@@ -92,6 +92,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .hudxp{font-weight:800;font-size:.85rem}
 .sky-gap{height:max(19vh,120px)}
 .ins{color:var(--muted);font-size:.9rem;margin-bottom:10px;font-weight:700}
+.ins .key{color:var(--gold2);font-size:1.18em;font-weight:800;padding:0 .08em}
 .sent{font-size:1.28rem;line-height:1.5;font-weight:700;margin-bottom:12px}
 .sent .spk{color:var(--gold);margin-right:4px}
 .blank{display:inline-block;min-width:3.4em;border-bottom:3px solid var(--gold);color:var(--gold2);padding:0 4px;text-align:center;line-height:1.2}
@@ -223,40 +224,6 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
 .back-row .back-btn{min-height:44px}
 .back-btn svg{width:18px;height:18px;flex:none}
 @media (min-width:520px){ .pgrid{grid-template-columns:1fr} .top h1{font-size:2.2rem} }
-/* ---------- collections (Orion / Clockwork Engine) ---------- */
-.col-btn{position:relative;color:var(--muted)}
-.col-btn.has-new{color:var(--gold2)}
-.col-btn.has-new::after{content:'';position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:colDot 1.6s ease-in-out infinite}
-@keyframes colDot{50%{transform:scale(1.5);opacity:.6}}
-.back-row .col-btn{margin-right:-2px}
-.newlit{margin-top:12px}
-.col-panel{text-align:center}
-.col-panel h2{font-size:1.6rem}
-.col-art{margin:10px auto 6px;max-width:420px}
-.col-art svg{width:100%;height:auto;display:block;overflow:visible}
-.col-G .col-art svg{max-height:62vh}
-.col-count{font-weight:800;margin-top:4px}
-.col-count b{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--gold2)}
-.c-ghost{stroke:#cfd9f5;stroke-opacity:.16;stroke-width:1;stroke-dasharray:2 4}
-.c-edge{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .8s ease}
-.c-edge.on{stroke-dashoffset:0}
-.c-edge.star{stroke:#dfe7fb;stroke-width:1.5;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(220,230,255,.8))}
-.c-edge.bar{stroke:#7a4e1e;stroke-width:6;stroke-linecap:round}
-.c-face{opacity:0;transition:opacity 1.2s ease}
-.c-face.on{opacity:1}
-.c-node .full{opacity:0}
-.c-node.lit .ghost{opacity:0}
-.c-node.lit .full{opacity:1}
-.c-node .full .ring{opacity:0;transform-box:fill-box;transform-origin:center}
-.c-node.pop .full{animation:colPop .8s cubic-bezier(.2,1.4,.4,1) both;transform-box:fill-box;transform-origin:center}
-.c-node.pop .full .ring{animation:colRing 1.1s ease-out both}
-@keyframes colPop{0%{transform:scale(.2);opacity:0}55%{transform:scale(1.35);opacity:1}100%{transform:scale(1);opacity:1}}
-@keyframes colRing{0%{transform:scale(.4);opacity:.95}100%{transform:scale(3.2);opacity:0}}
-.c-node.lit .full{filter:drop-shadow(0 0 4px rgba(255,255,255,.35))}
-.col-V .c-node.lit .full{filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
-.c-code{font-size:9px;font-weight:800;fill:#cfd9f5;opacity:.45;font-family:'Nunito',sans-serif}
-.col-V .c-code{fill:#ffd79a}
-.c-name{font-size:9px;font-style:italic;fill:#cfd9f5;opacity:.8;font-family:'Nunito',sans-serif}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
@@ -279,7 +246,6 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
   <section id="report" class="screen"></section>
   <section id="history" class="screen"></section>
   <section id="help" class="screen"></section>
-  <section id="collection" class="screen"></section>
 </div>
 <div class="overlay" id="overlay"></div>
 <div id="toast"></div>
@@ -313,16 +279,16 @@ const POINTS = [
 const UNITS = { 5:'Comparisons & quantifiers', 6:'Will, shall & verb forms', 7:'Infinitives, gerunds, have to', 8:'Should, conditionals, possessives' };
 
 const GAP_INS = {
-  '5A':'Write the comparative form (-er or more …) of the word in brackets.',
-  '5B':'Write the superlative form (-est or most …) of the word in brackets.',
-  '6A':'Use will or won’t + the verb in brackets.',
-  '6B':'Use will (’ll) or won’t + the verb in brackets.',
+  '5A':'Write the {comparative} form ({-er} or {more …}) of the word in brackets.',
+  '5B':'Write the {superlative} form ({-est} or {most …}) of the word in brackets.',
+  '6A':'Use {will} or {won’t} + the verb in brackets.',
+  '6B':'Use {will} ({’ll}) or {won’t} + the verb in brackets.',
   '6C':'Write the verb in brackets in the correct form.',
   '7A':'Write the verb in brackets in the correct form.',
   '7B':'Write the verb in brackets in the correct form.',
-  '7C':'Write the correct form of have to.',
-  '8A':'Use should or shouldn’t + the verb in brackets.',
-  '8B':'Use the present simple or will / won’t + the verb in brackets.',
+  '7C':'Write the correct form of {have to}.',
+  '8A':'Use {should} or {shouldn’t} + the verb in brackets.',
+  '8B':'Use the {present simple} or {will / won’t} + the verb in brackets.',
   '8C':'Write the correct word.'
 };
 
@@ -478,7 +444,7 @@ g('5B','It was the ___ exam I’ve ever done.','difficult','most difficult','sup
 g('5B','It’s the ___ city I’ve ever been to.','beautiful','most beautiful','sup_most');
 g('5B','July is the ___ month of the year in Spain.','hot','hottest','sup_double');
 g('5B','Who’s the ___ person you’ve ever met?','interesting','most interesting','sup_most');
-const PP_INS = 'Write the correct form of the verb in brackets.';
+const PP_INS = 'Write the {past participle} of the verb in brackets.';
 g('5B','It’s the best book I’ve ever ___.','read','read','sup_pp',PP_INS);
 g('5B','It’s the most beautiful beach I’ve ever ___ to.','be','been','sup_pp',PP_INS);
 g('5B','It’s the worst film I’ve ever ___.','see','seen','sup_pp',PP_INS);
@@ -834,7 +800,7 @@ MATCHES.push({ id:'8B-life2', p:'8B', title:'Real possibilities', pairs:[
 ]});
 
 /* ---------------- 8C Possessives & adverbs of manner ---------------- */
-const PRO_INS = 'Write the possessive pronoun (mine, yours, his, hers, ours, theirs).';
+const PRO_INS = 'Write the {possessive pronoun} (mine, yours, his, hers, ours, theirs).';
 g('8C','A: Whose book is that?  B: It’s ___.','I','mine','pp_pro',PRO_INS);
 g('8C','This isn’t my coat. It’s ___.','you','yours','pp_pro',PRO_INS);
 g('8C','Is this car ___? It’s parked outside their house.','they','theirs','pp_pro',PRO_INS);
@@ -842,7 +808,7 @@ g('8C','That’s not your table. It’s ___. We booked it.','we','ours','pp_pro'
 g('8C','Is this pen ___ or mine? He’s got one like it.','he','his','pp_pro',PRO_INS);
 g('8C','I’ve got my ticket. Has Maria got ___?','she','hers','pp_pro',PRO_INS);
 g('8C','‘Vivienne,’ said Hartley, ‘you must be ___.’','I','mine','pp_pro',PRO_INS);
-const ADV_INS = 'Make an adverb from the adjective in brackets.';
+const ADV_INS = 'Make an {adverb} from the adjective in brackets.';
 g('8C','She spoke ___ because the baby was asleep.','quiet','quietly','adv_ly',ADV_INS);
 g('8C','‘I’m sorry, but I don’t love you,’ he said ___.','sad','sadly','adv_ly',ADV_INS);
 g('8C','‘Give me back all my letters,’ she said ___.','angry','angrily','adv_y',ADV_INS);
@@ -918,7 +884,7 @@ const VUNITS = { 5:'Numbers, towns, the body', 6:'Opposites, back, modifiers', 7
 Object.assign(GAP_INS, {
   'V5B':'Complete the word. The first letter or letters are given.',
   'V5C':'Complete the word. The first letter or letters are given.',
-  'V6A':'Write the OPPOSITE of the verb in brackets, in the correct form.'
+  'V6A':'Write the {OPPOSITE} of the verb in brackets, in the correct form.'
 });
 
 Object.assign(RULES, {
@@ -1844,7 +1810,7 @@ const pct = (c, t) => t ? Math.round(100 * c / t) : 0;
 
 /* ===================== STORAGE (this device only) ===================== */
 const KEY = 'grammarObservatory.v1';
-function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null, lit:{}, shown:{} }; }
+function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null }; }
 let store = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(freshStore(), s); } catch (e) {} return freshStore(); })();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 let SEC = store.lastSec === 'V' ? 'V' : 'G';
@@ -2284,7 +2250,6 @@ function renderHome(){
       </button>`).join('')}</div></div>`; }).join('');
   $('#home').innerHTML = `
     <div class="back-row"><button class="btn ghost small back-btn" data-act="landing">${BACK}Menu</button><div style="flex:1"></div>
-      <button class="icon-btn col-btn${pendingCount(SEC) ? ' has-new' : ''}" data-act="collection" aria-label="${CDEF[SEC].label}" title="${CDEF[SEC].label}">${CDEF[SEC].icon}</button>
       <button class="icon-btn" data-act="mute" aria-label="Sound on or off">${MUTE_ICON(store.muted)}</button></div>
     <header class="top"><div><div class="eyebrow">${T.eyebrow}</div><h1>${T.title}</h1></div></header>
     ${sessionStrip()}
@@ -2323,7 +2288,7 @@ function startRound(p, mode){
   const q = buildQueue(p, mode);
   if (!q.length) return;
   const total = q.reduce((a, e) => a + (e.k === 'x' ? e.board.pairs.length : 1), 0);
-  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], newLit: [], lvlBefore: levelOf(store.xp), locked: false };
+  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], lvlBefore: levelOf(store.xp), locked: false };
   const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
   $('#hudTitle').textContent = label;
   show('game'); Sky.setRound(total); updateHud(); renderItem();
@@ -2337,7 +2302,6 @@ function award(ok, p, base, bonus = 0, quiet = false){
   const s = store.stats[p] || (store.stats[p] = { r: [], n: 0, c: 0 });
   s.r.push(ok ? 1 : 0); if (s.r.length > 20) s.r.shift(); s.n++; if (ok) s.c++;
   store.answered = (store.answered || 0) + 1;
-  if (mastery(p) >= 5 && !store.lit[p]){ store.lit[p] = Date.now(); G.newLit.push(p); }
   const b = G.by[p] || (G.by[p] = [0, 0]); b[1]++; G.t++;
   let gained = 0;
   if (ok){
@@ -2383,10 +2347,12 @@ function feedback(ok, o){
 }
 
 /* ---- Forge (gap fill) ---- */
+/* instructions mark their key words with {braces}; those are shown larger and in colour */
+const insHtml = s => esc(s).replace(/{([^}]+)}/g, '<b class="key">$1</b>');
 function renderGap(e){
   const it = e.it, [b, a = ''] = it.t.split('___');
   stage().innerHTML = `
-    <div class="ins">${esc(it.ins || GAP_INS[it.p])}</div>
+    <div class="ins">${insHtml(it.ins || GAP_INS[it.p])}</div>
     <div class="sent">${fmt(b)}<span class="blank" id="blank"> </span>${fmt(a)}</div>
     <div class="base">${it.pre || /[=:]/.test(it.b) ? esc(it.b) : '( ' + esc(it.b) + ' )'}</div>
     <div class="gap-form" id="gapForm">
@@ -2567,7 +2533,6 @@ function renderResult(){
         <div class="lvl-badge" style="width:48px;height:48px;font-size:1.25rem">${lp.L}</div>
         <div class="lvl-info"><div class="lvl-title">${levelName(lp.L)}</div><div class="xpbar"><div style="width:${Math.round(lp.frac * 100)}%"></div></div><div class="muted small">${lp.need - lp.into} XP to level ${lp.L + 1}</div></div>
       </div>
-      ${G.newLit.length ? `<button class="btn primary wide newlit" data-act="collection">${CDEF[PT[G.newLit[0]].sec].found(G.newLit.length)}</button>` : ''}
       ${G.mistakes.length ? `<details class="rev"><summary>Review your mistakes (${G.mistakes.length})</summary>${G.mistakes.map(m => `<div class="rev-item">${m.sent}${m.your ? `<div class="yw">You chose: ${esc(m.your)}</div>` : ''}</div>`).join('')}</details>` : ''}
       <div class="btn-col">
         <button class="btn primary wide" data-act="again">Play again</button>
@@ -2657,7 +2622,6 @@ function renderHelp(){
       <p><b>Split</b> – swipe or tap each card into the right group.</p>
       <p><b>Halves</b> – match the beginnings and endings of sentences.</p>
       <p><b>Star Mix</b>, <b>Mixed revision</b> and <b>Weak spots</b> mix the game types together.</p>
-      <h3>Orion and the Clockwork Engine</h3><p>When you reach five stars on a topic, it lights up for good: a star in the Orion constellation for grammar, a cog in the Clockwork Engine for vocabulary. Tap the small picture button at the top of the Grammar or Vocabulary menu to see how far you have got.</p>
       <h3>Scores</h3><p>Every correct answer earns XP, with extra XP for streaks. All your games add up into one <b>session report</b> – open it from the top of any menu screen. When you finish a session, it’s saved in your history.</p>
       <p class="muted small">Your progress is saved only on this phone, in this browser.</p>
     </div>`;
@@ -2672,149 +2636,6 @@ function ask(title, text, yes, fn){
     <div class="btn-col"><button class="btn primary wide" data-act="askYes">${esc(yes)}</button><button class="btn ghost wide" data-act="closeOverlay">Cancel</button></div></div>`;
   o.classList.add('show');
 }
-/* ===================== COLLECTIONS: Orion (grammar) and the Clockwork Engine (vocabulary) =====================
-   Each topic is tied, in a fixed order, to one star or cog. Reaching five stars on a topic lights it for good
-   (store.lit). store.shown remembers what the player has already seen light up, so opening the picture
-   animates only the new pieces: the piece pops in, then any line, bar or panel it completes is drawn in. */
-const GEAR_M = 3.2;
-const ORION = {
-  vb: [0, 0, 300, 400],
-  names: ['Meissa','Betelgeuse','Bellatrix','Alnitak','Alnilam','Mintaka','Saiph','Rigel','Nair al Saif','Hatysa','Pi3','Pi5'],
-  pts: [[150,44,4],[92,84,7],[208,92,6],[112,226,5,'l'],[152,206,6],[192,186,5],[92,330,5],[212,346,7],[152,258,4],[152,288,4],[262,126,4],[272,188,4]],
-  edges: [[0,1],[0,2],[1,3],[2,5],[3,4],[4,5],[3,6],[5,7],[4,8],[8,9],[2,10],[10,11]],
-  faces: [[0,1,2],[1,2,5,3],[3,5,7,6],[2,10,11]]
-};
-const ENGINE = (() => {
-  const spec = [[18,0,0],[12,0,300],[20,1,240],[14,2,225],[16,3,195],[10,4,135],[18,5,75],[12,6,135],[22,7,150],[14,8,255],[16,9,285],[12,10,255]];
-  const pos = [], R = spec.map(g => g[0] * GEAR_M / 2);
-  spec.forEach(([N, p, a], i) => { if (!i){ pos.push([70, 90]); return; } const d = R[p] + R[i], r = a * Math.PI / 180; pos.push([pos[p][0] + d * Math.cos(r), pos[p][1] + d * Math.sin(r)]); });
-  const tip = i => R[i] + 0.85 * GEAR_M, pad = 14;
-  const x0 = Math.min(...pos.map((q, i) => q[0] - tip(i))) - pad, x1 = Math.max(...pos.map((q, i) => q[0] + tip(i))) + pad;
-  const y0 = Math.min(...pos.map((q, i) => q[1] - tip(i))) - pad, y1 = Math.max(...pos.map((q, i) => q[1] + tip(i))) + pad;
-  return { vb: [x0, y0, x1 - x0, y1 - y0], N: spec.map(g => g[0]), R, pos, par: spec.map(g => g[1]),
-    edges: spec.slice(1).map((g, i) => [g[1], i + 1]), faces: [[0,1,2],[3,4,5],[6,7,8],[9,10,11]] };
-})();
-const CONST_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18l4-7 5 3 5-9" opacity=".7"/><circle cx="5" cy="18" r="1.8" fill="currentColor"/><circle cx="9" cy="11" r="1.8" fill="currentColor"/><circle cx="14" cy="14" r="1.8" fill="currentColor"/><circle cx="19" cy="5" r="1.8" fill="currentColor"/></svg>';
-const CDEF = {
-  G: { name:'Orion', sub:'The Hunter', unit:'star', icon: CONST_ICON, label:'See the Orion constellation',
-       found: n => n > 1 ? `★ ${n} new stars lit in Orion – take a look` : '★ A new star is lit in Orion – take a look',
-       hint:'Reach five stars on a grammar point to light its star for good.' },
-  V: { name:'The Clockwork Engine', sub:'A machine that runs on vocabulary', unit:'cog', icon: GEAR_SVG, label:'See the Clockwork Engine',
-       found: n => n > 1 ? `⚙ ${n} new cogs fitted in the engine – take a look` : '⚙ A new cog is fitted in the engine – take a look',
-       hint:'Reach five stars on a vocabulary topic to fit its cog for good.' }
-};
-const litCount = s => secPoints(s).filter(p => store.lit[p.id]).length;
-const pendingCount = s => secPoints(s).filter(p => store.lit[p.id] && !store.shown[p.id]).length;
-function syncLit(){ ALLP.forEach(p => { if (mastery(p.id) >= 5 && !store.lit[p.id]) store.lit[p.id] = Date.now(); }); }
-
-function gearPath(N, R){
-  const m = GEAR_M, rr = R - 1.15 * m, ra = R + 0.85 * m, P = 2 * Math.PI / N, f = v => v.toFixed(1);
-  const xy = (a, r) => f(Math.cos(a) * r) + ' ' + f(Math.sin(a) * r);
-  const hole = (x, y, r) => `M${f(x - r)} ${f(y)}a${f(r)} ${f(r)} 0 1 0 ${f(2 * r)} 0a${f(r)} ${f(r)} 0 1 0 ${f(-2 * r)} 0Z`;
-  let d = '';
-  for (let k = 0; k < N; k++){
-    const c = k * P;
-    d += (k ? 'L' : 'M') + xy(c - 0.32 * P, rr) + 'L' + xy(c - 0.16 * P, ra) + 'L' + xy(c + 0.16 * P, ra) + 'L' + xy(c + 0.32 * P, rr) + `A${f(rr)} ${f(rr)} 0 0 1 ` + xy(c + 0.68 * P, rr);
-  }
-  d += 'Z' + hole(0, 0, R * 0.16);
-  if (N >= 14) for (let k = 0; k < 5; k++){ const a = k / 5 * Math.PI * 2; d += hole(Math.cos(a) * R * 0.56, Math.sin(a) * R * 0.56, R * 0.13); }
-  return d;
-}
-function gearAngles(a0){
-  const E = ENGINE, ang = [a0];
-  for (let k = 1; k < E.N.length; k++){
-    const p = E.par[k], th = Math.atan2(E.pos[k][1] - E.pos[p][1], E.pos[k][0] - E.pos[p][0]);
-    ang[k] = th + Math.PI - Math.PI / E.N[k] + (th - ang[p]) * E.N[p] / E.N[k];
-  }
-  return ang;
-}
-
-const Col = (() => {
-  let timers = [], raf = 0, sec = 'G', lit = [], svgEl = null;
-  const calm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const f1 = v => v.toFixed(1);
-
-  function buildSvg(s, pts){
-    let sd = 7; const seed = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
-    const D = s === 'G' ? ORION : ENGINE, vb = D.vb, ctr = i => s === 'G' ? [D.pts[i][0], D.pts[i][1]] : D.pos[i];
-    let h = `<svg viewBox="${vb.map(f1).join(' ')}" role="img" aria-label="${esc(CDEF[s].name)}: ${litCount(s)} of 12 ${CDEF[s].unit}s lit">`;
-    h += `<defs><radialGradient id="cGlow"><stop offset="0" stop-color="#e9efff" stop-opacity=".85"/><stop offset=".4" stop-color="#cfd9f5" stop-opacity=".25"/><stop offset="1" stop-color="#cfd9f5" stop-opacity="0"/></radialGradient>
-      <linearGradient id="cBrass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98f"/><stop offset=".55" stop-color="#d9a14a"/><stop offset="1" stop-color="#9a6a26"/></linearGradient></defs>`;
-    if (s === 'G'){
-      for (let i = 0; i < 46; i++) h += `<circle cx="${f1(seed() * 300)}" cy="${f1(seed() * 400)}" r="${f1(0.4 + seed() * 0.9)}" fill="#cfd9f5" opacity="${f1(0.15 + seed() * 0.35)}"/>`;
-    } else h += `<rect x="${f1(vb[0] + 4)}" y="${f1(vb[1] + 4)}" width="${f1(vb[2] - 8)}" height="${f1(vb[3] - 8)}" rx="16" fill="none" stroke="#e9a94b" stroke-opacity=".18" stroke-dasharray="3 5"/>`;
-    // panels / faces (filled in when all their pieces are lit)
-    D.faces.forEach((fc, k) => {
-      const poly = fc.map(i => ctr(i).map(f1).join(',')).join(' '), on = fc.every(i => pts[i]);
-      h += s === 'G' ? `<polygon class="c-face${on ? ' on' : ''}" data-f="${k}" points="${poly}" fill="rgba(205,216,245,.11)"/>`
-        : `<polygon class="c-face${on ? ' on' : ''}" data-f="${k}" points="${poly}" fill="rgba(120,78,30,.5)" stroke="rgba(120,78,30,.5)" stroke-width="22" stroke-linejoin="round"/>`;
-    });
-    // lines / axle bars
-    D.edges.forEach(([a, b], k) => {
-      const A = ctr(a), B = ctr(b), on = pts[a] && pts[b];
-      if (s === 'G') h += `<line class="c-ghost" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}"/>`;
-      h += `<line class="c-edge ${s === 'G' ? 'star' : 'bar'}${on ? ' on' : ''}" data-e="${k}" pathLength="1" x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(B[0])}" y2="${f1(B[1])}"/>`;
-    });
-    // stars or cogs
-    const ang = s === 'V' ? gearAngles(0) : [];
-    for (let i = 0; i < 12; i++){
-      const p = secPoints(s)[i], on = pts[i], c = ctr(i);
-      if (s === 'G'){
-        const r = D.pts[i][2];
-        h += `<g class="c-node${on ? ' lit' : ''}" data-i="${i}" transform="translate(${c[0]} ${c[1]})">
-          <g class="ghost"><circle r="2.6" fill="#cfd9f5" opacity=".4"/><text x="8" y="-7" class="c-code">${p.code}</text></g>
-          <g class="full"><circle class="ring" r="12" fill="none" stroke="#e9efff" stroke-width="1.2"/><circle r="${r * 3.4}" fill="url(#cGlow)"/>
-            <path d="M0 ${-r * 2.4}L0 ${r * 2.4}M${-r * 2.4} 0L${r * 2.4} 0" stroke="#dfe7fb" stroke-width=".9" stroke-linecap="round" opacity=".8"/>
-            <circle r="${r * 0.8}" fill="#f6f9ff"/><text x="${D.pts[i][3] === 'l' ? -(r * 1.6 + 3) : r * 1.6 + 3}" y="${r * 0.5 + 2}" class="c-name"${D.pts[i][3] === 'l' ? ' text-anchor="end"' : ''}>${esc(D.names[i])}</text></g></g>`;
-      } else {
-        const N = D.N[i], R = D.R[i];
-        h += `<g class="c-node${on ? ' lit' : ''}" data-i="${i}" transform="translate(${f1(c[0])} ${f1(c[1])})">
-          <g class="ghost"><g transform="rotate(${f1(ang[i] * 180 / Math.PI)})"><path d="${gearPath(N, R)}" fill="none" stroke="#e9a94b" stroke-opacity=".3" stroke-dasharray="2 3" fill-rule="evenodd"/></g><text y="3" text-anchor="middle" class="c-code">${p.code}</text></g>
-          <g class="full"><circle class="ring" r="${f1(R * 0.6)}" fill="none" stroke="#ffd98f" stroke-width="1.5"/><g class="gr" transform="rotate(${f1(ang[i] * 180 / Math.PI)})"><path d="${gearPath(N, R)}" fill="url(#cBrass)" stroke="#6b4518" stroke-width=".8" fill-rule="evenodd"/></g></g></g>`;
-      }
-    }
-    return h + '</svg>';
-  }
-
-  function clear(){ timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf); raf = 0; }
-  function spin(t0){
-    const tick = t => {
-      if (!svgEl || !svgEl.isConnected || !$('#collection').classList.contains('active')){ raf = 0; return; }
-      const ang = gearAngles(calm ? 0 : (t - t0) * 0.0004);
-      svgEl.querySelectorAll('.c-node.lit .gr').forEach(g => { const i = +g.closest('.c-node').dataset.i; g.setAttribute('transform', `rotate(${(ang[i] * 180 / Math.PI).toFixed(1)})`); });
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-  }
-  function open(){
-    clear(); sec = SEC;
-    const D = sec === 'G' ? ORION : ENGINE, C = CDEF[sec], pp = secPoints(sec);
-    lit = pp.map(p => !!store.lit[p.id] && !!store.shown[p.id]);
-    const fresh = pp.map((p, i) => i).filter(i => store.lit[pp[i].id] && !store.shown[pp[i].id]).sort((a, b) => store.lit[pp[a].id] - store.lit[pp[b].id] || a - b);
-    $('#collection').innerHTML = `
-      <div class="back-row"><button class="btn ghost small back-btn" data-act="home">${BACK}Back</button><div class="eyebrow">${sec === 'G' ? 'Constellation' : 'Machine'}</div></div>
-      <div class="panel col-panel col-${sec}">
-        <h2>${esc(C.name)}</h2><div class="muted">${esc(C.sub)}</div>
-        <div class="col-art"></div>
-        <div class="col-count"><b>${litCount(sec)}</b> / 12 ${C.unit}s lit</div>
-        <div class="muted small">${C.hint} Once lit, a ${C.unit} stays lit.</div>
-      </div>`;
-    const art = $('#collection .col-art'); art.innerHTML = buildSvg(sec, lit); svgEl = art.firstElementChild;
-    fresh.forEach(i => { store.shown[pp[i].id] = 1; }); if (fresh.length) save();
-    fresh.forEach((i, n) => {
-      const at = 700 + n * 1500;
-      timers.push(setTimeout(() => {
-        lit[i] = true;
-        const nd = svgEl.querySelector(`.c-node[data-i="${i}"]`); nd.classList.add('lit', 'pop'); Sfx.correct();
-        timers.push(setTimeout(() => D.edges.forEach(([a, b], k) => { if ((a === i || b === i) && lit[a] && lit[b]) svgEl.querySelector(`.c-edge[data-e="${k}"]`).classList.add('on'); }), 450));
-        timers.push(setTimeout(() => D.faces.forEach((fc, k) => { if (fc.includes(i) && fc.every(j => lit[j])){ svgEl.querySelector(`.c-face[data-f="${k}"]`).classList.add('on'); Sfx.finish(); } }), 1000));
-      }, at));
-    });
-    if (sec === 'V') spin(performance.now());
-  }
-  return { open, clear };
-})();
-
 /* ===================== EVENTS ===================== */
 document.addEventListener('pointerdown', () => Sfx.unlock(), { once: true });
 document.addEventListener('click', ev => {
@@ -2852,7 +2673,6 @@ document.addEventListener('click', ev => {
       });
       break;
     case 'askYes': { const fn = ask.fn; ask.fn = null; $('#overlay').classList.remove('show'); if (fn) fn(); break; }
-    case 'collection': Sfx.tap(); Col.open(); show('collection'); break;
     case 'closeOverlay': $('#overlay').classList.remove('show'); break;
   }
 });
@@ -2862,7 +2682,6 @@ document.addEventListener('keydown', ev => {
 });
 
 /* ===================== BOOT ===================== */
-syncLit(); save();
 renderLanding(); document.body.dataset.theme = 'sky';
 (function loadThree(){
   const s = document.createElement('script');
