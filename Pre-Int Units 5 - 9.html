@@ -1,0 +1,2001 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060a1a">
+<title>Grammar Observatory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060a1a; --panel:rgba(13,19,44,.88); --panel2:rgba(255,255,255,.055); --line:rgba(170,185,255,.16);
+  --text:#eef1ff; --muted:#a3abd0; --gold:#f6c86b; --gold2:#ffe2a6; --teal:#5fe0b5; --coral:#ff7d7d; --violet:#8f7bff;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:17px;line-height:1.45;-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;background:radial-gradient(ellipse at 50% -10%,#1b2556 0%,#0b1130 45%,#060a1a 80%)}
+#app{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 32px);min-height:100vh;min-height:100dvh}
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1,h2,h3,.display{font-family:'Fraunces',Georgia,serif;font-weight:700;letter-spacing:-.01em;margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:800}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 20px;border-radius:14px;font-weight:800;font-size:1rem;transition:transform .12s,background .2s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1b00;box-shadow:0 4px 18px rgba(246,200,107,.25)}
+.btn.ghost{background:var(--panel2);border:1px solid var(--line)}
+.btn.small{min-height:40px;padding:0 14px;font-size:.9rem}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.45}
+.icon-btn{width:44px;height:44px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.icon-btn svg{width:22px;height:22px}
+.back-btn{flex:none;padding:0 12px 0 8px;gap:4px;min-height:44px}
+
+/* ---------- home ---------- */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.top h1{font-size:1.9rem;line-height:1.05;margin-top:4px}
+.level-card{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.lvl-badge{width:62px;height:62px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;color:#2a1b00;background:radial-gradient(circle at 35% 30%,#fff3cf,var(--gold) 60%,#b98a2e);box-shadow:0 0 24px rgba(246,200,107,.45)}
+.lvl-info{flex:1;min-width:0}
+.lvl-title{font-weight:800;font-size:1.05rem}
+.xpbar{height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 4px}
+.xpbar>div{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--violet),var(--gold));transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.session-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:12px}
+.session-strip .s-num{font-weight:800}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.quick .btn{min-height:62px;font-size:1rem;line-height:1.15;text-align:center;flex-direction:column;gap:2px}
+.unit{margin-bottom:18px}
+.unit-head{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
+.unit-head .u{font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
+.unit-head .t{color:var(--muted);font-size:.86rem}
+.pgrid{display:grid;grid-template-columns:1fr;gap:8px}
+.pcard{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);transition:transform .12s,border-color .2s}
+.pcard:active{transform:scale(.985)}
+.pcard:hover{border-color:rgba(246,200,107,.4)}
+.pc-id{grid-row:span 2;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;background:rgba(143,123,255,.16);color:#cfc6ff;font-size:.95rem}
+.pc-title{font-weight:800;line-height:1.2}
+.pc-sub{color:var(--muted);font-size:.82rem;line-height:1.25;grid-column:2}
+.stars{grid-row:span 2;font-size:.95rem;letter-spacing:1px;white-space:nowrap}
+.stars i{font-style:normal;color:rgba(255,255,255,.18)} .stars i.on{color:var(--gold);text-shadow:0 0 8px rgba(246,200,107,.6)}
+.foot{display:flex;gap:10px;justify-content:center;margin-top:8px}
+
+/* ---------- point ---------- */
+.back-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.point-hero{text-align:center;padding:22px 18px;margin-bottom:14px}
+.point-hero .code{font-weight:800;color:#cfc6ff;letter-spacing:.08em}
+.point-hero h2{font-size:1.7rem;margin:4px 0}
+.point-hero .stars{font-size:1.4rem;margin-top:8px;display:block}
+.modes{display:grid;gap:10px}
+.mode{display:flex;gap:14px;align-items:center;text-align:left;padding:14px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.mode:active{transform:scale(.985)}
+.mode .mi{width:48px;height:48px;flex:none;border-radius:14px;display:grid;place-items:center;background:linear-gradient(160deg,rgba(246,200,107,.22),rgba(143,123,255,.18))}
+.mode .mi svg{width:26px;height:26px;stroke:var(--gold2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mode .mn{font-weight:800;font-size:1.05rem}
+.mode .md{color:var(--muted);font-size:.85rem;line-height:1.3}
+
+/* ---------- game ---------- */
+.hud{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;padding-top:2px}
+.hud-mid{flex:1;min-width:0}
+.hud-title{font-size:.8rem;font-weight:800;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px}
+.prog>div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s}
+.hud-right{text-align:right;min-width:62px}
+.streak{font-weight:800;font-size:.85rem;color:var(--muted);transition:color .3s}
+.streak.hot{color:var(--gold)}
+.hudxp{font-weight:800;font-size:.85rem}
+.sky-gap{height:max(19vh,120px)}
+.ins{color:var(--muted);font-size:.9rem;margin-bottom:10px;font-weight:700}
+.sent{font-size:1.28rem;line-height:1.5;font-weight:700;margin-bottom:12px}
+.sent .spk{color:var(--gold);margin-right:4px}
+.blank{display:inline-block;min-width:3.4em;border-bottom:3px solid var(--gold);color:var(--gold2);padding:0 4px;text-align:center;line-height:1.2}
+.blank.sm{min-width:2.6em}
+.base{display:inline-block;padding:5px 12px;border-radius:999px;background:rgba(143,123,255,.18);color:#d8d0ff;font-weight:800;margin-bottom:14px}
+.gap-form{display:flex;gap:8px}
+.gap-form input{flex:1;min-width:0;height:52px;border-radius:14px;border:2px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:1.1rem;font-weight:700;padding:0 14px;outline:none}
+.gap-form input:focus{border-color:var(--gold)}
+.opts{display:grid;gap:10px}
+.opt{min-height:56px;padding:10px 16px;border-radius:14px;background:var(--panel2);border:2px solid var(--line);font-weight:800;font-size:1.08rem;text-align:left;display:flex;align-items:center;gap:12px;transition:border-color .2s,background .2s}
+.opt .door{width:30px;height:30px;flex:none;border-radius:8px 8px 3px 3px;display:grid;place-items:center;font-size:.8rem;background:rgba(246,200,107,.16);color:var(--gold)}
+.opt.good{border-color:var(--teal);background:rgba(95,224,181,.14)}
+.opt.bad{border-color:var(--coral);background:rgba(255,125,125,.13)}
+.chunks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chunk{padding:10px 13px;border-radius:12px;background:var(--panel2);border:2px solid var(--line);font-weight:800;font-size:1.08rem;transition:all .2s}
+.chunk.found{border-color:var(--gold);background:rgba(246,200,107,.16)}
+.chunk.miss{border-color:var(--coral);background:rgba(255,125,125,.12);text-decoration:line-through}
+.chunk.actual{border-color:var(--gold);box-shadow:0 0 0 3px rgba(246,200,107,.25)}
+.fixlabel{font-weight:800;color:var(--gold2);margin:4px 0 8px;font-size:.95rem}
+/* sort */
+.card-stage{height:190px;display:grid;place-items:center;margin:6px 0 14px;perspective:800px}
+.sort-card{width:min(86%,340px);min-height:130px;padding:20px;border-radius:20px;display:grid;place-items:center;text-align:center;font-size:1.3rem;font-weight:800;line-height:1.35;
+  background:linear-gradient(160deg,#20295e,#151b40);border:1px solid rgba(246,200,107,.35);box-shadow:0 14px 40px rgba(0,0,0,.45),0 0 30px rgba(143,123,255,.15);touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.sort-card.drag{transition:none}
+.sort-card.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.bins{display:grid;gap:10px}
+.bins.b2{grid-template-columns:1fr 1fr}
+.bins.b3{grid-template-columns:1fr 1fr 1fr}
+.bin{min-height:64px;padding:8px;border-radius:14px;background:var(--panel2);border:2px dashed rgba(170,185,255,.3);font-weight:800;font-size:.98rem;line-height:1.2;transition:all .2s}
+.bin.hint{border-style:solid;border-color:var(--teal);background:rgba(95,224,181,.14)}
+.bin.lean{border-color:var(--gold);background:rgba(246,200,107,.14)}
+/* match */
+.match{display:grid;gap:14px}
+.mcol{display:grid;gap:8px}
+.mcol .lab{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800}
+.mb{text-align:left;padding:11px 13px;border-radius:12px;background:var(--panel2);border:2px solid var(--line);font-weight:700;font-size:1rem;line-height:1.3;display:flex;gap:10px;align-items:center;transition:all .2s}
+.mb .pn{width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:800;background:rgba(255,255,255,.08);color:var(--muted)}
+.mb.sel{border-color:var(--gold);background:rgba(246,200,107,.14)}
+.mb.done{border-color:var(--teal);background:rgba(95,224,181,.1);opacity:.85}
+.mb.done .pn{background:var(--teal);color:#06261b}
+.mb.err{border-color:var(--coral);animation:shake .35s}
+/* feedback */
+.fb{margin-top:14px;padding:14px;border-radius:14px;border:1px solid;animation:fadeUp .25s ease both}
+.fb.ok{border-color:rgba(95,224,181,.45);background:rgba(95,224,181,.08)}
+.fb.bad{border-color:rgba(255,125,125,.45);background:rgba(255,125,125,.07)}
+.fb-head{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:1.05rem;margin-bottom:6px}
+.fb.ok .fb-head{color:var(--teal)} .fb.bad .fb-head{color:var(--coral)}
+.fb-xp{color:var(--gold);font-size:.95rem}
+.fb-sent{font-size:1.08rem;font-weight:700;margin:4px 0}
+.fb-sent mark,.rev mark{background:none;color:var(--gold2);border-bottom:2px solid var(--gold);padding:0 2px}
+.fb-your{color:var(--muted);font-size:.9rem}
+.fb-also,.fb-note{font-size:.9rem;color:var(--muted);margin-top:4px}
+.fb-note{color:var(--gold2)}
+.fb-rule{margin-top:8px;padding:10px 12px;border-radius:10px;background:rgba(143,123,255,.12);font-size:.92rem;line-height:1.4}
+.fb-rule::before{content:'Rule  ';font-weight:800;color:#cfc6ff;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.fb-rule.hide-rule{display:none}
+.fb-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.fb-actions .primary{min-width:120px}
+/* results & report */
+.result{text-align:center}
+.big-score{font-family:'Fraunces',serif;font-size:4.2rem;font-weight:700;line-height:1;margin:10px 0 2px}
+.big-score span{font-size:2rem;color:var(--muted)}
+.res-msg{font-size:1.1rem;font-weight:800;margin:6px 0}
+.res-xp{display:inline-block;margin:6px 0 14px;padding:6px 16px;border-radius:999px;background:rgba(246,200,107,.16);color:var(--gold);font-weight:800;font-size:1.1rem}
+.btn-col{display:grid;gap:10px;margin-top:16px}
+details.rev{text-align:left;margin-top:10px;background:var(--panel2);border-radius:12px;padding:10px 14px}
+details.rev summary{font-weight:800;cursor:pointer}
+.rev-item{padding:9px 0;border-top:1px solid var(--line);font-size:.95rem}
+.rev-item .yw{color:var(--coral);font-size:.85rem}
+.report-head{text-align:center;margin-bottom:6px}
+.grade{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--gold);margin-top:2px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.stat{background:var(--panel2);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:1.35rem;font-family:'Fraunces',serif}
+.stat span{font-size:.75rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.bars{display:grid;gap:7px;margin-top:6px}
+.bar{display:grid;grid-template-columns:2.6em 1fr auto;gap:8px;align-items:center;font-size:.88rem}
+.bar .bt{height:12px;border-radius:7px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar .bt div{height:100%;border-radius:7px}
+.bar .bv{text-align:right;font-weight:800;color:var(--muted);white-space:nowrap;min-width:6.2em}
+.focus-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{padding:5px 10px;border-radius:999px;background:rgba(255,125,125,.14);color:#ffc2c2;font-weight:800;font-size:.82rem}
+.sec-title{font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+.list{display:grid;gap:6px}
+.li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:10px;background:var(--panel2);font-size:.9rem}
+.li b{font-weight:800}
+.stamp{font-size:.78rem;color:var(--muted);text-align:center;margin-top:12px}
+.help p{margin:.4em 0 .9em}
+.help h3{font-size:1.1rem;margin-top:14px}
+/* overlay + toast */
+.overlay{position:fixed;inset:0;z-index:20;display:none;place-items:center;background:rgba(3,6,18,.7);padding:24px}
+.overlay.show{display:grid;animation:fadeUp .3s ease}
+.overlay .panel{text-align:center;max-width:360px}
+.overlay .lvl-badge{width:96px;height:96px;font-size:2.6rem;margin:6px auto 10px}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%) translateY(30px);opacity:0;z-index:30;padding:10px 18px;border-radius:999px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1b00;font-weight:800;pointer-events:none;transition:all .3s;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+body[data-theme="clock"]{
+  --bg:#140d08; --panel:rgba(40,27,16,.9); --panel2:rgba(255,214,160,.06); --line:rgba(232,176,104,.2);
+  --text:#fbf0e2; --muted:#cbb59b; --gold:#e9a94b; --gold2:#ffd79a; --teal:#86d9a6; --coral:#ff8068; --violet:#c27a45;
+}
+body[data-theme="clock"] #sky{background:radial-gradient(ellipse at 50% -10%,#3a2614 0%,#1d130b 50%,#140d08 85%)}
+body[data-theme="clock"] .pc-id{background:rgba(194,122,69,.2);color:#ffd0a8}
+body[data-theme="clock"] .point-hero .code{color:#ffd0a8}
+body[data-theme="clock"] .panel{box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,220,170,.06)}
+body[data-theme="clock"] .lvl-badge{background:radial-gradient(circle at 35% 30%,#fff0d6,#e9a94b 60%,#8a5a22)}
+body[data-theme="clock"] .fb-rule{background:rgba(194,122,69,.16)}
+body[data-theme="clock"] .fb-rule::before{color:#ffd0a8}
+body[data-theme="clock"] .base{background:rgba(194,122,69,.2);color:#ffe0c0}
+body[data-theme="clock"] h1, body[data-theme="clock"] .door-title{letter-spacing:-.005em}
+body[data-theme="clock"] .sort-card{background:linear-gradient(160deg,#5a3b1d,#2e1e10);border-color:rgba(233,169,75,.45);box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 30px rgba(233,169,75,.12)}
+body[data-theme="clock"] .bin{border-color:rgba(232,176,104,.35)}
+body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
+.doors{display:grid;gap:12px;margin:4px 0 18px}
+.door-card{display:flex;align-items:center;gap:16px;text-align:left;padding:20px 18px;border-radius:20px;border:1px solid;transition:transform .12s}
+.door-card:active{transform:scale(.985)}
+.door-card.sky{background:linear-gradient(135deg,#1b2556,#0d1333);border-color:rgba(170,185,255,.25);color:#eef1ff}
+.door-card.clock{background:linear-gradient(135deg,#4a2f17,#24170c);border-color:rgba(232,176,104,.35);color:#fbf0e2}
+.door-art{width:64px;height:64px;flex:none;display:grid;place-items:center;border-radius:18px}
+.door-art svg{width:44px;height:44px}
+.door-card.sky .door-art{background:rgba(143,123,255,.18);color:#ffd27a}
+.door-card.clock .door-art{background:rgba(233,169,75,.16);color:#e9a94b}
+.door-card.clock .door-art svg{animation:spin 9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.door-txt{display:flex;flex-direction:column;gap:2px}
+.door-title{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.45rem;line-height:1.1}
+.door-card.clock .eyebrow{color:#e9a94b}
+.door-card .muted{color:inherit;opacity:.72}
+.back-row .back-btn{min-height:44px}
+.back-btn svg{width:18px;height:18px;flex:none}
+@media (min-width:520px){ .pgrid{grid-template-columns:1fr} .top h1{font-size:2.2rem} }
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div id="app">
+  <section id="landing" class="screen active"></section>
+  <section id="home" class="screen"></section>
+  <section id="point" class="screen"></section>
+  <section id="game" class="screen">
+    <div class="hud">
+      <button class="btn ghost small back-btn" data-act="quit" aria-label="Back to menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Back</button>
+      <div class="hud-mid"><div class="hud-title" id="hudTitle"></div><div class="prog"><div id="progFill"></div></div></div>
+      <div class="hud-right"><div class="streak" id="hudStreak">streak 0</div><div class="hudxp" id="hudXp">0 XP</div></div>
+    </div>
+    <div class="sky-gap"></div>
+    <div id="stage" class="panel"></div>
+  </section>
+  <section id="result" class="screen"></section>
+  <section id="report" class="screen"></section>
+  <section id="history" class="screen"></section>
+  <section id="help" class="screen"></section>
+</div>
+<div class="overlay" id="overlay"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ===================== ITEM BANK =====================
+   Conventions
+   g(point, text, base, answers, rule, instruction?)  typed gap-fill ("___" marks the gap)
+   m(point, text, options, rule)                       multichoice – FIRST option is correct (shuffled at runtime)
+   f(point, chunks, wrongIndex, fixes, rule)           error hunt – FIRST fix is correct (shuffled at runtime)
+   Typed answers: case, curly apostrophes, spaces and final punctuation are ignored;
+   contractions and full forms are treated as the same (won't = will not, 'll = will …).
+======================================================= */
+
+const POINTS = [
+  { id:'5A', unit:5, title:'Comparatives', sub:'faster, more carefully, (not) as … as', star:'The Racer' },
+  { id:'5B', unit:5, title:'Superlatives', sub:"the biggest, the best … I've ever seen", star:'The Crown' },
+  { id:'5C', unit:5, title:'Quantifiers', sub:'much / many, a few / a little, too, enough', star:'The Jug' },
+  { id:'6A', unit:6, title:'Will / won’t: predictions', sub:"It'll rain. You won't pass.", star:'The Crystal Ball' },
+  { id:'6B', unit:6, title:'Will / won’t / shall', sub:'decisions, offers, promises', star:'The Handshake' },
+  { id:'6C', unit:6, title:'Verb forms review', sub:'past, present or future?', star:'The Hourglass' },
+  { id:'7A', unit:7, title:'Infinitive with to', sub:'decide to, it’s easy to, what to do', star:'The Arrow' },
+  { id:'7B', unit:7, title:'Gerunds (-ing)', sub:'enjoy doing, good at, Swimming is …', star:'The Dancer' },
+  { id:'7C', unit:7, title:'Have to / must', sub:"mustn't vs don't have to", star:'The Gate' },
+  { id:'8A', unit:8, title:'Should', sub:'advice: should / shouldn’t', star:'The Compass' },
+  { id:'8B', unit:8, title:'First conditional', sub:'If + present, will + verb', star:'The Domino' },
+  { id:'8C', unit:8, title:'Possessives & adverbs', sub:'my / mine; quietly, well', star:'The Key' }
+];
+
+const UNITS = { 5:'Comparisons & quantifiers', 6:'Will, shall & verb forms', 7:'Infinitives, gerunds, have to', 8:'Should, conditionals, possessives' };
+
+const GAP_INS = {
+  '5A':'Write the comparative form (-er or more …) of the word in brackets.',
+  '5B':'Write the superlative form (-est or most …) of the word in brackets.',
+  '6A':'Use will or won’t + the verb in brackets.',
+  '6B':'Use will (’ll) or won’t + the verb in brackets.',
+  '6C':'Write the verb in brackets in the correct form.',
+  '7A':'Write the verb in brackets in the correct form.',
+  '7B':'Write the verb in brackets in the correct form.',
+  '7C':'Write the correct form of have to.',
+  '8A':'Use should or shouldn’t + the verb in brackets.',
+  '8B':'Use the present simple or will / won’t + the verb in brackets.',
+  '8C':'Write the correct word.'
+};
+
+const RULES = {
+  // 5A
+  cmp_er:'One-syllable adjectives: add -er (tall → taller, old → older).',
+  cmp_double:'One-syllable adjectives ending in one vowel + one consonant: double the consonant (big → bigger, hot → hotter, thin → thinner). Not w: new → newer.',
+  cmp_y:'Consonant + y: change y to -ier (busy → busier, easy → easier, sunny → sunnier).',
+  cmp_more:'Longer adjectives: more + adjective (more expensive, more difficult).',
+  cmp_irr:'Irregular: good / well → better; bad / badly → worse.',
+  cmp_adv:'Adverbs ending in -ly: more + adverb (more carefully, more easily).',
+  cmp_flat:'Some adverbs look like adjectives: fast → faster, hard → harder.',
+  cmp_asas:'as + adjective + as. Negative: not as … as. Never mix as and than.',
+  cmp_less:'less + adjective + than is the opposite of more … than.',
+  cmp_than:'After a comparative, use than (not that or as).',
+  // 5B
+  sup_est:'One-syllable adjectives: the + -est (the cleanest, the tallest).',
+  sup_double:'One-syllable adjectives ending in one vowel + one consonant: double it (big → the biggest, hot → the hottest).',
+  sup_y:'Consonant + y: change y to -iest (busy → the busiest, happy → the happiest).',
+  sup_most:'Longer adjectives: the most + adjective (the most expensive).',
+  sup_irr:'Irregular: good → the best; bad → the worst.',
+  sup_old:'old → the oldest (for people in a family you can also say the eldest).',
+  sup_the:'Use the before a superlative: the tallest, the most dangerous.',
+  sup_ever:"Superlative + present perfect + ever: the best film I've ever seen.",
+  sup_pp:"After I've / you've, use the past participle: seen, been, read, bought, done, eaten.",
+  // 5C
+  q_much:'much + uncountable nouns (water, milk). many + plural countable nouns (cups, cars). In positive sentences we usually use a lot of: I drink a lot of water.',
+  q_few:'a few + plural countable nouns (a few cans). a little + uncountable nouns (a little wine).',
+  q_alot:'a lot of + noun. Without a noun after it, just a lot.',
+  q_toomuch:'too much + uncountable noun (too much coffee). too many + plural noun (too many people).',
+  q_tooadj:'too + adjective (too small, too hot). Not too much + adjective.',
+  q_enough_n:'enough goes BEFORE a noun: enough time, enough money.',
+  q_enough_adj:'enough goes AFTER an adjective: old enough, tall enough.',
+  q_count:'Countable nouns have a plural (bottles, eggs). Uncountable nouns don’t (milk, advice, money).',
+  // 6A
+  w_form:'will / won’t + infinitive without to. will never changes: she will love (not wills, not will to).',
+  w_pred:'Use will / won’t to make predictions about the future.',
+  w_neg:'Negative: won’t (= will not). Not don’t will.',
+  w_q:'Questions: Will + subject + infinitive? (Will it rain?)',
+  w_opt:'Optimists predict good things will happen; pessimists predict bad things.',
+  // 6B
+  w_dec:'Use I’ll for a decision you make at the moment of speaking.',
+  w_off:'Use I’ll to offer to do something for someone.',
+  w_prom:'Use I’ll / I won’t to make a promise.',
+  w_shall:'To offer as a question, use Shall I + infinitive? (Shall I open the window?)',
+  // 6C
+  v_past:'Past simple and past continuous are about the past.',
+  v_pres:'Present simple and present continuous (without a future time) are about the present.',
+  v_fut:'going to, will and the present continuous with a future time (tonight, next week) are about the future.',
+  v_ps:'Present simple for habits and things that are always true. He / she / it + -s (she works).',
+  v_pc:'Present continuous for things happening now: Look! It’s raining.',
+  v_pastc:'Past continuous for an action in progress in the past: they were living in Madrid when …',
+  v_pp:'Present perfect for experiences (Have you ever …?). With a finished time (last year, last night) use the past simple.',
+  v_gt:'going to for a prediction when you can see the evidence (Look at those clouds!).',
+  v_arr:'Present continuous for future arrangements: I’m visiting my grandmother on Sunday.',
+  v_neg:'Past simple negative: didn’t + infinitive. Present negative: don’t / doesn’t + infinitive.',
+  v_q:'Past simple questions: Did + subject + infinitive (Did you go?).',
+  // 7A
+  inf_verb:'These verbs are followed by to + infinitive: decide to, want to, plan to, offer to, promise to, hope to, learn to, pretend to, agree to, manage to, need to, would like to, (don’t) forget to.',
+  inf_adj:'Use to + infinitive after adjectives: It’s important to be on time.',
+  inf_purp:'Use to + infinitive to give a reason (why?): I went to the bank to get money. Not for get.',
+  inf_q:'Use to + infinitive after question words: what to do, how to use, where to go.',
+  inf_neg:'Negative infinitive: not to + verb (Try not to be late).',
+  // 7B
+  ger_verb:'These verbs are followed by -ing: enjoy, mind, finish, feel like, spend (time), keep, practise, look forward to.',
+  ger_prep:'After a preposition (at, of, in, for, about, without), use the -ing form: good at dancing.',
+  ger_subj:'Use the -ing form as the subject of a sentence: Swimming is good exercise.',
+  ger_neg:'Negative gerund: not + -ing (not having to …).',
+  ger_both:'like, love, hate: both the -ing form and to + infinitive are correct. But would like / would love always take to: I’d like to go.',
+  ger_spell:'Spelling: short verbs ending in one vowel + one consonant double it (chat → chatting, swim → swimming).',
+  // 7C
+  ht_form:'have to / has to (he, she, it) / had to (past). Questions: Do you have to …? Negative: don’t / doesn’t / didn’t have to.',
+  ht_must:'must / mustn’t + infinitive without to (You must wear, not must to wear).',
+  ht_mustnt:'mustn’t = it’s not allowed, or it’s very important that you don’t.',
+  ht_dont:'don’t have to = it isn’t necessary (but you can if you want).',
+  // 8A
+  sh_form:'should / shouldn’t + infinitive without to. should never changes: she should (not shoulds).',
+  sh_q:'Questions: Should I …? / What should I do? Negative: shouldn’t (not don’t should).',
+  sh_use:'Use should to say something is a good idea, shouldn’t to say it’s a bad idea.',
+  // 8B
+  c_if:'After if, use the present simple, not will: If it rains, …',
+  c_will:'In the other part of the sentence, use will / won’t + infinitive: … we’ll stay at home.',
+  c_neg:'Negative after if: don’t / doesn’t + verb (If you don’t find a taxi …).',
+  c_match:'First conditional: if + present simple, will / won’t + infinitive.',
+  // 8C
+  pp_adj:'Possessive adjectives come before a noun: my book, your coat, their car.',
+  pp_pro:'Possessive pronouns stand alone, with no noun after them: It’s mine. (mine, yours, his, hers, ours, theirs)',
+  adv_ly:'Most adverbs: adjective + -ly (quiet → quietly, sad → sadly).',
+  adv_y:'Adjectives ending in -y: change y to -ily (angry → angrily, lazy → lazily).',
+  adv_ful:'-ful adjectives: add -ly (careful → carefully, beautiful → beautifully).',
+  adv_irr:'Irregular: good → well. fast → fast. hard → hard.',
+  adv_use:'Adjective + noun (a careful driver). Verb + adverb (he drives carefully).'
+};
+
+const GAP = [], MC = [], FAULT = [], SORTS = [], MATCHES = [];
+function g(p, t, b, a, r, ins){ GAP.push({ p, t, b, a: Array.isArray(a) ? a : [a], r, ins }); }
+function m(p, t, o, r){ MC.push({ p, t, o, r }); }
+function f(p, c, w, x, r){ FAULT.push({ p, c, w, x, r }); }
+
+/* ---------------- 5A Comparatives ---------------- */
+g('5A','My brother is ___ than me.','tall','taller','cmp_er');
+g('5A','Traffic in the city is ___ than it was ten years ago.','bad','worse','cmp_irr');
+g('5A','Everybody is ___ than they were five years ago.','busy','busier','cmp_y');
+g('5A','This exercise is ___ than the last one.','easy','easier','cmp_y');
+g('5A','Your phone is ___ than mine.','expensive','more expensive','cmp_more');
+g('5A','Today is ___ than yesterday.','hot','hotter','cmp_double');
+g('5A','She speaks English ___ than her sister.','well','better','cmp_irr');
+g('5A','Can you drive ___? We’re going to be late!','fast','faster','cmp_flat');
+g('5A','You need to drive ___ when it’s raining.','carefully','more carefully','cmp_adv');
+g('5A','I found the second test ___ than the first.','difficult','more difficult','cmp_more');
+g('5A','Our new flat is ___ than our old one.','big','bigger','cmp_double');
+g('5A','He works ___ than anybody in the office.','hard','harder','cmp_flat');
+g('5A','He answered the questions ___ than me.','correctly','more correctly','cmp_adv');
+g('5A','Is Rome ___ than Paris?','old','older','cmp_er');
+g('5A','This sofa is ___ than the other one.','comfortable','more comfortable','cmp_more');
+g('5A','The weather is ___ today than yesterday.','sunny','sunnier','cmp_y');
+g('5A','I’m ___ than I was last year because I go running every day.','thin','thinner','cmp_double');
+
+m('5A','Life is ___ than before.',['faster','more fast','fastest'],'cmp_er');
+m('5A','Traffic is ___ than it was.',['worse','more bad','badder'],'cmp_irr');
+m('5A','We are ___ than our grandparents were.',['more stressed','stresseder','most stressed'],'cmp_more');
+m('5A','People aren’t ___ they were before.',['as patient as','as patient than','patient as'],'cmp_asas');
+m('5A','His new book isn’t as good ___ his last one.',['as','than','that'],'cmp_asas');
+m('5A','I’m ___ tired this week than I was last week.',['less','as','most'],'cmp_less');
+m('5A','She drives ___ than her brother.',['more carefully','more careful','carefullier'],'cmp_adv');
+m('5A','My new job is ___ than my old one.',['more interesting','interestinger','most interesting'],'cmp_more');
+m('5A','He plays the guitar ___ than me.',['better','gooder','more good'],'cmp_irr');
+m('5A','This summer was ___ than last summer.',['hotter','more hot','hoter'],'cmp_double');
+m('5A','A city is usually ___ than a village.',['busier','busyer','more busier'],'cmp_y');
+m('5A','My grandmother is ___ than my grandfather.',['older','more old','oldest'],'cmp_er');
+m('5A','Your answer isn’t ___ mine.',['as good as','as good than','so good than'],'cmp_asas');
+m('5A','London is bigger ___ Manchester.',['than','that','as'],'cmp_than');
+
+f('5A',['Life is','more fast','than before.'],1,['faster','fastest','most fast'],'cmp_er');
+f('5A',['My sister','is','more tall','than me.'],2,['taller','tallest','more taller'],'cmp_er');
+f('5A',['Traffic','is','badder','than it was.'],2,['worse','worst','more bad'],'cmp_irr');
+f('5A',['He','isn’t','as patient than','his brother.'],2,['as patient as','so patient than','as patient that'],'cmp_asas');
+f('5A',['She drives','more careful','than me.'],1,['more carefully','carefuller','most carefully'],'cmp_adv');
+f('5A',['Everybody','is','busyer','than before.'],2,['busier','busiest','more busyer'],'cmp_y');
+f('5A',['This test','is','more easy','than the last one.'],2,['easier','easyer','more easier'],'cmp_y');
+f('5A',['I','play tennis','more good','than my dad.'],2,['better','gooder','best'],'cmp_irr');
+
+/* ---------------- 5B Superlatives ---------------- */
+g('5B','It’s the ___ city in the world.','clean','cleanest','sup_est');
+g('5B','Tokyo has the ___ public transport.','good','best','sup_irr');
+g('5B','What’s the ___ film you’ve ever seen?','bad','worst','sup_irr');
+g('5B','That was the ___ day of my life.','happy','happiest','sup_y');
+g('5B','It’s the ___ hotel in the city.','expensive','most expensive','sup_most');
+g('5B','Who’s the ___ person in your family?','old',['oldest','eldest'],'sup_old');
+g('5B','This is the ___ room in the house.','big','biggest','sup_double');
+g('5B','Summer is the ___ time of year in our shop.','busy','busiest','sup_y');
+g('5B','It was the ___ exam I’ve ever done.','difficult','most difficult','sup_most');
+g('5B','It’s the ___ city I’ve ever been to.','beautiful','most beautiful','sup_most');
+g('5B','July is the ___ month of the year in Spain.','hot','hottest','sup_double');
+g('5B','Who’s the ___ person you’ve ever met?','interesting','most interesting','sup_most');
+const PP_INS = 'Write the correct form of the verb in brackets.';
+g('5B','It’s the best book I’ve ever ___.','read','read','sup_pp',PP_INS);
+g('5B','It’s the most beautiful beach I’ve ever ___ to.','be','been','sup_pp',PP_INS);
+g('5B','It’s the worst film I’ve ever ___.','see','seen','sup_pp',PP_INS);
+g('5B','It’s the most expensive thing I’ve ever ___.','buy','bought','sup_pp',PP_INS);
+g('5B','It’s the hardest sport I’ve ever ___.','do','done','sup_pp',PP_INS);
+g('5B','That’s the nicest food I’ve ever ___.','eat','eaten','sup_pp',PP_INS);
+
+m('5B','Friday is ___ day of the week for me.',['the busiest','the busier','the most busy'],'sup_y');
+m('5B','It’s ___ road in the world.',['the most dangerous','the more dangerous','most dangerous'],'sup_the');
+m('5B','It’s the hottest country I’ve ___ been to.',['ever','never','always'],'sup_ever');
+m('5B','This is the best pizza I’ve ___.',['ever eaten','never eaten','ever ate'],'sup_ever');
+m('5B','What’s the most beautiful city you’ve ever ___?',['visited','visit','visiting'],'sup_pp');
+m('5B','He’s the ___ player in the team.',['best','goodest','most good'],'sup_irr');
+m('5B','Rome has the ___ attractions.',['best','goodest','most good'],'sup_irr');
+m('5B','It’s ___ building in the city.',['the tallest','the most tall','tallest'],'sup_the');
+m('5B','That was the ___ holiday I’ve ever had.',['worst','baddest','most bad'],'sup_irr');
+m('5B','It’s the ___ city I’ve ever been to.',['friendliest','friendlier','friendlyest'],'sup_y');
+m('5B','Who’s the ___ person you know?',['funniest','funnyest','most funniest'],'sup_y');
+m('5B','It was the ___ day of the year.',['coldest','most cold','colder'],'sup_est');
+
+f('5B',['It’s','the most cheap','hotel','in the city.'],1,['the cheapest','the cheaper','the most cheapest'],'sup_est');
+f('5B',['She’s','the goodest','student','in the class.'],1,['the best','the better','the most good'],'sup_irr');
+f('5B',['It’s','the most beautiful city','I’ve','never','been to.'],3,['ever','always','yet'],'sup_ever');
+f('5B',['It’s','the best film','I’ve ever','see.'],3,['seen.','saw.','seeing.'],'sup_pp');
+f('5B',['That’s','the most big','house','in the street.'],1,['the biggest','the bigest','the most biggest'],'sup_double');
+f('5B',['It was','the most hot','day','of the year.'],1,['the hottest','the hotest','the most hottest'],'sup_double');
+f('5B',['Tokyo','is','the cleanest city','I’ve ever','visit.'],4,['visited.','visiting.','visits.'],'sup_pp');
+
+/* ---------------- 5C Quantifiers ---------------- */
+m('5C','How ___ cups of coffee do you drink a day?',['many','much','a lot'],'q_much');
+m('5C','I don’t drink ___ water.',['much','many','a few'],'q_much');
+m('5C','Drinking ___ red wine can be good for you.',['a little','a few','many'],'q_few');
+m('5C','I only have ___ cans of cola a week.',['a few','a little','much'],'q_few');
+m('5C','My parents don’t drink ___ coffee.',['a lot of','a lot','many'],'q_alot');
+m('5C','My sister drinks ___ coffee. She can’t sleep at night.',['too much','too many','too'],'q_toomuch');
+m('5C','These jeans are ___ small. Do you have them in a bigger size?',['too','too much','too many'],'q_tooadj');
+m('5C','You haven’t spent ___ on your homework.',['enough time','time enough','many time'],'q_enough_n');
+m('5C','There are ___ people here. Let’s go somewhere quieter.',['too many','too much','too'],'q_toomuch');
+m('5C','I’m not old ___ to drive.',['enough','too','too much'],'q_enough_adj');
+m('5C','I can’t buy it. I haven’t got ___.',['enough money','money enough','too money'],'q_enough_n');
+m('5C','There’s ___ traffic in the city centre.',['too much','too many','too'],'q_toomuch');
+m('5C','He isn’t tall ___ to play basketball.',['enough','too','many'],'q_enough_adj');
+m('5C','We haven’t got ___ eggs to make a cake.',['enough','too','much'],'q_enough_n');
+m('5C','How ___ milk do you want in your tea?',['much','many','a few'],'q_much');
+m('5C','I’ve got ___ homework tonight. I can’t go out.',['too much','too many','too'],'q_toomuch');
+m('5C','This coffee is ___ hot to drink.',['too','too much','enough'],'q_tooadj');
+
+f('5C',['I don’t drink','many water.'],1,['much water.','a few water.','too many water.'],'q_much');
+f('5C',['There are','too much','cars','in the city centre.'],1,['too many','too','a little'],'q_toomuch');
+f('5C',['We','haven’t got','time enough','to finish.'],2,['enough time','too time','many time'],'q_enough_n');
+f('5C',['This bag','is','too much','heavy.'],2,['too','too many','enough'],'q_tooadj');
+f('5C',['I','have','a little friends','in London.'],2,['a few friends','much friends','a lot friends'],'q_few');
+f('5C',['He','isn’t','enough old','to drive.'],2,['old enough','old too','much old'],'q_enough_adj');
+f('5C',['How many milk','do you want?'],0,['How much milk','How a few milk','How a lot milk'],'q_much');
+
+/* ---------------- 6A will / won't predictions ---------------- */
+g('6A','Don’t worry. The queue ___ moving soon.','start','will start','w_pred');
+g('6A','Don’t take the car. You ___ anywhere to park.','not find','won’t find','w_neg');
+g('6A','I lent my brother some money, but I’m sure I ___ it again.','not see','won’t see','w_neg');
+g('6A','Take an umbrella. It ___ later.','rain','will rain','w_pred');
+g('6A','I’m sure you ___ the film. It’s brilliant.','love','will love','w_pred');
+g('6A','Don’t worry about the test. It ___ difficult.','not be','won’t be','w_neg');
+g('6A','I think we ___ the match. They’re a much better team.','lose','will lose','w_pred');
+g('6A','Hurry up! We ___ the train.','miss','will miss','w_pred');
+g('6A','I don’t think he ___ the job. He hasn’t got any experience.','get','will get','w_pred');
+g('6A','Don’t worry. She ___ late. She’s never late.','not be','won’t be','w_neg');
+g('6A','You ___ the party. Everyone will be there.','enjoy','will enjoy','w_pred');
+g('6A','I’m sure she ___ the exam. She’s studied really hard.','pass','will pass','w_pred');
+
+m('6A','A: My exam is today.  B: Don’t worry. You ___.',['will pass','passing','will to pass'],'w_form');
+m('6A','They’re playing really badly. They ___ the match.',['won’t win','don’t will win','won’t to win'],'w_neg');
+m('6A','I think it ___ tomorrow.',['will rain','will rains','will to rain'],'w_form');
+m('6A','Do you think she ___ the job?',['will get','will gets','is get'],'w_form');
+m('6A','I’m sure he ___ pay you back.',['will','will to','wills'],'w_form');
+m('6A','She ___ like the present. It isn’t her style.',['won’t','doesn’t will','willn’t'],'w_neg');
+m('6A','Will it ___ cold tomorrow?',['be','to be','is'],'w_q');
+m('6A','Nobody ___ buy your old laptop.',['will','wills','will to'],'w_form');
+m('6A','We ___ find anywhere to park.',['won’t','don’t will','will not to'],'w_neg');
+
+f('6A',['I’m sure','you','will passing','the exam.'],2,['will pass','will to pass','wills pass'],'w_form');
+f('6A',['Don’t worry.','It','will to be','fine.'],2,['will be','wills be','will being'],'w_form');
+f('6A',['She','wills love','the present.'],1,['will love','will loves','will to love'],'w_form');
+f('6A',['They','don’t will win','the match.'],1,['won’t win','won’t to win','willn’t win'],'w_neg');
+f('6A',['Will','it','rains','tomorrow?'],2,['rain','to rain','raining'],'w_q');
+f('6A',['I think','we','will missing','the flight.'],2,['will miss','will to miss','wills miss'],'w_form');
+
+SORTS.push({ id:'6A-opt', bins:['Optimist \u{1F642}','Pessimist \u{1F641}'], rules:['w_opt','w_opt'], cards:[
+  ['I’m sure he’ll pay you back.',0,'6A'], ['You won’t see that money again.',1,'6A'],
+  ['You’ll sell it easily.',0,'6A'], ['Nobody will buy it.',1,'6A'],
+  ['We’ll never find anywhere to park.',1,'6A'], ['It’ll be fine, you’ll see.',0,'6A'],
+  ['We’ll miss the flight.',1,'6A'], ['I’m sure we’ll win!',0,'6A'],
+  ['You’ll never learn it.',1,'6A'], ['You’ll love it.',0,'6A'],
+  ['The queue will start moving soon.',0,'6A'], ['We’ll lose the match.',1,'6A'],
+  ['You won’t pass your driving test.',1,'6A'], ['Your interview will go well.',0,'6A']
+]});
+
+/* ---------------- 6B will / won't / shall ---------------- */
+g('6B','It’s cold in here. I ___ the window.','close','will close','w_dec');
+g('6B','A: The phone’s ringing.  B: Don’t get up. I ___ it.','answer','will answer','w_off');
+g('6B','Those bags look heavy. I ___ you.','help','will help','w_off');
+g('6B','I promise I ___ anyone your secret.','not tell','won’t tell','w_prom');
+g('6B','I ___ you back next week, I promise.','pay','will pay','w_prom');
+g('6B','I’m really tired. I think I ___ to bed.','go','will go','w_dec');
+g('6B','No more cake, thanks. I ___ any more. I’m full.','not have','won’t have','w_dec');
+g('6B','A: What would you like?  B: I ___ the fish, please.','have','will have','w_dec');
+g('6B','I’m sorry. I ___ late again, I promise.','not be','won’t be','w_prom');
+g('6B','Don’t worry, I ___ you at the station.','meet','will meet','w_off');
+
+m('6B','___ I carry that for you?',['Shall','Do','Am'],'w_shall');
+m('6B','A: It’s cold in here.  B: ___ the window.',['I’ll close','I close','I closing'],'w_dec');
+m('6B','___ I make you a coffee?',['Shall','Do','Am'],'w_shall');
+m('6B','I promise I ___ forget.',['won’t','don’t will','willn’t'],'w_prom');
+m('6B','This ___ hurt. I promise.',['won’t','willn’t','not will'],'w_prom');
+m('6B','A: What would you like?  B: I ___ the chicken, please.',['’ll have','having','has'],'w_dec');
+m('6B','___ I help you with your homework?',['Shall','Do','Am'],'w_shall');
+m('6B','I’m tired. I ___ back tomorrow and finish it.',['’ll come','coming','comes'],'w_dec');
+m('6B','Shall I ___ the window?',['open','to open','opening'],'w_shall');
+
+f('6B',['I','will to help','you','with that.'],1,['will help','will helping','wills help'],'w_off');
+f('6B',['I promise','I','don’t will','forget.'],2,['won’t','willn’t','not will'],'w_prom');
+f('6B',['Shall','I','to open','the door?'],2,['open','opening','opens'],'w_shall');
+f('6B',['I','willn’t','tell','anyone.'],1,['won’t','don’t will','not will'],'w_prom');
+f('6B',['I’ll paying','you back','tomorrow.'],0,['I’ll pay','I’ll to pay','I’ll pays'],'w_prom');
+f('6B',['It’s late.','I’ll going','home now.'],1,['I’ll go','I’ll to go','I’ll goes'],'w_dec');
+
+/* ---------------- 6C Verb forms review ---------------- */
+g('6C','I ___ an owl in my dream last night.','see','saw','v_past');
+g('6C','Have you ever ___ to Japan?','be','been','v_pp');
+g('6C','She usually ___ to work by bus.','go','goes','v_ps');
+g('6C','Listen! Somebody ___ the violin.','play','is playing','v_pc');
+g('6C','We ___ the film yesterday. We were too busy.','not see','didn’t see','v_neg');
+g('6C','He ___ coffee. He prefers tea.','not like','doesn’t like','v_neg');
+g('6C','I’m tired. I ___ well last night.','not sleep','didn’t sleep','v_neg');
+
+m('6C','They met for the first time when they ___ in Madrid.',['were living','are living','was living'],'v_pastc');
+m('6C','A: Have you been to the USA?  B: Yes, I ___ to New York last year.',['went','’ve been','was going'],'v_pp');
+m('6C','Look at those clouds! It ___ rain.',['is going to','is','will to'],'v_gt');
+m('6C','I ___ my grandmother on Sunday. It’s all arranged.',['’m visiting','visiting','am visit'],'v_arr');
+m('6C','What ___ at 8 o’clock last night?',['were you doing','did you doing','are you doing'],'v_pastc');
+m('6C','She ___ in an office. She’s an accountant.',['works','is work','working'],'v_ps');
+m('6C','Have you ever ___ this dream before?',['had','have','having'],'v_pp');
+m('6C','I ___ a strange dream last night.',['had','’ve had','have'],'v_pp');
+m('6C','Look! The bus ___.',['is coming','come','coming'],'v_pc');
+m('6C','___ you go to the party on Saturday?',['Did','Were','Have'],'v_q');
+
+f('6C',['I','have seen','a great film last night.'],1,['saw','see','have see'],'v_pp');
+f('6C',['She work','in a bank.'],0,['She works','She working','She is work'],'v_ps');
+f('6C',['Did you','went','to the party?'],1,['go','going','goes'],'v_q');
+f('6C',['Look!','It','snows.'],2,['is snowing.','snowing.','snow.'],'v_pc');
+f('6C',['We','are living','in Madrid','when we met.'],1,['were living','was living','live'],'v_pastc');
+
+SORTS.push({ id:'6C-time', bins:['Past','Present','Future'], rules:['v_past','v_pres','v_fut'], cards:[
+  ['I was drinking champagne.',0,'6C'], ['I saw an owl.',0,'6C'], ['We met in Madrid in 2015.',0,'6C'],
+  ['She was living in Paris at the time.',0,'6C'], ['I didn’t sleep well last night.',0,'6C'], ['They went to the beach yesterday.',0,'6C'],
+  ['You work in an office.',1,'6C'], ['You are feeling positive.',1,'6C'], ['She’s watching TV at the moment.',1,'6C'],
+  ['I usually get up at seven.',1,'6C'], ['He doesn’t like coffee.',1,'6C'], ['They live near the station.',1,'6C'],
+  ['You’re going to meet a lot of people.',2,'6C'], ['Maybe you’ll have a meeting with your boss.',2,'6C'], ['I’m meeting her tonight.',2,'6C'],
+  ['We’re flying to Rome next week.',2,'6C'], ['It’ll rain later.',2,'6C'], ['She’s going to start a new job next month.',2,'6C']
+]});
+
+/* ---------------- 7A Infinitive with to ---------------- */
+g('7A','I’ve decided ___ Spanish.','learn','to learn','inf_verb');
+g('7A','Don’t forget ___ the light off.','turn','to turn','inf_verb');
+g('7A','She offered ___ coffee for everyone.','make','to make','inf_verb');
+g('7A','Plan ___ at least ten minutes early.','arrive','to arrive','inf_verb');
+g('7A','We need ___ some bread.','buy','to buy','inf_verb');
+g('7A','He promised ___ me back.','pay','to pay','inf_verb');
+g('7A','I want ___ to Italy next year.','go','to go','inf_verb');
+g('7A','It’s important ___ on time.','be','to be','inf_adj');
+g('7A','Sorry, I don’t know. It’s difficult ___.','say','to say','inf_adj');
+g('7A','I don’t know what ___.','do','to do','inf_q');
+g('7A','Can you tell me how ___ this machine?','use','to use','inf_q');
+g('7A','I went to the shop ___ some milk.','buy','to buy','inf_purp');
+g('7A','I went to the post office ___ a parcel.','send','to send','inf_purp');
+g('7A','I hope ___ you soon.','see','to see','inf_verb');
+g('7A','He pretended ___ ill.','be','to be','inf_verb');
+g('7A','I’d like ___ in another country.','live','to live','inf_verb');
+g('7A','I’m learning ___ the guitar.','play','to play','inf_verb');
+g('7A','I’d like ___ your parents.','meet','to meet','inf_verb');
+g('7A','I’m not sure where ___.','go','to go','inf_q');
+
+m('7A','I need ___ some emails.',['to answer','answer','answering'],'inf_verb');
+m('7A','The situation is difficult ___.',['to explain','explain','for explain'],'inf_adj');
+m('7A','I don’t know what ___.',['to do','do','doing'],'inf_q');
+m('7A','I went to the bank ___ some money.',['to get','for get','get'],'inf_purp');
+m('7A','She decided ___ the job.',['to take','taking','take'],'inf_verb');
+m('7A','He offered ___ me to the airport.',['to drive','driving','drive'],'inf_verb');
+m('7A','It’s easy ___ the way.',['to find','find','for find'],'inf_adj');
+m('7A','Would you like ___ dinner with us?',['to have','having','have'],'inf_verb');
+m('7A','I’m going to the gym ___ fit.',['to get','for get','get'],'inf_purp');
+m('7A','Do you know how ___ a tyre?',['to change','change','changing'],'inf_q');
+m('7A','We hope ___ next summer.',['to come','coming','come'],'inf_verb');
+m('7A','They agreed ___ us.',['to help','helping','help'],'inf_verb');
+
+f('7A',['I decided','learning','Spanish.'],1,['to learn','learn','for learn'],'inf_verb');
+f('7A',['She','went','to the shop','for buy','some bread.'],3,['to buy','buying','buy'],'inf_purp');
+f('7A',['It’s','important','be','on time.'],2,['to be','being','for be'],'inf_adj');
+f('7A',['I','don’t know','what do','next.'],2,['what to do','what doing','what does'],'inf_q');
+f('7A',['He promised','calling','me.'],1,['to call','call','calls'],'inf_verb');
+f('7A',['I’d like go','to Japan.'],0,['I’d like to go','I’d like going','I’d like goes'],'inf_verb');
+
+/* ---------------- 7B Gerunds ---------------- */
+g('7B','I really enjoy ___ cakes. It’s so relaxing.','make','making','ger_verb');
+g('7B','Do you mind ___ here until I’m ready?','wait','waiting','ger_verb');
+g('7B','When are you going to finish ___ the printer? I need it!','use','using','ger_verb');
+g('7B','I don’t feel like ___ out tonight.','go','going','ger_verb');
+g('7B','___ is one of the best forms of exercise.','swim',['swimming','to swim'],'ger_subj');
+g('7B','She’s very good at ___.','dance','dancing','ger_prep');
+g('7B','I spend too much time ___ online.','chat','chatting','ger_spell');
+g('7B','My parents hate ___ late.','be',['being','to be'],'ger_both');
+g('7B','I’m thinking of ___ a new car.','buy','buying','ger_prep');
+g('7B','Thanks for ___ me.','help','helping','ger_prep');
+g('7B','___ too much coffee is bad for you.','drink',['drinking','to drink'],'ger_subj');
+g('7B','I love ___ in the sea.','swim',['swimming','to swim'],'ger_both');
+g('7B','Do you like ___?','cook',['cooking','to cook'],'ger_both');
+g('7B','She left without ___ goodbye.','say','saying','ger_prep');
+g('7B','I’m tired of ___ for the bus.','wait','waiting','ger_prep');
+
+m('7B','I don’t really mind ___ housework.',['doing','to do','do'],'ger_verb');
+m('7B','___ is one of the best forms of exercise.',['Swimming','Swim','Swims'],'ger_subj');
+m('7B','We finished ___ at midnight.',['working','to work','work'],'ger_verb');
+m('7B','I’m interested in ___ Japanese.',['learning','to learn','learn'],'ger_prep');
+m('7B','Do you feel like ___ a film tonight?',['watching','to watch','watch'],'ger_verb');
+m('7B','He’s very good at ___.',['cooking','to cook','cook'],'ger_prep');
+m('7B','I enjoy ___ to music in the car.',['listening','to listen','listen'],'ger_verb');
+m('7B','___ early is difficult for me.',['Getting up','Get up','Gets up'],'ger_subj');
+m('7B','How about ___ to the beach?',['going','to go','go'],'ger_prep');
+m('7B','She spends hours ___ on the phone.',['talking','to talk','talk'],'ger_verb');
+m('7B','I’m looking forward to ___ you.',['seeing','see','saw'],'ger_verb');
+m('7B','Happiness is ___ having to work on Saturday.',['not','no','don’t'],'ger_neg');
+
+f('7B',['I enjoy','to cook','for my friends.'],1,['cooking','cook','cooks'],'ger_verb');
+f('7B',['Do you mind close','the window?'],0,['Do you mind closing','Do you mind to close','Do you mind closed'],'ger_verb');
+f('7B',['She’s good at','draw.'],1,['drawing.','to draw.','draws.'],'ger_prep');
+f('7B',['Run','is','good for you.'],0,['Running','Runs','Ran'],'ger_subj');
+f('7B',['I feel like','to go','out.'],1,['going','go','goes'],'ger_verb');
+f('7B',['Thanks','for','help','me.'],2,['helping','to help','helps'],'ger_prep');
+
+SORTS.push({ id:'7AB-verbs', bins:['+ to do','+ doing'], rules:['inf_verb','ger_verb'], cards:[
+  ['decide …',0,'7A'], ['want …',0,'7A'], ['manage …',0,'7A'], ['plan …',0,'7A'], ['offer …',0,'7A'],
+  ['promise …',0,'7A'], ['hope …',0,'7A'], ['learn …',0,'7A'], ['pretend …',0,'7A'], ['would like …',0,'7A'], ['agree …',0,'7A'],
+  ['enjoy …',1,'7B'], ['mind …',1,'7B'], ['finish …',1,'7B'], ['feel like …',1,'7B'], ['don’t mind …',1,'7B'],
+  ['spend an hour …',1,'7B'], ['keep …',1,'7B'], ['practise …',1,'7B'], ['be good at …',1,'7B'], ['look forward to …',1,'7B']
+]});
+
+/* ---------------- 7C have to / must ---------------- */
+g('7C','She ___ wear a uniform at work every day. She hates it.','have to',['has to','has got to'],'ht_form');
+g('7C','We ___ get up early tomorrow. Our flight’s at six.','have to',['have to','have got to','will have to','are going to have to'],'ht_form');
+g('7C','My brother ___ work on Saturdays. He’s free at weekends.','not have to',['doesn’t have to','hasn’t got to'],'ht_dont');
+g('7C','I ___ work yesterday. It was a holiday.','not have to','didn’t have to','ht_dont');
+g('7C','He ___ work late last night, so he missed dinner.','have to','had to','ht_form');
+g('7C','You ___ pay. It’s free.','not have to',['don’t have to','won’t have to','haven’t got to'],'ht_dont');
+
+m('7C','___ bring our books tomorrow?',['Do we have to','Have we to','Do we must'],'ht_form');
+m('7C','It’s free. You ___ pay.',['don’t have to','mustn’t','haven’t to'],'ht_dont');
+m('7C','You must ___ your grandmother.',['call','to call','calling'],'ht_must');
+m('7C','You ___ use your phone in the exam. It’s against the rules.',['mustn’t','don’t have to','must'],'ht_mustnt');
+m('7C','Does she ___ work at weekends?',['have to','has to','must'],'ht_form');
+m('7C','I ___ go now or I’ll miss my bus.',['have to','has to','don’t have to'],'ht_form');
+m('7C','He ___ wear glasses to drive.',['has to','have to','must to'],'ht_form');
+m('7C','We ___ hurry. We’ve got lots of time.',['don’t have to','mustn’t','have to'],'ht_dont');
+m('7C','Did you ___ wear a uniform at school?',['have to','had to','must'],'ht_form');
+
+f('7C',['You','must to wear','a seatbelt.'],1,['must wear','must wearing','musts wear'],'ht_must');
+f('7C',['She have to','work','on Saturdays.'],0,['She has to','She haves to','She having to'],'ht_form');
+f('7C',['Do we must','bring','a pen?'],0,['Do we have to','Have we to','Do we has to'],'ht_form');
+f('7C',['I','haven’t to','go','to school today.'],1,['don’t have to','haven’t got','not have to'],'ht_dont');
+f('7C',['He','doesn’t has to','work','tomorrow.'],1,['doesn’t have to','don’t have to','hasn’t to'],'ht_form');
+f('7C',['You','don’t must','smoke','here.'],1,['mustn’t','mustn’t to','not must'],'ht_mustnt');
+
+SORTS.push({ id:'7C-mustnt', bins:['mustn’t','don’t have to'], rules:['ht_mustnt','ht_dont'], cards:[
+  ['You ___ smoke in the hospital.',0,'7C'], ['It’s Saturday! You ___ get up early.',1,'7C'],
+  ['You ___ use your phone in the exam.',0,'7C'], ['It’s free. You ___ pay.',1,'7C'],
+  ['At my school you ___ wear a uniform. You can wear what you want.',1,'7C'], ['You ___ touch that. It’s very hot!',0,'7C'],
+  ['You ___ be late for the exam. They won’t let you in.',0,'7C'], ['You ___ bring food. We’ve got lots.',1,'7C'],
+  ['You ___ drive faster than 50 here. It’s the speed limit.',0,'7C'], ['You ___ come if you don’t want to.',1,'7C'],
+  ['Children ___ play near the road. It’s dangerous.',0,'7C'], ['We ___ cook tonight. We’re going to a restaurant.',1,'7C']
+]});
+
+/* ---------------- 8A should ---------------- */
+g('8A','You look tired. You ___ to bed.','go','should go','sh_use');
+g('8A','You ___ so much coffee. It’s bad for you.','not drink','shouldn’t drink','sh_use');
+g('8A','It’s very cold outside. You ___ a coat.','wear','should wear','sh_use');
+g('8A','You ___ a decision in a hurry. Think about it first.','not make','shouldn’t make','sh_use');
+g('8A','She’s really ill. She ___ to the doctor.','go','should go','sh_use');
+g('8A','You ___ your phone in class. The teacher will be angry.','not use','shouldn’t use','sh_use');
+g('8A','He wants to pass the exam, so he ___ harder.','study','should study','sh_use');
+
+m('8A','You ___ drink so much coffee.',['shouldn’t','don’t should','shouldn’t to'],'sh_q');
+m('8A','I think you should ___ to her about it.',['talk','to talk','talking'],'sh_form');
+m('8A','___ I leave him?',['Should','Shoulds','Do should'],'sh_q');
+m('8A','She ___ stay with him.',['should','shoulds','should to'],'sh_form');
+m('8A','What ___ do?',['should I','I should','do I should'],'sh_q');
+m('8A','He ___ work so hard.',['shouldn’t','doesn’t should','not should'],'sh_q');
+m('8A','Do you think I ___ buy it?',['should','should to','shoulds'],'sh_form');
+
+f('8A',['You','should to see','a doctor.'],1,['should see','should seeing','shoulds see'],'sh_form');
+f('8A',['She','shoulds','stay','with him.'],1,['should','should to','shoulding'],'sh_form');
+f('8A',['You','don’t should','eat','so much.'],1,['shouldn’t','not should','doesn’t should'],'sh_q');
+f('8A',['What','I should','do?'],1,['should I','I shoulds','do I should'],'sh_q');
+f('8A',['He should','studying','more.'],1,['study','to study','studies'],'sh_form');
+f('8A',['Should','I','to call','her?'],2,['call','calling','calls'],'sh_form');
+
+/* ---------------- 8B First conditional ---------------- */
+g('8B','If she goes, she ___ back.','not come','won’t come','c_will');
+g('8B','If they don’t come soon, we ___ them.','not see','won’t see','c_will');
+g('8B','Call me if you ___ a taxi.','not find','don’t find','c_neg');
+g('8B','If it ___ tomorrow, we’ll stay at home.','rain','rains','c_if');
+g('8B','If you ___ now, you’ll catch the bus.','leave','leave','c_if');
+g('8B','I’ll be angry if you ___ late again.','be','are','c_if');
+g('8B','If we ___ a taxi, we’ll be late.','not get','don’t get','c_neg');
+g('8B','If he ___ hard, he’ll pass the exam.','study','studies','c_if');
+g('8B','She ___ if you tell her the truth.','understand','will understand','c_will');
+
+m('8B','If she ___, she won’t come back.',['goes','went','’ll go'],'c_if');
+m('8B','If they don’t come soon, we ___ them.',['won’t see','don’t will see','won’t to see'],'c_will');
+m('8B','Call me if you ___ a taxi.',['don’t find','won’t find','didn’t find'],'c_neg');
+m('8B','If it ___ sunny, we’ll go to the beach.',['’s','will be','be'],'c_if');
+m('8B','If you don’t hurry, you ___ the train.',['’ll miss','missing','to miss'],'c_will');
+m('8B','What will you do if you ___ the job?',['don’t get','won’t get','didn’t get'],'c_neg');
+m('8B','If I see him, I ___ him.',['’ll tell','telling','to tell'],'c_will');
+m('8B','We’ll be late if we ___ now.',['don’t leave','won’t leave','not leave'],'c_neg');
+
+f('8B',['If','it','will rain','tomorrow,','we’ll stay','at home.'],2,['rains','rain','is rain'],'c_if');
+f('8B',['If','she','will call,','I’ll tell','her.'],2,['calls,','call,','calling,'],'c_if');
+f('8B',['We','won’t','go','if it','will snow.'],4,['snows.','snow.','snowing.'],'c_if');
+f('8B',['If','I','see','him,','I','will to tell','him.'],5,['will tell','will telling','wills tell'],'c_will');
+f('8B',['If','you','won’t find','a taxi,','call me.'],2,['don’t find','not find','doesn’t find'],'c_neg');
+
+MATCHES.push({ id:'8B-murphy1', p:'8B', title:'Murphy’s Law', pairs:[
+  ['If you lose a glove and buy a new pair,','you’ll find the lost one.'],
+  ['If you order something online,','you’ll be out when they deliver it.'],
+  ['If a technician comes to fix your computer,','it will immediately start working.'],
+  ['If you need to print a document urgently,','the printer won’t have any paper.']
+]});
+MATCHES.push({ id:'8B-murphy2', p:'8B', title:'Murphy’s Law', pairs:[
+  ['If you stop waiting for a bus and start walking,','three buses will come at the same time.'],
+  ['If you’re in a taxi and you’re late for something important,','all the traffic lights will be red.'],
+  ['If you get to the airport early,','your flight will be delayed.'],
+  ['If you take your umbrella,','it won’t rain.']
+]});
+MATCHES.push({ id:'8B-life1', p:'8B', title:'Real possibilities', pairs:[
+  ['If you don’t study,','you won’t pass the exam.'],
+  ['If you leave now,','you’ll catch the last bus.'],
+  ['If it’s sunny tomorrow,','we’ll have a picnic in the park.'],
+  ['If you’re hungry,','I’ll make you a sandwich.']
+]});
+MATCHES.push({ id:'8B-life2', p:'8B', title:'Real possibilities', pairs:[
+  ['If I see Anna,','I’ll tell her the news.'],
+  ['If you eat all that cake,','you’ll feel sick.'],
+  ['If you don’t wear sun cream,','you’ll get sunburnt.'],
+  ['If the shop is closed,','we’ll go to the supermarket.']
+]});
+
+/* ---------------- 8C Possessives & adverbs of manner ---------------- */
+const PRO_INS = 'Write the possessive pronoun (mine, yours, his, hers, ours, theirs).';
+g('8C','A: Whose book is that?  B: It’s ___.','I','mine','pp_pro',PRO_INS);
+g('8C','This isn’t my coat. It’s ___.','you','yours','pp_pro',PRO_INS);
+g('8C','Is this car ___? It’s parked outside their house.','they','theirs','pp_pro',PRO_INS);
+g('8C','That’s not your table. It’s ___. We booked it.','we','ours','pp_pro',PRO_INS);
+g('8C','Is this pen ___ or mine? He’s got one like it.','he','his','pp_pro',PRO_INS);
+g('8C','I’ve got my ticket. Has Maria got ___?','she','hers','pp_pro',PRO_INS);
+g('8C','‘Vivienne,’ said Hartley, ‘you must be ___.’','I','mine','pp_pro',PRO_INS);
+const ADV_INS = 'Make an adverb from the adjective in brackets.';
+g('8C','She spoke ___ because the baby was asleep.','quiet','quietly','adv_ly',ADV_INS);
+g('8C','‘I’m sorry, but I don’t love you,’ he said ___.','sad','sadly','adv_ly',ADV_INS);
+g('8C','‘Give me back all my letters,’ she said ___.','angry','angrily','adv_y',ADV_INS);
+g('8C','He walked ___ to the sofa and lay down.','lazy','lazily','adv_y',ADV_INS);
+g('8C','Please drive ___. The roads are icy.','careful','carefully','adv_ful',ADV_INS);
+g('8C','She plays the piano very ___.','good','well','adv_irr',ADV_INS);
+g('8C','He works very ___. He never stops.','hard','hard','adv_irr',ADV_INS);
+g('8C','Don’t drive so ___! Slow down!','fast','fast','adv_irr',ADV_INS);
+g('8C','‘This is a very important matter,’ she said ___.','serious','seriously','adv_ly',ADV_INS);
+g('8C','She speaks English ___. You’d think she was British.','perfect','perfectly','adv_ly',ADV_INS);
+g('8C','The girl looked out of the window ___.','dreamy','dreamily','adv_y',ADV_INS);
+g('8C','And they lived ___ ever after.','happy','happily','adv_y',ADV_INS);
+g('8C','She sings ___.','beautiful','beautifully','adv_ful',ADV_INS);
+
+m('8C','A: Whose book is that?  B: It’s ___.',['mine','my','the mine'],'pp_pro');
+m('8C','My birthday is in May. When’s ___?',['yours','your','you'],'pp_pro');
+m('8C','Vivienne, you didn’t answer ___ last letter.',['my','mine','me'],'pp_adj');
+m('8C','These aren’t our bags. ___ are blue.',['Ours','Our','Us'],'pp_pro');
+m('8C','Is this your phone or ___?',['hers','her','she'],'pp_pro');
+m('8C','That’s ___ car, the red one.',['their','theirs','them'],'pp_adj');
+m('8C','Excuse me, I think you’re in ___ seat.',['my','mine','me'],'pp_adj');
+m('8C','A: Is this your umbrella?  B: No, ___ is green.',['mine','my','me'],'pp_pro');
+m('8C','He’s a very ___ driver.',['careful','carefully','carefuly'],'adv_use');
+m('8C','He drives very ___.',['carefully','careful','carefuly'],'adv_use');
+m('8C','You speak English very ___!',['well','good','goodly'],'adv_irr');
+m('8C','‘Get out!’ she said ___.',['angrily','angry','angryly'],'adv_y');
+
+f('8C',['This is my bag','and that is','your.'],2,['yours.','you.','yours bag.'],'pp_pro');
+f('8C',['Is this','yours phone?'],1,['your phone?','you phone?','yourself phone?'],'pp_adj');
+f('8C',['The house','is','their.'],2,['theirs.','them.','theirs house.'],'pp_pro');
+f('8C',['Mine','brother','lives','in Rome.'],0,['My','Me','I'],'pp_adj');
+f('8C',['She sings','beautiful.'],1,['beautifully.','beautifuly.','beautifull.'],'adv_ful');
+f('8C',['He','plays','football','very good.'],3,['very well.','very goodly.','very best.'],'adv_irr');
+f('8C',['‘Go away!’','she','said','angryly.'],3,['angrily.','angry.','angrilly.'],'adv_y');
+
+SORTS.push({ id:'8C-poss', bins:['Before a noun (my book)','On its own (it’s mine)'], rules:['pp_adj','pp_pro'], cards:[
+  ['my',0,'8C'], ['your',0,'8C'], ['our',0,'8C'], ['their',0,'8C'],
+  ['mine',1,'8C'], ['yours',1,'8C'], ['hers',1,'8C'], ['ours',1,'8C'], ['theirs',1,'8C']
+]});
+
+/* ---------------- 5C countable sort ---------------- */
+SORTS.push({ id:'5C-count', bins:['Countable','Uncountable'], rules:['q_count','q_count'], cards:[
+  ['bottle',0,'5C'], ['can (of cola)',0,'5C'], ['carton',0,'5C'], ['cup',0,'5C'], ['egg',0,'5C'], ['friend',0,'5C'], ['chair',0,'5C'],
+  ['biscuit',0,'5C'], ['suitcase',0,'5C'], ['problem',0,'5C'], ['banana',0,'5C'],
+  ['bread',1,'5C'], ['music',1,'5C'], ['money',1,'5C'], ['information',1,'5C'], ['homework',1,'5C'], ['housework',1,'5C'],
+  ['advice',1,'5C'], ['furniture',1,'5C'], ['traffic',1,'5C'], ['rice',1,'5C'], ['luggage',1,'5C'], ['weather',1,'5C']
+]});
+
+
+/* ===================== VOCABULARY BANK =====================
+   Same helpers as the grammar bank (g, m, f, SORTS, MATCHES), plus:
+   vg(point, text, clue, answers, explanation, pre)  typed word with first letters given (pre).
+   The student may type the whole word or only the missing letters.
+   The 5th argument may be a RULES key OR a plain-text explanation.
+=========================================================== */
+
+const VPOINTS = [
+  { id:'V5A', code:'5A', unit:5, title:'Saying numbers', sub:'2,500 · 75% · ⅔ · 9.2 · 25th May' },
+  { id:'V5B', code:'5B', unit:5, title:'Describing a town or city', sub:'crowded, historic, harbour, town hall' },
+  { id:'V5C', code:'5C', unit:5, title:'Health and the body', sub:'heart, bones, liver, blood pressure' },
+  { id:'V6A', code:'6A', unit:6, title:'Opposite verbs', sub:'borrow / lend, pass / fail, push / pull' },
+  { id:'V6B', code:'6B', unit:6, title:'Verb + back', sub:'call back, pay back, take back' },
+  { id:'V6C', code:'6C', unit:6, title:'Modifiers', sub:'a bit cold, a bit better' },
+  { id:'V7AB', code:'7A–B', unit:7, title:'Verbs + to / -ing', sub:'forget to, offer to, mind, feel like' },
+  { id:'V7C', code:'7C', unit:7, title:'Adjectives + prepositions', sub:'afraid of, good at, interested in' },
+  { id:'V8A', code:'8A', unit:8, title:'get', sub:'get lost, get on with, get home' },
+  { id:'V8B', code:'8B', unit:8, title:'Confusing verbs', sub:'win / earn, say / tell, miss / lose' },
+  { id:'P3', code:'PE3', unit:'PE', title:'Shopping', sub:'sizes, receipts, taking things back' },
+  { id:'P4', code:'PE4', unit:'PE', title:'At the pharmacy', sub:'headache, cough, temperature' }
+];
+const VUNITS = { 5:'Numbers, towns, the body', 6:'Opposites, back, modifiers', 7:'Verbs and prepositions', 8:'get and confusing verbs', PE:'Practical English' };
+
+Object.assign(GAP_INS, {
+  'V5B':'Complete the word. The first letter or letters are given.',
+  'V5C':'Complete the word. The first letter or letters are given.',
+  'V6A':'Write the OPPOSITE of the verb in brackets, in the correct form.'
+});
+
+Object.assign(RULES, {
+  num_big:'No -s on hundred, thousand or million after a number (two thousand, six million). In British English, say and after hundred (or after thousand if there are no hundreds): a hundred and eighty-four, three thousand and twenty-five.',
+  num_date:'Dates: the + ordinal number + of + month: the twenty-fifth of May, the first of June.',
+  num_frac:'Fractions: one third, two thirds, three quarters (-s when there is more than one).',
+  num_dec:'Decimals: say point. 9.2 = nine point two.',
+  num_pc:'% = per cent (American English: percent). Seventy-five per cent (no -s).',
+  num_money:'$6,000,000 = six million dollars: million without -s, dollars with -s.',
+  num_approx:'about = more or less. at least = that number or more. between … and … = in the middle of two numbers.',
+  opp:'Learn verbs in pairs of opposites: borrow / lend, push / pull, win / lose, buy / sell, send / receive …',
+  back:'verb + back = return something, or return to a place: come back, go back, give back, pay back, send back, take back. call back = phone someone again.',
+  abit:'Use a bit with negative adjectives and adverbs (a bit cold, a bit expensive, a bit slowly), with words that describe a problem (a bit big), and with comparatives (a bit better). Not with very positive adjectives: NOT a bit wonderful.',
+  abit_form:'a bit + adjective (a bit big). Not a bit of big, not bit big.',
+  prep:'Learn adjectives with their prepositions: afraid of, proud of, full of, tired of, good at, bad at, interested in, famous for, worried about, keen on, similar to, married to, nice to.',
+  get:'get has many meanings: get lost (become), get a present (receive), get tickets (buy), get home (arrive).',
+  win_earn:'win a game, a match, a prize. earn money by working.',
+  wear_carry:'wear clothes, shoes, glasses. carry something in your hands or arms.',
+  meet_know:'meet = see someone for the first time (or see by arrangement). know = have known someone for some time (I’ve known her for ten years).',
+  watch_look:'watch TV, a film, a match (something that moves). look at a photo, a picture (something that doesn’t move).',
+  look_like:'look + adjective (You look tired). look like + noun (She looks like her mother).',
+  find_lookfor:'look for = try to find. find = discover something you were looking for.',
+  say_tell:'tell someone something (tell me, tell a joke, tell the truth). say something (say that …, say sorry). Not say me.',
+  lend_borrow:'lend TO someone (I lent him £10). borrow FROM someone (I borrowed £10 from him).',
+  hope_wait_expect:'hope = want something to happen. wait (for) = stay until something happens. expect = think something will happen.',
+  miss_lose:'miss a bus, a train, a plane, a class. lose your keys, your glasses, a match.',
+  listen_hear:'listen to = pay attention to a sound. hear = a sound comes to your ears, even if you don’t try.',
+  bring:'bring = to the place where the speaker is (Did you bring me a present?). take = to another place, away from the speaker.',
+  shop:'Useful shopping words: size, changing room, receipt, try on, refund.',
+  ill:'headache = pain in your head. temperature = your body is too hot. cough = noise from your chest. bad stomach = pain in your stomach.',
+  pharm:'At the pharmacy: What are your symptoms? Are you allergic to anything? Take one every four hours.'
+});
+
+function vg(p, t, clue, a, r, pre){ GAP.push({ p, t, b: clue, a: Array.isArray(a) ? a : [a], r, pre }); }
+
+/* ---------------- 5A numbers ---------------- */
+m('V5A','2,500 = ___',['two thousand five hundred','two thousands five hundred','two thousand five hundreds'],'num_big');
+m('V5A','184 = ___',['a hundred and eighty-four','a hundreds and eighty-four','a hundred and eight four'],'num_big');
+m('V5A','3,025 = ___',['three thousand and twenty-five','three thousands and twenty-five','three thousand and two five'],'num_big');
+m('V5A','The population is about two ___ people.',['million','millions','millions of'],'num_big');
+m('V5A','25th May = ___',['the twenty-fifth of May','the twenty-five of May','the twentieth-five of May'],'num_date');
+m('V5A','1st June = ___',['the first of June','the one of June','the oneth of June'],'num_date');
+m('V5A','3rd March = ___',['the third of March','the three of March','the threeth of March'],'num_date');
+m('V5A','The house cost $6,000,000. = It cost ___.',['six million dollars','six millions dollars','six million dollar'],'num_money');
+m('V5A','75% = ___',['seventy-five per cent','seventy-five per cents','seventy-five of cent'],'num_pc');
+m('V5A','⅔ = ___',['two thirds','two third','two threes'],'num_frac');
+m('V5A','¾ = ___',['three quarters','three quarter','three fours'],'num_frac');
+m('V5A','9.2 = ___',['nine point two','nine comma two','nine and two'],'num_dec');
+m('V5A','2.5 = ___',['two point five','two comma five','two and five'],'num_dec');
+m('V5A','There were ___ 2,000 and 3,000 people at the concert.',['between','about','at least'],'num_approx');
+m('V5A','The flat costs ___ £500 a month – maybe a bit more, maybe a bit less.',['about','at least','between'],'num_approx');
+m('V5A','I drink ___ eight glasses of water a day – never fewer than eight.',['at least','about','between'],'num_approx');
+
+/* ---------------- 5B town or city ---------------- */
+vg('V5B','Valencia is a city on the east ___ of Spain.','c…  = where the land meets the sea','coast','coast = the land next to the sea.','c');
+vg('V5B','It isn’t big and it isn’t small. It’s a ___ city.','m…-s…  = not big, not small',['medium-sized','medium sized','medium-size','medium size','mid-sized','mid sized','mid-size','mid size','midsize','midsized'],'medium-sized = not big and not small.','m');
+vg('V5B','During the festival the streets are very ___. There are people everywhere.','cr…  = full of people','crowded','crowded = full of people.','cr');
+vg('V5B','Our street is very ___ at night because of the traffic.','n…  = the opposite of quiet','noisy','noisy ↔ quiet.','n');
+vg('V5B','There are some beautiful ___ buildings in the old town.','h…  = old and important',['historic','historical','heritage'],'historic (or historical) = old and important. Historic is the most common word for buildings.','h');
+vg('V5B','The mayor works in the ___.','t… h…  = the building for the town government',['town hall','townhall'],'town hall = where the local government works.','t');
+vg('V5B','The biggest church in the city is the ___.','c…  = a very big, important church','cathedral','cathedral = a very big, important church.','c');
+vg('V5B','Wellington is ___ of Auckland.','s…  = the opposite of north','south','north ↔ south, east ↔ west.','s');
+vg('V5B','Most of the buildings are very ___. They are less than ten years old.','m…  = new, not old','modern','modern = new, of today.','m');
+vg('V5B','In Kyoto you can visit a famous Buddhist ___.','t…  = a religious building, e.g. for Buddhists','temple','temple = a religious building (Buddhist, Hindu …).','t');
+vg('V5B','We saw some Egyptian mummies at the ___.','m…  = a building where you can see old or interesting things','museum','museum = a building with old or interesting things to look at.','m');
+vg('V5B','There’s always something to do. It’s a really ___ city.','e…  = the opposite of boring','exciting','exciting ↔ boring.','e');
+vg('V5B','We bought fresh fruit at the outdoor ___.','m…  = a place outside where people sell food, clothes, etc.','market','market = a place (often outside) where people sell things.','m');
+vg('V5B','The fishing boats come back to the ___ in the evening.','h…  = a place on the coast where boats stop',['harbour','harbor'],'harbour = a place on the coast where boats and ships stop.','h');
+vg('V5B','The king and queen live in a beautiful ___.','p…  = where a king or queen lives','palace','palace = a king’s or queen’s house.','p');
+vg('V5B','We went swimming in the ___ in the middle of the park.','l…  = an area of water with land all around it','lake','lake = water with land all around it.','l');
+vg('V5B','You can buy clothes, toys and furniture in a big ___ store.','d…  = a big shop with many sections','department','department store = a big shop that sells many different things.','d');
+vg('V5B','There’s a cinema and fifty shops in the new shopping ___.','c…  = a big building with lots of shops',['centre','center','complex'],'shopping centre = a big building with lots of shops.','c');
+vg('V5B','Let’s walk across the ___ to the other side of the river.','b…  = it goes over a river','bridge','bridge = it goes over a river or road.','b');
+vg('V5B','My grandparents live in a small ___ with only 300 people.','v…  = a very small place in the country','village','village < town < city.','v');
+vg('V5B','Don’t walk there at night. It’s ___.','d…  = the opposite of safe',['dangerous','dodgy'],'safe ↔ dangerous.','d');
+vg('V5B','The air in the city centre is very ___ because of all the cars.','p…  = dirty, with bad air and water','polluted','polluted = dirty air or water.','p');
+vg('V5B','The museum was ___. There was nobody there.','e…  = the opposite of crowded','empty','crowded ↔ empty.','e');
+vg('V5B','Wellington is the ___ of New Zealand.','c…  = the city where the government is','capital','capital = the most important city, where the government is.','c');
+
+/* ---------------- 5C health and the body ---------------- */
+vg('V5C','Milk has calcium, which is good for your ___.','b…  = you have 206 of these in your body','bones','bones = the hard parts inside your body (you have 206).','b');
+vg('V5C','Your ___ sends blood round your body.','h…  = the organ that sends blood round your body','heart','heart = it sends blood round your body.','h');
+vg('V5C','Brush your ___ twice a day.','t…  = you use them to bite and eat','teeth','one tooth, two teeth.','t');
+vg('V5C','Your heart sends ___ round your body.','b…  = the red liquid in your body','blood','blood = the red liquid in your body.','b');
+vg('V5C','Exercise makes your ___ stronger.','m…  = they help your body to move','muscles','muscles = they move your body.','m');
+vg('V5C','Drinking too much alcohol is bad for your ___.','l…  = an organ that cleans your blood','liver','liver = an organ that cleans your blood.','l');
+vg('V5C','Heart ___ is a serious illness.','d…  = another word for illness','disease','disease = illness.','d');
+vg('V5C','He had a ___ and went to hospital in an ambulance.','h… a…  = when your heart suddenly stops working properly','heart attack','heart attack = when the heart suddenly stops working properly.','h');
+vg('V5C','High blood ___ can cause heart problems.','p…  = doctors measure it with a machine on your arm','pressure','blood pressure = the force of your blood (measured on your arm).','p');
+vg('V5C','Smoking can cause lung ___.','c…  = a serious illness where cells grow out of control','cancer','cancer = a serious illness where cells grow out of control.','c');
+vg('V5C','I ate too much. My ___ hurts.','st…  = where food goes after you eat it','stomach','stomach = where food goes when you eat.','st');
+MATCHES.push({ id:'V5C-body1', p:'V5C', title:'Words and meanings', pairs:[
+  ['liver','cleans your blood'], ['heart','sends blood round your body'], ['bones','206 of them hold your body up'], ['teeth','you use them to bite food']
+]});
+MATCHES.push({ id:'V5C-body2', p:'V5C', title:'Words and meanings', pairs:[
+  ['muscles','they help your body to move'], ['blood','the red liquid in your body'], ['heart attack','your heart suddenly stops working properly'], ['blood pressure','a doctor measures it on your arm']
+]});
+
+/* ---------------- 6A opposite verbs ---------------- */
+vg('V6A','I didn’t pass the exam. I ___ it.','opposite of: pass','failed','opp');
+vg('V6A','Can you ___ me £10? I’ll pay you back tomorrow.','opposite of: borrow',['lend','loan'],'lend_borrow');
+vg('V6A','We didn’t win. We ___ 2–0.','opposite of: win','lost','win ↔ lose (a match, a game).');
+vg('V6A','Don’t push the door – ___ it!','opposite of: push','pull','push ↔ pull.');
+vg('V6A','I always ___ people’s names. I’m terrible with names!','opposite of: remember','forget','remember ↔ forget.');
+vg('V6A','Did you ___ my email? I sent it yesterday.','opposite of: send',['receive','get'],'send ↔ receive (or get).');
+vg('V6A','The concert starts at 9 and ___ at 11.','opposite of: start',['finishes','ends','stops'],'start ↔ finish / end.');
+vg('V6A','My sister ___ French at a school in Paris. She’s a teacher.','opposite of: learn','teaches','learn ↔ teach.');
+vg('V6A','I want to ___ my old bike. Do you want to buy it?','opposite of: buy','sell','buy ↔ sell.');
+vg('V6A','I lost my keys yesterday, but I ___ them this morning.','opposite of: lose','found','lose ↔ find (found).');
+vg('V6A','The TV is broken. Can you ___ it?','opposite of: break',['fix','mend','repair'],'break ↔ fix / mend / repair.');
+vg('V6A','Hurry up! We’re going to ___ the train!','opposite of: catch','miss','catch ↔ miss (a train, a bus).');
+vg('V6A','I need to ___ these photos to Instagram.','opposite of: download','upload','download ↔ upload.');
+vg('V6A','Her mum ___ her to swim when she was four.','opposite of: learn','taught','learn ↔ teach (taught).');
+vg('V6A','I ___ £20 to my brother last week. He hasn’t paid me back.','opposite of: borrow',['lent','loaned'],'lend_borrow');
+MATCHES.push({ id:'V6A-opp1', p:'V6A', title:'Opposites', pairs:[ ['borrow','lend'], ['pass','fail'], ['push','pull'], ['remember','forget'] ]});
+MATCHES.push({ id:'V6A-opp2', p:'V6A', title:'Opposites', pairs:[ ['send','receive'], ['buy','sell'], ['learn','teach'], ['catch','miss'] ]});
+MATCHES.push({ id:'V6A-opp3', p:'V6A', title:'Opposites', pairs:[ ['win','lose'], ['start','finish'], ['turn on','turn off'], ['download','upload'] ]});
+
+/* ---------------- 6B verb + back ---------------- */
+m('V6B','I’m driving at the moment. I’ll ___ you back in ten minutes.',['call','pay','give'],'back');
+m('V6B','You lent me £20. I’ll ___ you back on Friday.',['pay','call','come'],'back');
+m('V6B','The shoes were too small, so I ___ them back to the shop and got a refund.',['took','paid','called'],'back');
+m('V6B','I bought a phone online, but it doesn’t work. I’m going to ___ it back.',['send','pay','call'],'back');
+m('V6B','Thanks for lending me your pen. I’ll ___ it back after the lesson.',['give','pay','call'],'back');
+m('V6B','I’m feeling better now, so I’ll ___ back to work tomorrow.',['go','give','pay'],'back');
+m('V6B','Mum, I’m going out. I’ll ___ back at about ten.',['be','pay','give'],'back');
+m('V6B','Can you give me ___ my book? I need it for the exam.',['back','up','on'],'back');
+MATCHES.push({ id:'V6B-back1', p:'V6B', title:'verb + back', pairs:[
+  ['I’m driving now, so I’ll','call you back later.'],
+  ['You lent me £50, so I’ll','pay you back on Friday.'],
+  ['These shoes are too small, so I’ll','take them back to the shop.'],
+  ['Thanks for lending me your book. I’ll','give it back when I’ve finished reading it.']
+]});
+MATCHES.push({ id:'V6B-back2', p:'V6B', title:'verb + back', pairs:[
+  ['I’m going away for the weekend, but I’ll','be back on Monday.'],
+  ['I really loved Rome. I want to','go back there next year.'],
+  ['The jacket I ordered online is the wrong colour, so I’m going to','send it back.'],
+  ['He isn’t here at the moment. Can he','call you back?']
+]});
+
+/* ---------------- 6C modifiers ---------------- */
+SORTS.push({ id:'V6C-abit', bins:['✓ a bit is OK','✗ not with a bit'], rules:['abit','abit'], cards:[
+  ['a bit cold',0,'V6C'], ['a bit expensive',0,'V6C'], ['a bit boring',0,'V6C'], ['a bit tired',0,'V6C'], ['a bit dark',0,'V6C'],
+  ['a bit better',0,'V6C'], ['a bit faster',0,'V6C'], ['a bit slowly',0,'V6C'], ['a bit difficult',0,'V6C'],
+  ['a bit wonderful',1,'V6C'], ['a bit fantastic',1,'V6C'], ['a bit delicious',1,'V6C'], ['a bit perfect',1,'V6C'], ['a bit excellent',1,'V6C']
+]});
+m('V6C','This jacket is ___ big. Have you got a smaller one?',['a bit','a bit of','bit'],'abit_form');
+m('V6C','I’m ___ tired today. I didn’t sleep well.',['a bit','a bit of','bit'],'abit_form');
+m('V6C','Can you speak ___ more slowly, please?',['a bit','a bit of','bit'],'abit_form');
+m('V6C','The film was fantastic! It was ___ good.',['incredibly','a bit','not very'],'Fantastic means very, very good, so only incredibly fits.');
+m('V6C','The food wasn’t great. It was ___ good.',['not very','incredibly','really'],'wasn’t great → not very good.');
+
+/* ---------------- 7A–B verbs + to / -ing ---------------- */
+m('V7AB','I ___ going to the gym last week. Now I go every day.',['started','stopped','minded'],'started = began. stopped would mean you don’t go now.');
+m('V7AB','You have to ___ being so negative! Try to think positively.',['stop','start','mind'],'stop + -ing = not do it any more.');
+m('V7AB','I don’t ___ doing housework. I quite like it.',['mind','want','need'],'I don’t mind + -ing = it’s OK for me.');
+m('V7AB','Don’t ___ to call me when you arrive!',['forget','mind','enjoy'],'Don’t forget to = remember to.');
+m('V7AB','I’m tired. I don’t ___ going out tonight.',['feel like','want','spend'],'feel like + -ing = want to do something now.');
+m('V7AB','I ___ two hours a day playing video games.',['spend','enjoy','mind'],'spend (time) + -ing.');
+m('V7AB','She ___ to be ill so she didn’t have to go to school.',['pretended','offered','enjoyed'],'pretend = act as if something is true when it isn’t.');
+m('V7AB','He ___ to carry my bags, which was very kind.',['offered','pretended','forgot'],'offer to = say you will do something to help.');
+m('V7AB','I ___ to pass my exam next week, but I’m not sure.',['hope','mind','finish'],'hope to = want something and think it is possible.');
+m('V7AB','When you ___ eating, put your plate in the dishwasher.',['finish','mind','feel like'],'finish + -ing.');
+m('V7AB','I’m ___ to go to Japan next year. I’ve already booked the flights.',['planning','minding','enjoying'],'plan to = decide and organise something for the future.');
+m('V7AB','Don’t stop! ___ playing – it sounds great!',['Go on','Give up','Mind'],'go on + -ing = continue.');
+m('V7AB','I really ___ to learn to drive. Can you teach me?',['want','mind','enjoy'],'want to + infinitive.');
+m('V7AB','I ___ to help you with your homework. I won’t forget, I promise!',['promise','mind','feel like'],'promise to = say you will definitely do something.');
+
+/* ---------------- 7C adjectives + prepositions ---------------- */
+m('V7C','My little brother is afraid ___ spiders.',['of','at','in'],'prep');
+m('V7C','Are you good ___ maths?',['at','of','on'],'prep');
+m('V7C','I’m really bad ___ cooking.',['at','on','of'],'prep');
+m('V7C','Are you interested ___ photography?',['in','on','at'],'prep');
+m('V7C','Italy is famous ___ its food.',['for','of','in'],'prep');
+m('V7C','In summer the beaches are full ___ tourists.',['of','from','at'],'prep');
+m('V7C','I’m worried ___ the exam tomorrow.',['about','of','at'],'prep');
+m('V7C','My parents are very proud ___ my sister.',['of','on','at'],'prep');
+m('V7C','I’m tired ___ waiting. Let’s go.',['of','on','at'],'prep');
+m('V7C','He’s very keen ___ football. He plays every weekend.',['on','at','of'],'prep');
+m('V7C','My phone is very similar ___ yours.',['to','with','at'],'prep');
+m('V7C','She’s married ___ a doctor.',['to','with','at'],'prep');
+m('V7C','People here are very nice ___ tourists.',['to','at','of'],'prep');
+f('V7C',['I’m','very interested','on','photography.'],2,['in','at','of'],'prep');
+f('V7C',['She’s','really good','in','tennis.'],2,['at','on','of'],'prep');
+f('V7C',['The bus','was full','from','students.'],2,['of','at','on'],'prep');
+f('V7C',['Are you','afraid','from','dogs?'],2,['of','at','on'],'prep');
+
+/* ---------------- 8A get ---------------- */
+m('V8A','We didn’t have a map, so we got ___.',['lost','on','up'],'get lost = not know where you are.');
+m('V8A','Do you get ___ well with your sister?',['on','up','to'],'get on (well) with someone = have a good relationship.');
+m('V8A','What time do you get ___ in the morning?',['up','on','to'],'get up = get out of bed.');
+m('V8A','How do you get ___ school? By bus?',['to','at','in'],'get to = arrive at / travel to a place.');
+m('V8A','When I get ___, I make a cup of tea.',['home','to home','at home'],'get home (no to): When I get home …');
+m('V8A','I want to get ___, so I go to the gym every day.',['fit','angry','lost'],'get fit = become healthy and strong.');
+m('V8A','My sister always gets ___ when I use her phone without asking.',['angry','fit','lost'],'get angry = become angry.');
+m('V8A','They were married for 20 years, but they got ___ last year.',['divorced','married','engaged'],'get divorced = end a marriage.');
+m('V8A','I always get ___ before exams. I can’t sleep.',['nervous','divorced','lost'],'get nervous = start to feel nervous.');
+m('V8A','Did you get the ___? The interviewer said you were great!',['job','newspaper','present'],'get a job = be given a job.');
+m('V8A','I didn’t get a ___ this morning, so I read the news online.',['newspaper','message','present'],'get a newspaper = buy one.');
+m('V8A','I got a ___ from Pete. He says he’s going to be late.',['message','present','ticket'],'get a message = receive one.');
+m('V8A','It’s Diana’s birthday. Shall we get her a ___?',['present','message','job'],'get someone a present = buy one for them.');
+m('V8A','You’re ill? Oh no! Get ___ soon!',['well','good','lost'],'Get well soon! = we say this to people who are ill.');
+m('V8A','It’s winter and it’s getting ___. Wear a warm coat.',['colder','fit','married'],'get + comparative = become: get colder, get better.');
+
+/* ---------------- 8B confusing verbs ---------------- */
+m('V8B','Have you ever ___ a prize for something?',['won','earned'],'win_earn');
+m('V8B','How much money do you ___ a month?',['earn','win'],'win_earn');
+m('V8B','He ___ €2,000 a month as a waiter.',['earns','wins'],'win_earn');
+m('V8B','I love the jacket you’re ___. It really suits you.',['wearing','carrying'],'wear_carry');
+m('V8B','She’s ___ a really heavy box.',['carrying','wearing'],'wear_carry');
+m('V8B','Mark and Charlotte ___ at a party last year.',['met','knew'],'meet_know');
+m('V8B','I’ve ___ my best friend for ten years.',['known','met'],'meet_know');
+m('V8B','Can you help me, or are you ___ the news on TV?',['watching','looking at'],'watch_look');
+m('V8B','Do you like ___ photos of yourself?',['looking at','watching'],'watch_look');
+m('V8B','She ___ her mother. They have the same eyes.',['looks like','looks'],'look_like');
+m('V8B','You ___ really sad. What’s wrong?',['look','look like'],'look_like');
+m('V8B','Alba has ___ a new job. She starts next week.',['found','looked for'],'find_lookfor');
+m('V8B','Can you help me? I’m ___ my keys.',['looking for','finding'],'find_lookfor');
+m('V8B','I’m not very good at ___ jokes.',['telling','saying'],'say_tell');
+m('V8B','Nicky ___ that she was sorry.',['said','told'],'say_tell');
+m('V8B','Can you ___ me the way to the station?',['tell','say'],'say_tell');
+m('V8B','What did he ___? I didn’t hear.',['say','tell'],'say_tell');
+m('V8B','Would you ___ a lot of money to a good friend?',['lend','borrow'],'lend_borrow');
+m('V8B','We had to ___ money from the bank to buy our car.',['borrow','lend'],'lend_borrow');
+m('V8B','I ___ the weather is good tomorrow. We’re having a barbecue.',['hope','wait'],'hope_wait_expect');
+m('V8B','Do you mind ___ for a few minutes? I’m not ready yet.',['waiting','hoping'],'hope_wait_expect');
+m('V8B','The train is always late. I ___ it will be late again today.',['expect','wait'],'hope_wait_expect');
+m('V8B','We got to the airport late, so we ___ the plane.',['missed','lost'],'miss_lose');
+m('V8B','I always ___ my glasses. I can never find them.',['lose','miss'],'miss_lose');
+m('V8B','Did you ___ that noise? I think it was a car crash.',['hear','listen to'],'listen_hear');
+m('V8B','I love this song! ___ it!',['Listen to','Hear'],'listen_hear');
+m('V8B','Did you ___ me anything back from New York?',['bring','take'],'bring');
+f('V8B',['I','lent','some money','from the bank.'],1,['borrowed','lend','lending'],'lend_borrow');
+f('V8B',['Can you','say me','the time?'],1,['tell me','says me','speak me'],'say_tell');
+f('V8B',['We','earned','the match','3–1.'],1,['won','earn','winned'],'win_earn');
+f('V8B',['Hurry!','We’re going to','lose','the train!'],2,['miss','missing','losing'],'miss_lose');
+f('V8B',['I’m','finding','my keys.','Have you seen them?'],1,['looking for','find','founding'],'find_lookfor');
+f('V8B',['I','knew','my husband','at a party in 2010.'],1,['met','know','meeted'],'meet_know');
+
+/* ---------------- Practical English 3: shopping ---------------- */
+m('P3','S, M, L and XL on clothes tell you the ___.',['size','price','colour'],'shop');
+m('P3','XL means ___.',['extra large','extra long','extra light'],'XL = extra large.');
+m('P3','You can try on clothes in the ___.',['changing room','living room','waiting room'],'changing room = where you try on clothes in a shop.');
+m('P3','The piece of paper the shop assistant gives you when you buy something is the ___.',['receipt','recipe','reception'],'receipt = the paper that shows what you paid.');
+m('P3','A: Do you want to ___ them on?  B: No, thanks. I’m sure they’ll be fine.',['try','test','wear'],'try something on = put on clothes to see if they fit.');
+m('P3','A: Can I help you?  B: Yes, do you have these ___ a size 8?',['in','on','at'],'Do you have these in a (size) 8?');
+m('P3','A: I’d like a refund, please.  B: No problem. Do you have the ___?',['receipt','recipe','reception'],'You usually need the receipt to get a refund.');
+m('P3','I’m ___, but we don’t have these in a nine.',['afraid','scared','worried'],'I’m afraid = a polite way to say I’m sorry (bad news).');
+m('P3','$45 = ___',['forty-five dollars','forty-five dollar','dollars forty-five'],'$45 = forty-five dollars.');
+m('P3','15c = ___',['fifteen cents','fifteen of cents','cents fifteen'],'15c = fifteen cents.');
+m('P3','In American English, trainers are ___.',['sneakers','sandals','slippers'],'trainers (British) = sneakers (American).');
+m('P3','In American English, a shop is a ___.',['store','market','mall'],'shop (British) = store (American).');
+m('P3','A: You have problems remembering words.  B: ___ don’t you write them on cards?',['Why','What','How'],'Why don’t you …? = a way to make a suggestion.');
+m('P3','A: Why don’t you get a bike?  B: That’s a great ___!',['idea','thinking','opinion'],'That’s a good / great idea!');
+
+/* ---------------- Practical English 4: at the pharmacy ---------------- */
+m('P4','My head hurts. I have a ___.',['headache','temperature','cough'],'ill');
+m('P4','My body is very hot. I think I have a ___.',['temperature','headache','cough'],'ill');
+m('P4','I ate something bad. I have a bad ___.',['stomach','head','cough'],'ill');
+m('P4','A: What are your ___?  B: I have a headache and a cough.',['symptoms','medicines','doctors'],'symptoms = the signs that you are ill.');
+m('P4','Are you ___ to any drugs?',['allergic','ill','sick'],'allergic to = your body reacts badly to something.');
+m('P4','Take one every four hours. If you don’t feel ___ in 48 hours, see a doctor.',['better','best','gooder'],'feel better = feel less ill.');
+m('P4','Take one ___ four hours.',['every','all','each of'],'every four hours = at 8, 12, 4 …');
+m('P4','A: I don’t feel very well.  B: What’s the ___?',['matter','problem of','wrong'],'What’s the matter? = What’s wrong?');
+m('P4','In British English, you can buy medicine at the ___.',['chemist’s','chemistry','chemical'],'chemist’s (British) = pharmacy.');
+MATCHES.push({ id:'P4-ill', p:'P4', title:'What’s the matter?', pairs:[
+  ['My head hurts.','I have a headache.'], ['I can’t stop coughing.','I have a cough.'], ['My body is very hot.','I have a temperature.'], ['I ate something bad.','I have a bad stomach.']
+]});
+
+[['g',GAP],['m',MC],['f',FAULT]].forEach(([k,arr]) => { const c = {}; arr.forEach(it => { c[it.p] = (c[it.p]||0)+1; it.id = it.p + k + c[it.p]; it.k = k; }); });
+POINTS.forEach(p => { p.sec = 'G'; p.code = p.id; }); VPOINTS.forEach(p => { p.sec = 'V'; });
+const ALLP = [...POINTS, ...VPOINTS];
+
+/* ===================== UTILITIES ===================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const PT = Object.fromEntries(ALLP.map(p => [p.id, p]));
+const ruleText = r => RULES[r] || (r && r.includes(' ') ? r : '');
+const pct = (c, t) => t ? Math.round(100 * c / t) : 0;
+
+/* ===================== STORAGE (this device only) ===================== */
+const KEY = 'grammarObservatory.v1';
+function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null }; }
+let store = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(freshStore(), s); } catch (e) {} return freshStore(); })();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+let SEC = store.lastSec === 'V' ? 'V' : 'G';
+const secPoints = (x = SEC) => ALLP.filter(p => p.sec === x);
+const THEME = {
+  G: { name:'Grammar', title:'The Grammar Observatory', eyebrow:'Grammar · Units 5–8', back:'Back to the sky', perfect:'Perfect sky – every star lit!', light:'Light up all five stars!', units:[5,6,7,8], unitNames: UNITS },
+  V: { name:'Vocabulary', title:'The Word Workshop', eyebrow:'Vocabulary · Units 5–8', back:'Back to the workshop', perfect:'Perfect – every gear is turning!', light:'Get all five gears turning!', units:[5,6,7,8,'PE'], unitNames: VUNITS }
+};
+function setSection(x){ SEC = x; store.lastSec = x; save(); applyTheme(x); }
+function applyTheme(x){ document.body.dataset.theme = x === 'V' ? 'clock' : 'sky'; document.querySelector('meta[name=theme-color]').setAttribute('content', x === 'V' ? '#140d08' : '#060a1a'); Sky.setTheme(x === 'V' ? 'clock' : 'sky'); }
+function ensureSession(){ if (!store.session) store.session = { start: Date.now(), rounds: [], xp: 0 }; return store.session; }
+
+/* ===================== LEVELS & MASTERY ===================== */
+const LEVEL_NAMES = ['Stargazer','Moon Watcher','Comet Chaser','Planet Finder','Star Mapper','Nebula Navigator','Galaxy Guide','Constellation Keeper','Astronomer Royal','Master of the Skies'];
+const xpFor = L => 50 * L * (L - 1);
+function levelOf(xp){ let L = 1; while (xp >= xpFor(L + 1)) L++; return L; }
+const levelName = L => LEVEL_NAMES[Math.min(L, LEVEL_NAMES.length) - 1];
+function levelProgress(xp){ const L = levelOf(xp), a = xpFor(L), b = xpFor(L + 1); return { L, into: xp - a, need: b - a, frac: (xp - a) / (b - a) }; }
+function mastery(p){
+  const s = store.stats[p]; if (!s || !s.r.length) return 0;
+  const acc = s.r.reduce((a, b) => a + b, 0) / s.r.length;
+  return Math.max(0, Math.min(5, Math.floor(acc * 5 + 0.5), Math.floor(s.r.length / 4)));
+}
+function recentAcc(p){ const s = store.stats[p]; if (!s || !s.r.length) return null; return s.r.reduce((a, b) => a + b, 0) / s.r.length; }
+const starsHtml = n => '<span class="stars" aria-label="' + n + ' of 5 stars">' + [0,1,2,3,4].map(i => '<i class="' + (i < n ? 'on' : '') + '">★</i>').join('') + '</span>';
+
+/* ===================== ANSWER CHECKING ===================== */
+function canon(s){
+  s = String(s).toLowerCase()
+    .replace(/[‘’ʼ`´′]/g, "'")
+    .replace(/[“”"()]/g, ' ')
+    .replace(/[.!?,;:…]+/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  s = s.replace(/\bwon't\b/g, 'will not').replace(/\bcan't\b/g, 'can not').replace(/\bcannot\b/g, 'can not').replace(/\bshan't\b/g, 'shall not')
+       .replace(/n't\b/g, ' not').replace(/'ll\b/g, ' will').replace(/'m\b/g, ' am').replace(/'re\b/g, ' are').replace(/'ve\b/g, ' have');
+  return s.replace(/\s+/g, ' ').trim();
+}
+const LOOSE = { dont:'do not', doesnt:'does not', didnt:'did not', wont:'will not', shouldnt:'should not', mustnt:'must not', isnt:'is not', arent:'are not', havent:'have not', hasnt:'has not', cant:'can not' };
+function loosen(s){ return s.split(' ').map(w => LOOSE[w] || w).join(' '); }
+function checkGap(it, raw){
+  const parts = it.t.split('___');
+  const prev = canon(parts[0]).split(' ').pop() || '';
+  const next = canon(parts[1] || '').split(' ')[0] || '';
+  const answers = it.a.map(canon);
+  const g = canon(raw);
+  const cands = new Set([g]);
+  if (it.pre) cands.add(canon(it.pre + raw.trim()));
+  const strip = s => {
+    const out = [s];
+    if (prev && s.startsWith(prev + ' ')) out.push(s.slice(prev.length + 1));
+    out.slice().forEach(x => { if (next && x.endsWith(' ' + next)) out.push(x.slice(0, -(next.length + 1))); });
+    return out;
+  };
+  [...cands].forEach(c => strip(c).forEach(x => cands.add(x)));
+  for (const c of cands) if (answers.includes(c)) return { ok: true };
+  for (const c of cands) if (answers.includes(loosen(c))) return { ok: true, note: 'Remember the apostrophe in short forms: don’t, won’t, doesn’t …' };
+  return { ok: false };
+}
+
+/* ===================== SOUND (generated, no files) ===================== */
+const Sfx = (() => {
+  let ctx = null;
+  function ac(){
+    if (!ctx){ const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; try { ctx = new C(); } catch (e) { return null; } }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function tone(f, at, dur, type = 'sine', vol = 0.14, slide = 0){
+    const c = ac(); if (!c || store.muted) return;
+    const t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(f * slide, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.05);
+  }
+  return {
+    unlock(){ ac(); },
+    tap(){ tone(880, 0, 0.05, 'triangle', 0.05); },
+    correct(){ tone(784, 0, 0.16, 'triangle', 0.13); tone(1175, 0.08, 0.28, 'triangle', 0.12); },
+    wrong(){ tone(240, 0, 0.22, 'sine', 0.13, 0.75); },
+    streak(){ [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.07, 0.22, 'triangle', 0.11)); },
+    finish(){ [523, 659, 784].forEach((f, i) => tone(f, i * 0.11, 0.35, 'sine', 0.12)); },
+    perfect(){ [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.4, 'triangle', 0.11)); tone(2093, 0.5, 0.6, 'sine', 0.06); },
+    level(){ [392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.12, 0.3, 'square', 0.05)); [1047, 1319, 1568].forEach(f => tone(f, 0.5, 0.9, 'triangle', 0.08)); }
+  };
+})();
+
+/* ===================== 3D SKY (Three.js, optional) ===================== */
+const Sky = (() => {
+  let T, R, S, C, field, planetGroup, planet, ring, moon, roundGroup, lineGeo, lineObj, tex, ok = false, mode = 'home', boost = 0, last = 0;
+  let theme = 'sky', gearGroup, gears = [], dust, deco;
+  const PAL = { sky: { bg: 0x060a1a, idle: 0x9aa6e0, good: 0xffd27a, bad: 0xff6b6b, spark: 0xffe2a6, line: 0xf6c86b }, clock: { bg: 0x140d08, idle: 0x9a7a4a, good: 0xffb84d, bad: 0xff6a4d, spark: 0xffd08a, line: 0xd08a3c } };
+  let nodes = [], bursts = [], planetTarget = new Float32Array([16, -24, -70]);
+  function glowTex(){
+    const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+    const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.22, 'rgba(255,255,255,.8)'); g.addColorStop(0.5, 'rgba(255,255,255,.16)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new T.CanvasTexture(c);
+  }
+  function init(){
+    T = window.THREE; if (!T) return;
+    try {
+      R = new T.WebGLRenderer({ canvas: $('#sky'), antialias: false, powerPreference: 'low-power' });
+      R.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      S = new T.Scene(); S.background = new T.Color(0x060a1a);
+      C = new T.PerspectiveCamera(60, 1, 0.1, 2000);
+      tex = glowTex();
+      const N = 1300, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++){
+        const u = Math.random() * 2 - 1, th = Math.random() * Math.PI * 2, r = 380 + Math.random() * 420, s = Math.sqrt(1 - u * u);
+        pos[i*3] = r * s * Math.cos(th); pos[i*3+1] = r * u; pos[i*3+2] = r * s * Math.sin(th);
+        const k = Math.random(); const c = k < 0.12 ? [1, .85, .55] : k < 0.3 ? [.65, .72, 1] : [.92, .94, 1];
+        const b = 0.45 + Math.random() * 0.55; col[i*3] = c[0]*b; col[i*3+1] = c[1]*b; col[i*3+2] = c[2]*b;
+      }
+      const fg = new T.BufferGeometry(); fg.setAttribute('position', new T.BufferAttribute(pos, 3)); fg.setAttribute('color', new T.BufferAttribute(col, 3));
+      field = new T.Points(fg, new T.PointsMaterial({ size: 7, map: tex, vertexColors: true, transparent: true, depthWrite: false, blending: T.AdditiveBlending }));
+      S.add(field);
+      planetGroup = new T.Group();
+      planet = new T.Mesh(new T.IcosahedronGeometry(14, 1), new T.MeshStandardMaterial({ color: 0x5a4ad0, flatShading: true, roughness: 0.85, metalness: 0.05 }));
+      ring = new T.Mesh(new T.RingGeometry(19, 27, 56), new T.MeshBasicMaterial({ color: 0xf6c86b, side: T.DoubleSide, transparent: true, opacity: 0.25, depthWrite: false }));
+      ring.rotation.x = Math.PI * 0.42; ring.rotation.y = 0.25;
+      moon = new T.Mesh(new T.IcosahedronGeometry(2.6, 0), new T.MeshStandardMaterial({ color: 0xd9dcff, flatShading: true, roughness: 1 }));
+      planetGroup.add(planet, ring, moon);
+      planetGroup.position.set(16, -24, -70);
+      S.add(planetGroup);
+      gearGroup = new T.Group();
+      const brass = new T.MeshStandardMaterial({ color: 0xc89540, metalness: 0.45, roughness: 0.38 });
+      const copper = new T.MeshStandardMaterial({ color: 0xb8683a, metalness: 0.45, roughness: 0.42 });
+      const dark = new T.MeshStandardMaterial({ color: 0x6b4a26, metalness: 0.3, roughness: 0.6 });
+      const mk = (r, teeth, mat, x, y, z, dir, rx = 0) => {
+        const m = new T.Mesh(gearGeo(r, teeth, 2.2), mat); m.position.set(x, y, z); m.rotation.x = rx;
+        gearGroup.add(m); gears.push({ m, speed: dir / teeth }); return m;
+      };
+      // big + meshing small gear (pitch radius ~ r + tooth/2)
+      mk(15, 24, brass, 0, 0, 0, 1);
+      const sa = 2.4; mk(7.5, 12, copper, Math.cos(sa) * 24.6, Math.sin(sa) * 24.6, 0, -1);
+      mk(9, 16, dark, 10, -22, -6, -1);
+      gearGroup.position.set(14, -24, -70);
+      gearGroup.visible = false;
+      S.add(gearGroup);
+      const DN = 380, dpos = new Float32Array(DN * 3);
+      for (let i = 0; i < DN; i++){ dpos[i*3] = (Math.random() - 0.5) * 260; dpos[i*3+1] = (Math.random() - 0.5) * 220; dpos[i*3+2] = -60 - Math.random() * 160; }
+      const dg = new T.BufferGeometry(); dg.setAttribute('position', new T.BufferAttribute(dpos, 3));
+      dust = new T.Points(dg, new T.PointsMaterial({ size: 2.2, map: tex, color: 0xffb060, transparent: true, opacity: 0.45, depthWrite: false, blending: T.AdditiveBlending }));
+      dust.visible = false; S.add(dust);
+      deco = planetGroup;
+      S.add(new T.AmbientLight(0x3a4380, 0.9));
+      const dl = new T.DirectionalLight(0xffe0b0, 1.15); dl.position.set(-40, 30, 30); S.add(dl);
+      roundGroup = new T.Group(); S.add(roundGroup);
+      lineGeo = new T.BufferGeometry();
+      lineObj = new T.LineSegments(lineGeo, new T.LineBasicMaterial({ color: 0xf6c86b, transparent: true, opacity: 0.55, depthWrite: false }));
+      roundGroup.add(lineObj);
+      resize(); window.addEventListener('resize', resize);
+      ok = true; setTheme(theme); setMode(mode); requestAnimationFrame(loop);
+    } catch (e) { ok = false; }
+  }
+  function resize(){ if (!R) return; const w = innerWidth, h = innerHeight; R.setSize(w, h, false); C.aspect = w / h; C.updateProjectionMatrix(); if (nodes.length) layout(); }
+  function gearGeo(r, teeth, depth){
+    const sh = new T.Shape(), tooth = r * 0.16, N = teeth * 4;
+    for (let i = 0; i <= N; i++){
+      const a = i / N * Math.PI * 2, ph = i % 4, rr = (ph === 1 || ph === 2) ? r + tooth : r;
+      const x = Math.cos(a) * rr, y = Math.sin(a) * rr;
+      if (i === 0) sh.moveTo(x, y); else sh.lineTo(x, y);
+    }
+    const hole = new T.Path(); hole.absarc(0, 0, r * 0.22, 0, Math.PI * 2, true); sh.holes.push(hole);
+    if (teeth >= 12) for (let k = 0; k < 5; k++){ const a = k / 5 * Math.PI * 2, h = new T.Path(); h.absarc(Math.cos(a) * r * 0.58, Math.sin(a) * r * 0.58, r * 0.17, 0, Math.PI * 2, true); sh.holes.push(h); }
+    const g = new T.ExtrudeGeometry(sh, { depth, bevelEnabled: true, bevelThickness: 0.35, bevelSize: 0.3, bevelSegments: 1, curveSegments: 10 });
+    g.center(); return g;
+  }
+  function setTheme(t){
+    theme = t; if (!ok) return;
+    const P = PAL[t]; S.background.setHex(P.bg);
+    const clock = t === 'clock';
+    field.visible = !clock; planetGroup.visible = !clock; gearGroup.visible = clock; dust.visible = clock;
+    lineObj.material.color.setHex(P.line);
+    const old = deco; deco = clock ? gearGroup : planetGroup; if (old && old !== deco) deco.position.copy(old.position);
+    nodes.forEach(nd => { if (nd.state === 0) nd.sp.material.color.setHex(P.idle); });
+    setMode(mode);
+  }
+  function setMode(m){
+    mode = m; if (!ok) return;
+    roundGroup.visible = (m === 'game');
+    const portrait = innerWidth < innerHeight;
+    if (m === 'home') planetTarget.set([portrait ? (theme === 'clock' ? 20 : 14) : 30, portrait ? (theme === 'clock' ? -34 : -26) : -14, -70]);
+    else if (m === 'game') planetTarget.set([portrait ? 22 : 40, -48, -80]);
+    else planetTarget.set([portrait ? -12 : -30, -22, -75]);
+  }
+  function mkSprite(color, opacity, scale){
+    const sp = new T.Sprite(new T.SpriteMaterial({ map: tex, color, transparent: true, opacity, depthWrite: false, blending: T.AdditiveBlending }));
+    sp.scale.set(scale, scale, 1); return sp;
+  }
+  function layout(){
+    const n = nodes.length, z = -60, H = 2 * 60 * Math.tan(Math.PI / 6), W = H * C.aspect;
+    const gapPx = Math.max(innerHeight * 0.19, 120), yTop = H / 2 - (H * (60 + gapPx * 0.55) / innerHeight);
+    const spacing = Math.min(5.5, (W * 0.8) / Math.max(n - 1, 1));
+    nodes.forEach((nd, i) => { nd.sp.position.set((i - (n - 1) / 2) * spacing, yTop + Math.sin(i * 1.9) * Math.min(2.4, H * 0.03), z); });
+    updateLines();
+  }
+  function setRound(n){
+    if (!ok) return;
+    nodes.forEach(nd => roundGroup.remove(nd.sp)); nodes = [];
+    for (let i = 0; i < n; i++){ const sp = mkSprite(PAL[theme].idle, 0.6, 2.8); roundGroup.add(sp); nodes.push({ sp, state: 0, target: 2.8, pulse: 0, ph: Math.random() * 6 }); }
+    layout();
+  }
+  function updateLines(){
+    const pts = [];
+    for (let i = 0; i < nodes.length - 1; i++){
+      if (nodes[i].state === 1 && nodes[i+1].state === 1){ const a = nodes[i].sp.position, b = nodes[i+1].sp.position; pts.push(a.x, a.y, a.z, b.x, b.y, b.z); }
+    }
+    lineGeo.setAttribute('position', new T.BufferAttribute(new Float32Array(pts), 3)); lineGeo.computeBoundingSphere();
+  }
+  function burst(p, color, count = 34, speed = 0.35){
+    const pos = new Float32Array(count * 3), vel = [];
+    for (let i = 0; i < count; i++){ pos[i*3] = p.x; pos[i*3+1] = p.y; pos[i*3+2] = p.z; const a = Math.random() * Math.PI * 2, b = Math.random() * Math.PI - Math.PI / 2, v = speed * (0.4 + Math.random()); vel.push(Math.cos(a) * Math.cos(b) * v, Math.sin(b) * v, Math.sin(a) * Math.cos(b) * v * 0.4); }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.BufferAttribute(pos, 3));
+    const m = new T.PointsMaterial({ size: 1.4, map: tex, color, transparent: true, opacity: 1, depthWrite: false, blending: T.AdditiveBlending });
+    const pts = new T.Points(g, m); S.add(pts); bursts.push({ pts, vel, life: 1 });
+  }
+  function lightStar(i, good){
+    boost = Math.min(boost + (good ? 1 : 0.3), 4);
+    if (!ok || !nodes[i]) return;
+    const nd = nodes[i]; nd.state = good ? 1 : 2; nd.pulse = 1;
+    nd.sp.material.color.setHex(good ? PAL[theme].good : PAL[theme].bad); nd.sp.material.opacity = good ? 1 : 0.7; nd.target = good ? 5.2 : 3;
+    if (good) burst(nd.sp.position, PAL[theme].spark);
+    updateLines();
+  }
+  function complete(perfect){
+    if (!ok) return;
+    nodes.forEach((nd, k) => { if (nd.state === 1){ nd.pulse = 1.4; setTimeout(() => burst(nd.sp.position, PAL[theme].spark, 16, 0.25), k * 70); } });
+    if (perfect) celebrate();
+  }
+  function celebrate(){
+    if (!ok) return;
+    for (let k = 0; k < 6; k++) setTimeout(() => { const v = new T.Vector3((Math.random() - 0.5) * 40, (Math.random() - 0.1) * 30, -60); burst(v, theme === 'clock' ? pick([0xffd08a, 0xe08a3c, 0xfff0c0]) : pick([0xffe2a6, 0x8f7bff, 0x5fe0b5]), 50, 0.5); }, k * 160);
+  }
+  function loop(t){
+    requestAnimationFrame(loop);
+    if (document.hidden) return;
+    const dt = Math.min(50, t - (last || t)); last = t;
+    boost *= 0.97;
+    field.rotation.y += dt * 0.000012 * (1 + boost * 2.5); field.rotation.x = 0.15;
+    planet.rotation.y += dt * 0.00018; planet.rotation.x += dt * 0.00004;
+    const mt = t * 0.0004; moon.position.set(Math.cos(mt) * 30, Math.sin(mt) * 6, Math.sin(mt) * 30);
+    gears.forEach(gr => { gr.m.rotation.z += dt * 0.006 * gr.speed * (1 + boost * 3); });
+    if (dust.visible){ dust.rotation.z += dt * 0.000008; dust.position.y = Math.sin(t * 0.0002) * 2; }
+    const pp = deco.position; pp.x += (planetTarget[0] - pp.x) * 0.04; pp.y += (planetTarget[1] - pp.y) * 0.04; pp.z += (planetTarget[2] - pp.z) * 0.04;
+    C.position.x = Math.sin(t * 0.00007) * 1.5; C.position.y = Math.cos(t * 0.00005) * 1;
+    nodes.forEach(nd => {
+      nd.pulse *= 0.93;
+      const tw = nd.state === 1 ? 1 + 0.06 * Math.sin(t * 0.003 + nd.ph) : 1 + 0.12 * Math.sin(t * 0.002 + nd.ph);
+      const s = nd.target * tw * (1 + 0.5 * nd.pulse); nd.sp.scale.set(s, s, 1);
+    });
+    for (let b = bursts.length - 1; b >= 0; b--){
+      const B = bursts[b], arr = B.pts.geometry.attributes.position.array; B.life -= dt * 0.0011;
+      for (let i = 0; i < B.vel.length; i++) arr[i] += B.vel[i] * dt * 0.06;
+      B.pts.geometry.attributes.position.needsUpdate = true; B.pts.material.opacity = Math.max(0, B.life);
+      if (B.life <= 0){ S.remove(B.pts); B.pts.geometry.dispose(); B.pts.material.dispose(); bursts.splice(b, 1); }
+    }
+    R.render(S, C);
+  }
+  return { init, setMode, setTheme, setRound, lightStar, complete, celebrate };
+})();
+
+/* ===================== POOLS & MODES ===================== */
+const POOL = { g:{}, m:{}, f:{} };
+GAP.forEach(it => (POOL.g[it.p] = POOL.g[it.p] || []).push(it));
+MC.forEach(it => (POOL.m[it.p] = POOL.m[it.p] || []).push(it));
+FAULT.forEach(it => (POOL.f[it.p] = POOL.f[it.p] || []).push(it));
+const sortsFor = p => SORTS.filter(s => s.cards.some(c => c[2] === p));
+const matchesFor = p => MATCHES.filter(x => x.p === p);
+const mixPool = p => [...(POOL.g[p] || []), ...(POOL.m[p] || []), ...(POOL.f[p] || [])];
+
+const ICON = {
+  gap:'<svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 4.5l5 5L9 20H4v-5z"/></svg>',
+  mc:'<svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="5" height="14" rx="2.5"/><rect x="9.5" y="6" width="5" height="14" rx="2.5"/><rect x="16.5" y="6" width="5" height="14" rx="2.5"/><path d="M12 3v1"/></svg>',
+  fault:'<svg viewBox="0 0 24 24"><path d="M3 12h5l2-5 4 10 2-5h5"/></svg>',
+  sort:'<svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="11" rx="2"/><path d="M5 18l-3 3M19 18l3 3M4 21h4M16 21h4"/></svg>',
+  match:'<svg viewBox="0 0 24 24"><path d="M3 7h7a3 3 0 0 1 0 6H3z"/><path d="M21 11h-7a3 3 0 0 0 0 6h7z"/></svg>',
+  mix:'<svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.4L21 9l-5 4.5L17.5 21 12 17.3 6.5 21 8 13.5 3 9l6.4-.6z"/></svg>'
+};
+const MODES = {
+  gap:{ name:'Forge', desc:'Type the missing word or words.' },
+  mc:{ name:'Three Doors', desc:'Pick the right door. Quick answers earn bonus XP.' },
+  fault:{ name:'Fault Line', desc:'Find the mistake in the sentence, then fix it.' },
+  sort:{ name:'Split', desc:'Swipe or tap each card into the right group.' },
+  match:{ name:'Halves', desc:'Join the two halves of each sentence.' },
+  mix:{ name:'Star Mix', desc:'A bit of everything on this grammar point.' }
+};
+function modesFor(p){
+  const m = [];
+  if (POOL.g[p]) m.push('gap'); if (POOL.m[p]) m.push('mc'); if (POOL.f[p]) m.push('fault');
+  if (sortsFor(p).length) m.push('sort'); if (matchesFor(p).length) m.push('match');
+  m.push('mix'); return m;
+}
+function leastSeen(arr, n, idf){ return shuffle(arr).sort((a, b) => (store.seen[idf(a)] || 0) - (store.seen[idf(b)] || 0)).slice(0, n); }
+const markSeen = id => { store.seen[id] = Date.now(); };
+function weakScore(p){ const a = recentAcc(p); return a === null ? 0.6 : a; }
+function buildQueue(p, mode){
+  const K = { gap:'g', mc:'m', fault:'f' };
+  if (K[mode]) return leastSeen(POOL[K[mode]][p], 8, x => x.id).map(it => ({ k: it.k, it }));
+  if (mode === 'mix') return leastSeen(mixPool(p), 9, x => x.id).map(it => ({ k: it.k, it }));
+  if (mode === 'sort'){ const cards = []; sortsFor(p).forEach(s => s.cards.forEach((c, i) => cards.push({ k:'s', set:s, card:c, id:s.id + '#' + i }))); return leastSeen(cards, 10, x => x.id); }
+  if (mode === 'match') return leastSeen(matchesFor(p), 2, x => x.id).map(b => ({ k:'x', board:b, id:b.id }));
+  if (mode === 'all') return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = leastSeen(mixPool(pt.id), 1, x => x.id)[0]; return { k: it.k, it }; }));
+  if (mode === 'weak'){
+    const pts = shuffle(secPoints().filter(x => mixPool(x.id).length).map(x => x.id)).sort((a, b) => weakScore(a) - weakScore(b)).slice(0, 3);
+    return leastSeen(pts.flatMap(mixPool), 10, x => x.id).map(it => ({ k: it.k, it }));
+  }
+  return [];
+}
+
+/* ===================== SCREENS ===================== */
+function show(id){
+  $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  window.scrollTo(0, 0);
+  Sky.setMode(id === 'game' ? 'game' : id === 'home' || id === 'landing' ? 'home' : 'other');
+}
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 1600); }
+const SPEAKER = /(^|<br>)([AB]):/g;
+function fmt(s){ return esc(s).replace(/ {2}(B:)/g, '<br>$1').replace(SPEAKER, '$1<b class="spk">$2</b>'); }
+
+const MUTE_ICON = m => m
+  ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>'
+  : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+
+function sessionTotals(){
+  const s = store.session; let c = 0, t = 0; const by = {};
+  if (s) s.rounds.forEach(r => { c += r.c; t += r.t; Object.entries(r.by).forEach(([p, v]) => { by[p] = by[p] || [0, 0]; by[p][0] += v[0]; by[p][1] += v[1]; }); });
+  return { c, t, xp: s ? s.xp : 0, by, rounds: s ? s.rounds.length : 0 };
+}
+
+function levelCard(){
+  const lp = levelProgress(store.xp);
+  return `<div class="panel level-card">
+      <div class="lvl-badge">${lp.L}</div>
+      <div class="lvl-info"><div class="lvl-title">${levelName(lp.L)}</div>
+        <div class="xpbar"><div style="width:${Math.round(lp.frac * 100)}%"></div></div>
+        <div class="muted small">${store.xp} XP · ${lp.need - lp.into} XP to level ${lp.L + 1}</div></div>
+    </div>`;
+}
+function sessionStrip(){
+  const st = sessionTotals();
+  return `<div class="panel session-strip">
+      ${st.t ? `<div><div class="eyebrow">This session</div><div class="s-num">${st.c} / ${st.t} correct (${pct(st.c, st.t)}%) · ${st.xp} XP</div></div>
+        <button class="btn primary small" data-act="report">Report</button>`
+             : `<div class="muted small">Play any game to start a session. Your grammar and vocabulary scores add up into one report.</div>`}
+    </div>`;
+}
+const animBar = sel => requestAnimationFrame(() => { const f = $(sel + ' .xpbar>div'); if (f) { const w = f.style.width; f.style.width = '0'; requestAnimationFrame(() => f.style.width = w); } });
+const secStars = x => secPoints(x).reduce((a, p) => a + mastery(p.id), 0);
+const STAR_SVG = '<svg viewBox="0 0 48 48"><path d="M24 4l5.6 13.2L44 18.4 33 28l3.4 14L24 34.6 11.6 42 15 28 4 18.4l14.4-1.2z" fill="currentColor"/></svg>';
+const GEAR_SVG = '<svg viewBox="0 0 48 48"><path fill="currentColor" fill-rule="evenodd" d="M21 3h6l1 6 4 1.7 5-3.6 4.2 4.2-3.6 5L39.3 20l6 1v6l-6 1-1.7 4 3.6 5-4.2 4.2-5-3.6-4 1.7-1 6h-6l-1-6-4-1.7-5 3.6-4.2-4.2 3.6-5L8.7 28l-6-1v-6l6-1 1.7-4-3.6-5 4.2-4.2 5 3.6 4-1.7zM24 16a8 8 0 1 0 0 16 8 8 0 0 0 0-16z"/></svg>';
+function renderLanding(){
+  $('#landing').innerHTML = `
+    <header class="top">
+      <div><div class="eyebrow">English File Pre-Intermediate</div><h1>Units 5–8 Revision</h1></div>
+      <button class="icon-btn" data-act="mute" aria-label="Sound on or off">${MUTE_ICON(store.muted)}</button>
+    </header>
+    ${levelCard()}
+    ${sessionStrip()}
+    <div class="doors">
+      <button class="door-card sky" data-act="section" data-s="G">
+        <span class="door-art">${STAR_SVG}</span>
+        <span class="door-txt"><span class="eyebrow">Grammar</span><span class="door-title">The Observatory</span>
+        <span class="muted small">12 grammar points · ${secStars('G')} / 60 stars</span></span>
+      </button>
+      <button class="door-card clock" data-act="section" data-s="V">
+        <span class="door-art">${GEAR_SVG}</span>
+        <span class="door-txt"><span class="eyebrow">Vocabulary</span><span class="door-title">The Workshop</span>
+        <span class="muted small">12 topics · ${secStars('V')} / 60 gears</span></span>
+      </button>
+    </div>
+    <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
+  animBar('#landing');
+}
+function renderHome(){
+  const T = THEME[SEC];
+  const units = T.units.map(u => {
+    const ps = secPoints().filter(p => p.unit === u); if (!ps.length) return '';
+    return `
+    <div class="unit"><div class="unit-head"><span class="u">${u === 'PE' ? 'Practical English' : 'Unit ' + u}</span><span class="t">${u === 'PE' ? 'Episodes 3 and 4' : esc(T.unitNames[u])}</span></div>
+    <div class="pgrid">${ps.map(p => `
+      <button class="pcard" data-act="point" data-p="${p.id}">
+        <span class="pc-id">${p.code}</span><span class="pc-title">${esc(p.title)}</span>${starsHtml(mastery(p.id))}
+        <span class="pc-sub">${esc(p.sub)}</span>
+      </button>`).join('')}</div></div>`; }).join('');
+  $('#home').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="landing">${BACK}Menu</button><div style="flex:1"></div>
+      <button class="icon-btn" data-act="mute" aria-label="Sound on or off">${MUTE_ICON(store.muted)}</button></div>
+    <header class="top"><div><div class="eyebrow">${T.eyebrow}</div><h1>${T.title}</h1></div></header>
+    ${sessionStrip()}
+    <div class="quick">
+      <button class="btn primary" data-act="start" data-p="ALL" data-mode="all"><span>Mixed revision</span><span class="small" style="font-weight:700">all 12 ${SEC === 'V' ? 'topics' : 'points'}</span></button>
+      <button class="btn ghost" data-act="start" data-p="WEAK" data-mode="weak"><span>Weak spots</span><span class="small muted" style="font-weight:700">your lowest 3</span></button>
+    </div>
+    ${units}
+    <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
+}
+
+let currentPoint = null;
+function renderPoint(p){
+  currentPoint = p; const P = PT[p], acc = recentAcc(p), s = store.stats[p];
+  $('#point').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="home">${BACK}Back</button><div class="eyebrow">${P.unit === 'PE' ? 'Practical English' : 'Unit ' + P.unit}</div></div>
+    <div class="panel point-hero">
+      <div class="code">${P.code}${P.star ? ' · ' + esc(P.star) : ''}</div>
+      <h2>${esc(P.title)}</h2><div class="muted">${esc(P.sub)}</div>
+      ${starsHtml(mastery(p))}
+      <div class="muted small" style="margin-top:6px">${acc === null ? 'Not played yet. ' + THEME[SEC].light : `Last ${s.r.length} answers: ${Math.round(acc * 100)}% correct`}</div>
+    </div>
+    <div class="modes">${modesFor(p).map(m => `
+      <button class="mode" data-act="start" data-p="${p}" data-mode="${m}"><span class="mi">${ICON[m]}</span>
+        <span><div class="mn">${MODES[m].name}</div><div class="md">${MODES[m].desc}</div></span></button>`).join('')}</div>`;
+}
+const BACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+
+/* ===================== GAME ENGINE ===================== */
+let G = null;
+const PRAISE = ['Correct!', 'Brilliant!', 'Spot on!', 'Nice one!', 'Perfect!', 'Stellar!', 'Exactly right!'];
+const stage = () => $('#stage');
+
+function startRound(p, mode){
+  ensureSession();
+  const q = buildQueue(p, mode);
+  if (!q.length) return;
+  const total = q.reduce((a, e) => a + (e.k === 'x' ? e.board.pairs.length : 1), 0);
+  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], lvlBefore: levelOf(store.xp), locked: false };
+  const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
+  $('#hudTitle').textContent = label;
+  show('game'); Sky.setRound(total); updateHud(); renderItem();
+}
+function updateHud(){
+  $('#progFill').style.width = (100 * G.slot / G.total) + '%';
+  const sEl = $('#hudStreak'); sEl.textContent = 'streak ' + G.streak; sEl.classList.toggle('hot', G.streak >= 3);
+  $('#hudXp').textContent = G.xp + ' XP';
+}
+function award(ok, p, base, bonus = 0, quiet = false){
+  const s = store.stats[p] || (store.stats[p] = { r: [], n: 0, c: 0 });
+  s.r.push(ok ? 1 : 0); if (s.r.length > 20) s.r.shift(); s.n++; if (ok) s.c++;
+  store.answered = (store.answered || 0) + 1;
+  const b = G.by[p] || (G.by[p] = [0, 0]); b[1]++; G.t++;
+  let gained = 0;
+  if (ok){
+    b[0]++; G.c++; G.streak++;
+    gained = base + Math.min(G.streak - 1, 5) * 2 + bonus; G.xp += gained; store.xp += gained;
+    if (G.streak > store.bestStreak) store.bestStreak = G.streak;
+  } else G.streak = 0;
+  Sky.lightStar(G.slot, ok); G.slot++;
+  if (!quiet){
+    if (ok && G.streak % 5 === 0){ Sfx.streak(); toast(G.streak + ' in a row! ✨'); }
+    else if (ok) Sfx.correct(); else Sfx.wrong();
+  }
+  updateHud(); save();
+  return gained;
+}
+function next(){ if (!G) return; G.qi++; renderItem(); }
+function renderItem(){
+  G.locked = false;
+  const e = G.q[G.qi];
+  if (!e) return endRound();
+  G.t0 = Date.now();
+  ({ g: renderGap, m: renderMC, f: renderFault, s: renderSort, x: renderMatch })[e.k](e);
+}
+const isLastItem = () => G.qi >= G.q.length - 1;
+function fillSentence(text, ans){
+  const [b, a = ''] = text.split('___');
+  const shown = b.trim() === '' ? cap(ans) : ans;
+  return fmt(b) + '<mark>' + esc(shown) + '</mark>' + fmt(a);
+}
+function feedback(ok, o){
+  const fb = $('#fb');
+  fb.innerHTML = `<div class="fb ${ok ? 'ok' : 'bad'}">
+    <div class="fb-head">${ok ? `<span>✓ ${pick(PRAISE)}</span><span class="fb-xp">+${o.gained} XP</span>` : '<span>✗ Not quite</span>'}</div>
+    ${!ok && o.your ? `<div class="fb-your">Your answer: <s>${esc(o.your)}</s></div>` : ''}
+    ${o.sent ? `<div class="fb-sent">${o.sent}</div>` : ''}
+    ${o.also ? `<div class="fb-also">Also correct: ${o.also}</div>` : ''}
+    ${o.note ? `<div class="fb-note">${esc(o.note)}</div>` : ''}
+    ${ruleText(o.rule) ? `<div class="fb-rule ${ok ? 'hide-rule' : ''}">${esc(ruleText(o.rule))}</div>` : ''}
+    <div class="fb-actions">${ok && ruleText(o.rule) ? '<button class="btn ghost small" data-act="why">Why?</button>' : ''}<button class="btn primary" data-act="next" id="nextBtn">${isLastItem() ? 'Finish' : 'Next'}</button></div>
+  </div>`;
+  if (!ok && o.sent) G.mistakes.push({ sent: o.sent, your: o.your || '' });
+  setTimeout(() => { fb.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 30);
+}
+
+/* ---- Forge (gap fill) ---- */
+function renderGap(e){
+  const it = e.it, [b, a = ''] = it.t.split('___');
+  stage().innerHTML = `
+    <div class="ins">${esc(it.ins || GAP_INS[it.p])}</div>
+    <div class="sent">${fmt(b)}<span class="blank" id="blank"> </span>${fmt(a)}</div>
+    <div class="base">${it.pre || /[=:]/.test(it.b) ? esc(it.b) : '( ' + esc(it.b) + ' )'}</div>
+    <div class="gap-form" id="gapForm">
+      <input id="gapIn" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done" placeholder="Type your answer" aria-label="Your answer">
+      <button class="btn primary" type="button" id="gapBtn">Check</button>
+    </div><div id="fb"></div>`;
+  const inp = $('#gapIn');
+  inp.addEventListener('input', () => { $('#blank').textContent = inp.value || ' '; });
+  const submit = ev => {
+    if (ev) ev.preventDefault(); if (G.locked || !inp.value.trim()) return; G.locked = true;
+    const val = inp.value.trim(), res = checkGap(it, val);
+    inp.disabled = true; $('#gapBtn').disabled = true; inp.blur();
+    const gained = award(res.ok, it.p, 12); markSeen(it.id);
+    feedback(res.ok, { gained, your: val, sent: fillSentence(it.t, it.a[0]), also: it.a.length > 1 ? it.a.slice(1).map(esc).join(', ') : '', note: res.note, rule: it.r });
+  };
+  $('#gapBtn').addEventListener('click', submit);
+  inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.stopPropagation(); submit(ev); } });
+  if (matchMedia('(pointer:fine)').matches) inp.focus();
+}
+
+/* ---- Three Doors (multichoice) ---- */
+function renderMC(e){
+  const it = e.it, opts = shuffle(it.o.map((o, i) => ({ o, i }))), [b, a = ''] = it.t.split('___');
+  stage().innerHTML = `
+    <div class="ins">Choose the correct answer.</div>
+    <div class="sent">${fmt(b)}<span class="blank"> </span>${fmt(a)}</div>
+    <div class="opts">${opts.map((x, k) => `<button class="opt" data-act="opt" data-i="${x.i}"><span class="door">${'abc'[k]}</span><span>${esc(x.o)}</span></button>`).join('')}</div>
+    <div id="fb"></div>`;
+  G.mcItem = it;
+}
+function chooseOpt(btn){
+  if (G.locked) return; G.locked = true;
+  const it = G.mcItem, i = +btn.dataset.i, ok = i === 0;
+  $$('.opt').forEach(o => { o.disabled = true; if (+o.dataset.i === 0) o.classList.add('good'); });
+  if (!ok) btn.classList.add('bad');
+  const bonus = ok && Date.now() - G.t0 < 6000 ? 4 : 0;
+  const gained = award(ok, it.p, 10, bonus); markSeen(it.id);
+  feedback(ok, { gained, sent: fillSentence(it.t, it.o[0]), your: ok ? '' : it.o[i], rule: it.r, note: bonus ? 'Speed bonus +4' : '' });
+}
+
+/* ---- Fault Line (error hunt) ---- */
+function renderFault(e){
+  const it = e.it;
+  stage().innerHTML = `
+    <div class="ins">One part of this sentence is wrong. Tap it.</div>
+    <div class="chunks">${it.c.map((c, i) => `<button class="chunk" data-act="chunk" data-i="${i}">${esc(c)}</button>`).join('')}</div>
+    <div id="fixArea"></div><div id="fb"></div>`;
+  G.fItem = it; G.fStage = 0;
+}
+function faultSentence(it){ return it.c.map((c, i) => i === it.w ? '<mark>' + esc(it.x[0]) + '</mark>' : esc(c)).join(' '); }
+function chooseChunk(btn){
+  if (G.locked || G.fStage !== 0) return;
+  const it = G.fItem, i = +btn.dataset.i;
+  $$('.chunk').forEach(c => c.disabled = true);
+  if (i === it.w){
+    G.fStage = 1; btn.classList.add('found'); Sfx.tap();
+    $('#fixArea').innerHTML = `<div class="fixlabel">Found it! Now choose the correction:</div>
+      <div class="opts">${shuffle(it.x.map((x, k) => ({ x, k }))).map(o => `<button class="opt" data-act="fix" data-i="${o.k}"><span>${esc(o.x)}</span></button>`).join('')}</div>`;
+  } else {
+    G.locked = true; btn.classList.add('miss'); $$('.chunk')[it.w].classList.add('actual');
+    const gained = award(false, it.p, 12); markSeen(it.id);
+    feedback(false, { gained, your: it.c[i] + ' (that part was correct)', sent: faultSentence(it), rule: it.r });
+  }
+}
+function chooseFix(btn){
+  if (G.locked) return; G.locked = true;
+  const it = G.fItem, k = +btn.dataset.i, ok = k === 0;
+  $$('#fixArea .opt').forEach(o => { o.disabled = true; if (+o.dataset.i === 0) o.classList.add('good'); });
+  if (!ok) btn.classList.add('bad');
+  const gained = award(ok, it.p, 12); markSeen(it.id);
+  feedback(ok, { gained, your: ok ? '' : it.x[k], sent: faultSentence(it), rule: it.r });
+}
+
+/* ---- Split (sorting) ---- */
+function renderSort(e){
+  const s = e.set, [txt] = e.card, two = s.bins.length === 2;
+  stage().innerHTML = `
+    <div class="ins">${two ? 'Swipe the card left or right – or tap a group.' : 'Tap the right group for this card.'}</div>
+    <div class="card-stage"><div class="sort-card" id="sCard">${esc(txt).replace('___', '<span class="blank sm"> </span>')}</div></div>
+    <div class="bins b${s.bins.length}">${s.bins.map((b, i) => `<button class="bin" data-act="bin" data-bin="${i}">${two && i === 0 ? '← ' : ''}${esc(b)}${two && i === 1 ? ' →' : ''}</button>`).join('')}</div>
+    <div id="fb"></div>`;
+  G.sEntry = e;
+  if (two) enableSwipe($('#sCard'));
+}
+function enableSwipe(card){
+  let x0 = null, y0 = 0, dx = 0, id = null;
+  const bins = $$('.bin');
+  card.addEventListener('pointerdown', ev => { if (G.locked) return; x0 = ev.clientX; y0 = ev.clientY; dx = 0; id = ev.pointerId; card.classList.add('drag'); try { card.setPointerCapture(id); } catch (e) {} });
+  card.addEventListener('pointermove', ev => {
+    if (x0 === null || ev.pointerId !== id) return;
+    dx = ev.clientX - x0; const dy = ev.clientY - y0;
+    card.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${dx * 0.05}deg)`;
+    bins[0].classList.toggle('lean', dx < -40); bins[1].classList.toggle('lean', dx > 40);
+  });
+  const end = ev => {
+    if (x0 === null || (ev && ev.pointerId !== id)) return;
+    x0 = null; card.classList.remove('drag'); bins.forEach(b => b.classList.remove('lean'));
+    if (Math.abs(dx) > 80) chooseBin(dx < 0 ? 0 : 1, true); else card.style.transform = '';
+  };
+  card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
+}
+function chooseBin(bi, swiped){
+  if (G.locked) return; G.locked = true;
+  const e = G.sEntry, s = e.set, [txt, bin, p] = e.card, ok = bi === bin, card = $('#sCard');
+  const gained = award(ok, p, 6); markSeen(e.id);
+  $$('.bin').forEach(b => b.disabled = true);
+  if (ok){
+    const dir = s.bins.length === 2 ? (bi === 0 ? -1 : 1) : (bi - 1);
+    card.style.transform = `translate(${dir * 120}vw, 30px) rotate(${dir * 25}deg)`; card.style.opacity = '0';
+    toast('+' + gained + ' XP');
+    setTimeout(next, 450);
+  } else {
+    card.style.transform = ''; card.classList.add('shake');
+    $$('.bin')[bin].classList.add('hint');
+    const sent = txt.includes('___') ? esc(txt).replace('___', '<mark>' + esc(s.bins[bin]) + '</mark>') : `<b>${esc(txt)}</b> → <mark>${esc(s.bins[bin])}</mark>`;
+    feedback(false, { your: s.bins[bi], sent, rule: s.rules[bin] });
+  }
+}
+
+/* ---- Halves (matching) ---- */
+function renderMatch(e){
+  const b = e.board;
+  G.mm = { b, sel: { l: null, r: null }, done: new Set(), missed: new Set(), right: shuffle(b.pairs.map((p, i) => ({ t: p[1], i }))) };
+  stage().innerHTML = `
+    <div class="ins">${esc(b.title)}: tap a beginning, then the ending that matches it.</div>
+    <div class="match">
+      <div class="mcol"><div class="lab">Beginnings</div>${b.pairs.map((p, i) => `<button class="mb" data-act="ml" data-i="${i}"><span class="pn">${i + 1}</span><span>${esc(p[0])}</span></button>`).join('')}</div>
+      <div class="mcol"><div class="lab">Endings</div>${G.mm.right.map(x => `<button class="mb" data-act="mr" data-i="${x.i}"><span class="pn">?</span><span>${esc(x.t)}</span></button>`).join('')}</div>
+    </div><div id="fb"></div>`;
+}
+function matchTap(side, btn){
+  const M = G.mm, i = +btn.dataset.i;
+  if (G.locked || M.done.has(i)) return;
+  $$(`.mb[data-act="m${side}"]`).forEach(x => x.classList.remove('sel'));
+  btn.classList.add('sel'); M.sel[side] = i; Sfx.tap();
+  if (M.sel.l === null || M.sel.r === null) return;
+  const L = M.sel.l, Rr = M.sel.r, lb = $(`.mb[data-act="ml"][data-i="${L}"]`), rb = $(`.mb[data-act="mr"][data-i="${Rr}"]`);
+  M.sel = { l: null, r: null };
+  if (L === Rr){
+    M.done.add(L);
+    [lb, rb].forEach(x => { x.classList.remove('sel'); x.classList.add('done'); x.disabled = true; });
+    rb.querySelector('.pn').textContent = L + 1;
+    const first = !M.missed.has(L);
+    award(first, M.b.p, 10, 0, !first);
+    if (!first) Sfx.tap();
+    if (M.done.size === M.b.pairs.length){ G.locked = true; setTimeout(next, 750); }
+  } else {
+    M.missed.add(L); Sfx.wrong();
+    [lb, rb].forEach(x => { x.classList.remove('sel'); x.classList.add('err'); setTimeout(() => x.classList.remove('err'), 400); });
+    G.mistakes.push({ sent: esc(M.b.pairs[L][0]) + ' <mark>' + esc(M.b.pairs[L][1]) + '</mark>', your: M.b.pairs[Rr][1] });
+  }
+}
+
+/* ---- end of round ---- */
+function endRound(){
+  const r = { p: G.p, mode: G.mode, c: G.c, t: G.t, xp: G.xp, by: G.by, at: Date.now(), sec: SEC };
+  if (G.t > 0){ const s = ensureSession(); s.rounds.push(r); s.xp += G.xp; }
+  save();
+  const perfect = G.t > 0 && G.c === G.t;
+  Sky.complete(perfect);
+  if (perfect) Sfx.perfect(); else Sfx.finish();
+  renderResult();
+  show('result');
+  const lv = levelOf(store.xp);
+  if (lv > G.lvlBefore) setTimeout(() => { if ($('#result').classList.contains('active')) levelUp(lv); else { Sfx.level(); toast('Level up! You\u2019re now level ' + lv); } }, 900);
+}
+function renderResult(){
+  const p = pct(G.c, G.t), lp = levelProgress(store.xp);
+  const msg = p === 100 ? THEME[SEC].perfect : p >= 80 ? 'Brilliant work!' : p >= 60 ? 'Good – just a few mistakes left.' : 'Keep practising – you\u2019ll get there.';
+  const title = G.p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : G.p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : `${PT[G.p].code} ${PT[G.p].title} · ${MODES[G.mode].name}`;
+  $('#result').innerHTML = `
+    <div class="panel result">
+      <div class="eyebrow">${esc(title)}</div>
+      <div class="big-score">${G.c}<span>/${G.t}</span></div>
+      <div class="res-msg">${msg}</div>
+      <div class="res-xp">+${G.xp} XP</div>
+      <div class="level-card" style="justify-content:center;text-align:left">
+        <div class="lvl-badge" style="width:48px;height:48px;font-size:1.25rem">${lp.L}</div>
+        <div class="lvl-info"><div class="lvl-title">${levelName(lp.L)}</div><div class="xpbar"><div style="width:${Math.round(lp.frac * 100)}%"></div></div><div class="muted small">${lp.need - lp.into} XP to level ${lp.L + 1}</div></div>
+      </div>
+      ${G.mistakes.length ? `<details class="rev"><summary>Review your mistakes (${G.mistakes.length})</summary>${G.mistakes.map(m => `<div class="rev-item">${m.sent}${m.your ? `<div class="yw">You chose: ${esc(m.your)}</div>` : ''}</div>`).join('')}</details>` : ''}
+      <div class="btn-col">
+        <button class="btn primary wide" data-act="again">Play again</button>
+        ${PT[G.p] ? `<button class="btn ghost wide" data-act="point" data-p="${G.p}">Choose another game for ${PT[G.p] ? PT[G.p].code : ''}</button>` : ''}
+        <button class="btn ghost wide" data-act="home">${THEME[SEC].back}</button>
+      </div>
+    </div>`;
+}
+function levelUp(L){
+  Sfx.level(); Sky.celebrate();
+  const o = $('#overlay');
+  o.innerHTML = `<div class="panel"><div class="eyebrow">Level up!</div><div class="lvl-badge">${L}</div><h2>${levelName(L)}</h2>
+    <p class="muted">You’ve reached level ${L}. Keep going to light up the whole sky.</p><button class="btn primary wide" data-act="closeOverlay">Brilliant!</button></div>`;
+  o.classList.add('show');
+}
+
+/* ---- session report ---- */
+function gradeFor(p){ return p >= 90 ? 'Supernova' : p >= 75 ? 'Bright Star' : p >= 60 ? 'Rising Star' : 'Keep Stargazing'; }
+function barsHtml(by, sec){
+  return secPoints(sec).filter(p => by[p.id]).map(p => { const [c, t] = by[p.id], v = pct(c, t), col = v >= 80 ? 'var(--teal)' : v >= 60 ? 'var(--gold)' : 'var(--coral)';
+    return `<div class="bar"><b>${p.code}</b><div class="bt"><div style="width:${Math.max(v, 3)}%;background:${col}"></div></div><span class="bv">${c}/${t} · ${v}%</span></div>`; }).join('');
+}
+function renderReport(){
+  const st = sessionTotals(), p = pct(st.c, st.t), s = store.session;
+  const weak = ALLP.filter(x => st.by[x.id] && pct(st.by[x.id][0], st.by[x.id][1]) < 70);
+  const secTot = x => secPoints(x).reduce((a, q) => st.by[q.id] ? [a[0] + st.by[q.id][0], a[1] + st.by[q.id][1]] : a, [0, 0]);
+  const gT = secTot('G'), vT = secTot('V');
+  const d = new Date();
+  $('#report').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="ret">${BACK}Back</button><div class="eyebrow">Session report</div></div>
+    <div class="panel">
+      <div class="report-head"><div class="big-score">${p}<span>%</span></div><div class="grade">${gradeFor(p)}</div></div>
+      <div class="stat-row">
+        <div class="stat"><b>${st.c}/${st.t}</b><span>correct</span></div>
+        <div class="stat"><b>${st.xp}</b><span>XP earned</span></div>
+        <div class="stat"><b>${st.rounds}</b><span>games</span></div>
+      </div>
+      ${!st.t ? '<div class="muted small">No answers yet.</div>' : ''}
+      ${gT[1] ? `<div class="sec-title">Grammar · ${gT[0]}/${gT[1]} · ${pct(gT[0], gT[1])}%</div><div class="bars">${barsHtml(st.by, 'G')}</div>` : ''}
+      ${vT[1] ? `<div class="sec-title">Vocabulary · ${vT[0]}/${vT[1]} · ${pct(vT[0], vT[1])}%</div><div class="bars">${barsHtml(st.by, 'V')}</div>` : ''}
+      ${weak.length ? `<div class="sec-title">Focus on</div><div class="focus-chips">${weak.map(x => `<span class="chip">${x.sec === 'V' ? 'Vocab ' : 'Grammar '}${x.code} ${esc(x.title)}</span>`).join('')}</div>` : ''}
+      <div class="sec-title">Games played</div>
+      <div class="list">${s ? s.rounds.map(r => `<div class="li"><span>${r.p === 'ALL' || r.p === 'WEAK' ? (r.p === 'ALL' ? 'Mixed revision' : 'Weak spots') + ' · ' + THEME[r.sec || 'G'].name : (PT[r.p].sec === 'V' ? 'Vocab ' : 'Grammar ') + PT[r.p].code + ' · ' + MODES[r.mode].name}</span><b>${r.c}/${r.t}</b></div>`).join('') : ''}</div>
+      <div class="stamp">Level ${levelOf(store.xp)} ${levelName(levelOf(store.xp))} · ${d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' })} ${d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}</div>
+    </div>
+    <div class="btn-col">
+      <button class="btn primary wide" data-act="ret">Keep playing</button>
+      <button class="btn ghost wide" data-act="endSession">Finish this session and start a new one</button>
+    </div>`;
+}
+function endSession(){
+  const st = sessionTotals();
+  if (st.t > 0){ store.history.unshift({ start: store.session.start, end: Date.now(), c: st.c, t: st.t, xp: st.xp, by: st.by, games: st.rounds }); store.history = store.history.slice(0, 40); }
+  store.session = null; save(); toast('Session saved'); goLanding();
+}
+
+/* ---- history & progress ---- */
+function renderHistory(){
+  const lp = levelProgress(store.xp);
+  const fmtD = t => new Date(t).toLocaleDateString('en-GB', { day:'numeric', month:'short' }) + ' ' + new Date(t).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  $('#history').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="ret">${BACK}Back</button><div class="eyebrow">Progress & history</div></div>
+    <div class="panel">
+      <div class="stat-row">
+        <div class="stat"><b>${lp.L}</b><span>level</span></div>
+        <div class="stat"><b>${store.xp}</b><span>total XP</span></div>
+        <div class="stat"><b>${store.bestStreak}</b><span>best streak</span></div>
+      </div>
+      <div class="muted small" style="text-align:center">${store.answered || 0} answers so far</div>
+      ${['G', 'V'].map(x => `<div class="sec-title">${THEME[x].name} (your last 20 answers on each)</div>
+      <div class="list">${secPoints(x).map(p => { const a = recentAcc(p.id); return `<div class="li"><span><b>${p.code}</b> ${esc(p.title)}</span><span>${starsHtml(mastery(p.id))} <span class="muted small">${a === null ? '–' : Math.round(a * 100) + '%'}</span></span></div>`; }).join('')}</div>`).join('')}
+      <div class="sec-title">Past sessions</div>
+      <div class="list">${store.history.length ? store.history.map(h => `<div class="li"><span>${fmtD(h.end)} · ${h.games} game${h.games === 1 ? '' : 's'}</span><b>${h.c}/${h.t} · ${pct(h.c, h.t)}%</b></div>`).join('') : '<div class="muted small">Finished sessions appear here. Open the session report and tap “Finish this session”.</div>'}</div>
+      <div class="muted small" style="margin-top:14px">Everything is saved only in this browser on this phone. Nothing is sent anywhere.</div>
+    </div>
+    <div class="btn-col"><button class="btn ghost wide" data-act="reset">Reset all progress</button></div>`;
+}
+function renderHelp(){
+  $('#help').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="ret">${BACK}Back</button><div class="eyebrow">How to play</div></div>
+    <div class="panel help">
+      <h3>Grammar and vocabulary</h3><p>Choose <b>Grammar</b> (the Observatory) or <b>Vocabulary</b> (the Workshop) on the first screen. Each grammar point or vocabulary topic has five stars. Your stars come from your last 20 answers on it, so keep practising to get all five.</p>
+      <h3>The games</h3>
+      <p><b>Forge</b> – type the missing words. Short forms are fine: <i>won’t</i> and <i>will not</i> are both correct. If the first letters are given, you can type the whole word or just the missing letters.</p>
+      <p><b>Three Doors</b> – choose the right answer. Answer within 6 seconds for bonus XP.</p>
+      <p><b>Fault Line</b> – tap the wrong part of the sentence, then choose the correction.</p>
+      <p><b>Split</b> – swipe or tap each card into the right group.</p>
+      <p><b>Halves</b> – match the beginnings and endings of sentences.</p>
+      <p><b>Star Mix</b>, <b>Mixed revision</b> and <b>Weak spots</b> mix the game types together.</p>
+      <h3>Scores</h3><p>Every correct answer earns XP, with extra XP for streaks. All your games add up into one <b>session report</b> – open it from the top of any menu screen. When you finish a session, it’s saved in your history.</p>
+      <p class="muted small">Your progress is saved only on this phone, in this browser.</p>
+    </div>`;
+}
+
+let retTo = 'landing';
+const curScreen = () => { const a = $('.screen.active'); return a && a.id === 'home' ? 'home' : 'landing'; };
+function goLanding(){ applyTheme('G'); renderLanding(); show('landing'); }
+function ask(title, text, yes, fn){
+  ask.fn = fn; const o = $('#overlay');
+  o.innerHTML = `<div class="panel"><h2>${esc(title)}</h2><p class="muted">${esc(text)}</p>
+    <div class="btn-col"><button class="btn primary wide" data-act="askYes">${esc(yes)}</button><button class="btn ghost wide" data-act="closeOverlay">Cancel</button></div></div>`;
+  o.classList.add('show');
+}
+/* ===================== EVENTS ===================== */
+document.addEventListener('pointerdown', () => Sfx.unlock(), { once: true });
+document.addEventListener('click', ev => {
+  const el = ev.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act;
+  switch (act){
+    case 'point': Sfx.tap(); renderPoint(el.dataset.p); show('point'); break;
+    case 'start': Sfx.tap(); startRound(el.dataset.p, el.dataset.mode); break;
+    case 'home': renderHome(); show('home'); break;
+    case 'landing': goLanding(); break;
+    case 'section': Sfx.tap(); setSection(el.dataset.s); renderHome(); show('home'); break;
+    case 'ret': if (retTo === 'home') { renderHome(); show('home'); } else goLanding(); break;
+    case 'mute': store.muted = !store.muted; save(); el.innerHTML = MUTE_ICON(store.muted); if (!store.muted) Sfx.correct(); break;
+    case 'opt': chooseOpt(el); break;
+    case 'chunk': chooseChunk(el); break;
+    case 'fix': chooseFix(el); break;
+    case 'bin': chooseBin(+el.dataset.bin); break;
+    case 'ml': matchTap('l', el); break;
+    case 'mr': matchTap('r', el); break;
+    case 'next': next(); break;
+    case 'why': { const r = $('.fb-rule'); if (r) r.classList.remove('hide-rule'); el.remove(); break; }
+    case 'again': startRound(G.p, G.mode); break;
+    case 'quit':
+      if (G && G.t > 0){ const s = ensureSession(); s.rounds.push({ p: G.p, mode: G.mode, c: G.c, t: G.t, xp: G.xp, by: G.by, at: Date.now(), sec: SEC }); s.xp += G.xp; save(); }
+      { const back = G && PT[G.p] ? G.p : null; G = null;
+        if (back){ renderPoint(back); show('point'); } else { renderHome(); show('home'); } }
+      break;
+    case 'report': retTo = curScreen(); renderReport(); show('report'); break;
+    case 'endSession': ask('Finish this session?', 'It will be saved in your history and a new session will start.', 'Finish session', endSession); break;
+    case 'history': retTo = curScreen(); renderHistory(); show('history'); break;
+    case 'help': retTo = curScreen(); renderHelp(); show('help'); break;
+    case 'reset':
+      ask('Reset ALL progress?', 'Your XP, stars and history on this phone will be deleted. This cannot be undone.', 'Delete everything', () => {
+        const m = store.muted; store = freshStore(); store.muted = m; save(); goLanding(); toast('Progress reset');
+      });
+      break;
+    case 'askYes': { const fn = ask.fn; ask.fn = null; $('#overlay').classList.remove('show'); if (fn) fn(); break; }
+    case 'closeOverlay': $('#overlay').classList.remove('show'); break;
+  }
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key !== 'Enter' || !$('#game').classList.contains('active')) return;
+  const nb = $('#nextBtn'); if (nb && document.activeElement !== nb){ ev.preventDefault(); nb.click(); }
+});
+
+/* ===================== BOOT ===================== */
+renderLanding(); document.body.dataset.theme = 'sky';
+(function loadThree(){
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  s.async = true; s.onload = () => Sky.init();
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
