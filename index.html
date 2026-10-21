@@ -224,6 +224,20 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
 .back-row .back-btn{min-height:44px}
 .back-btn svg{width:18px;height:18px;flex:none}
 @media (min-width:520px){ .pgrid{grid-template-columns:1fr} .top h1{font-size:2.2rem} }
+/* ---------- mistakes book ---------- */
+.foot{flex-wrap:wrap}
+.book-link{justify-content:space-between;margin:-6px 0 18px;min-height:46px}
+.bk-count{min-width:26px;padding:1px 9px;border-radius:999px;background:rgba(246,200,107,.16);color:var(--gold2);font-weight:800;text-align:center}
+.bk-point{margin:16px 2px 6px;font-weight:700}
+.bk-point b{color:var(--gold2)}
+.bk-item,.rv-item{padding:10px 12px;border-radius:10px;background:var(--panel2);margin-bottom:6px;font-size:.95rem;line-height:1.4}
+.bk-s,.rv-s{font-weight:700;font-size:1.02rem}
+.bk-s mark,.rv-s mark{background:none;color:var(--gold2);border-bottom:2px solid var(--gold);padding:0 2px}
+.bk-rule{margin:4px 0;font-size:.9rem}
+.bk-rule summary{cursor:pointer;color:var(--muted);font-weight:800}
+.rv-head{font-size:1.15rem;margin:2px 0 10px}
+.rv-head b{color:var(--gold2)}
+.bk-text{width:100%;margin-top:8px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:.8rem/1.4 ui-monospace,Menlo,Consolas,monospace;padding:8px}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
@@ -246,6 +260,7 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
   <section id="report" class="screen"></section>
   <section id="history" class="screen"></section>
   <section id="help" class="screen"></section>
+  <section id="book" class="screen"></section>
 </div>
 <div class="overlay" id="overlay"></div>
 <div id="toast"></div>
@@ -1796,6 +1811,7 @@ m('P4','The pharmacist gave me some ___ for my cough.',['medicine','receipt','sy
 [['g',GAP],['m',MC],['f',FAULT]].forEach(([k,arr]) => { const c = {}; arr.forEach(it => { c[it.p] = (c[it.p]||0)+1; it.id = it.p + k + c[it.p]; it.k = k; }); });
 POINTS.forEach(p => { p.sec = 'G'; p.code = p.id; }); VPOINTS.forEach(p => { p.sec = 'V'; });
 const ALLP = [...POINTS, ...VPOINTS];
+const ITEM_BY_ID = {}; [...GAP, ...MC, ...FAULT].forEach(it => { ITEM_BY_ID[it.id] = it; });
 
 /* ===================== UTILITIES ===================== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1810,7 +1826,7 @@ const pct = (c, t) => t ? Math.round(100 * c / t) : 0;
 
 /* ===================== STORAGE (this device only) ===================== */
 const KEY = 'grammarObservatory.v1';
-function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null }; }
+function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null, book:{}, cleared:0 }; }
 let store = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(freshStore(), s); } catch (e) {} return freshStore(); })();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 let SEC = store.lastSec === 'V' ? 'V' : 'G';
@@ -2166,9 +2182,13 @@ function buildQueue(p, mode){
   if (mode === 'sort'){ const cards = []; sortsFor(p).forEach(s => s.cards.forEach((c, i) => cards.push({ k:'s', set:s, card:c, id:s.id + '#' + i }))); return leastSeen(cards, 10, x => x.id); }
   if (mode === 'match') return leastSeen(matchesFor(p), 2, x => x.id).map(b => ({ k:'x', board:b, id:b.id }));
   if (mode === 'all') return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = leastSeen(mixPool(pt.id), 1, x => x.id)[0]; return { k: it.k, it }; }));
+  if (mode === 'book') return buildReview(SEC);
   if (mode === 'weak'){
+    // the questions this student has actually missed come first, then new ones from the 3 weakest points
+    const mine = bookItems(SEC, 4), have = new Set(mine.map(bkKey));
     const pts = shuffle(secPoints().filter(x => mixPool(x.id).length).map(x => x.id)).sort((a, b) => weakScore(a) - weakScore(b)).slice(0, 3);
-    return leastSeen(pts.flatMap(mixPool), 10, x => x.id).map(it => ({ k: it.k, it }));
+    const fill = leastSeen(pts.flatMap(mixPool).filter(it => !have.has(it.id)), 10 - mine.length, x => x.id).map(it => ({ k: it.k, it }));
+    return shuffle([...mine, ...fill]);
   }
   return [];
 }
@@ -2234,7 +2254,7 @@ function renderLanding(){
         <span class="muted small">12 topics · ${secStars('V')} / 60 gears</span></span>
       </button>
     </div>
-    <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
+    <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="book">My mistakes${bookCount() ? ' (' + bookCount() + ')' : ''}</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
   animBar('#landing');
 }
 function renderHome(){
@@ -2257,6 +2277,7 @@ function renderHome(){
       <button class="btn primary" data-act="start" data-p="ALL" data-mode="all"><span>Mixed revision</span><span class="small" style="font-weight:700">all 12 ${SEC === 'V' ? 'topics' : 'points'}</span></button>
       <button class="btn ghost" data-act="start" data-p="WEAK" data-mode="weak"><span>Weak spots</span><span class="small muted" style="font-weight:700">your lowest 3</span></button>
     </div>
+    <button class="btn ghost wide book-link" data-act="book"><span>My mistakes book</span><span class="bk-count">${bookCount(SEC)}</span></button>
     ${units}
     <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
 }
@@ -2287,9 +2308,10 @@ function startRound(p, mode){
   ensureSession();
   const q = buildQueue(p, mode);
   if (!q.length) return;
-  const total = q.reduce((a, e) => a + (e.k === 'x' ? e.board.pairs.length : 1), 0);
-  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], lvlBefore: levelOf(store.xp), locked: false };
-  const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
+  const total = q.reduce((a, e) => a + (e.k === 'r' ? 0 : e.k === 'x' ? e.board.pairs.length : 1), 0);
+  if (!total) return;
+  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], cur: null, missKey: null, lvlBefore: levelOf(store.xp), locked: false };
+  const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : p === 'BOOK' ? 'Mistakes review · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
   $('#hudTitle').textContent = label;
   show('game'); Sky.setRound(total); updateHud(); renderItem();
 }
@@ -2302,6 +2324,7 @@ function award(ok, p, base, bonus = 0, quiet = false){
   const s = store.stats[p] || (store.stats[p] = { r: [], n: 0, c: 0 });
   s.r.push(ok ? 1 : 0); if (s.r.length > 20) s.r.shift(); s.n++; if (ok) s.c++;
   store.answered = (store.answered || 0) + 1;
+  if (G.cur && G.cur.k !== 'x' && G.cur.k !== 'r'){ if (ok) bookHit(G.cur); else G.missKey = bookMiss(G.cur); }
   const b = G.by[p] || (G.by[p] = [0, 0]); b[1]++; G.t++;
   let gained = 0;
   if (ok){
@@ -2322,8 +2345,8 @@ function renderItem(){
   G.locked = false;
   const e = G.q[G.qi];
   if (!e) return endRound();
-  G.t0 = Date.now();
-  ({ g: renderGap, m: renderMC, f: renderFault, s: renderSort, x: renderMatch })[e.k](e);
+  G.t0 = Date.now(); G.cur = e;
+  ({ g: renderGap, m: renderMC, f: renderFault, s: renderSort, x: renderMatch, r: renderReview })[e.k](e);
 }
 const isLastItem = () => G.qi >= G.q.length - 1;
 function fillSentence(text, ans){
@@ -2343,6 +2366,7 @@ function feedback(ok, o){
     <div class="fb-actions">${ok && ruleText(o.rule) ? '<button class="btn ghost small" data-act="why">Why?</button>' : ''}<button class="btn primary" data-act="next" id="nextBtn">${isLastItem() ? 'Finish' : 'Next'}</button></div>
   </div>`;
   if (!ok && o.sent) G.mistakes.push({ sent: o.sent, your: o.your || '' });
+  if (!ok && G.missKey) bookFill(o);
   setTimeout(() => { fb.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 30);
 }
 
@@ -2496,14 +2520,161 @@ function matchTap(side, btn){
     [lb, rb].forEach(x => { x.classList.remove('sel'); x.classList.add('done'); x.disabled = true; });
     rb.querySelector('.pn').textContent = L + 1;
     const first = !M.missed.has(L);
+    if (first) bookHitPair(M.b, L);
     award(first, M.b.p, 10, 0, !first);
     if (!first) Sfx.tap();
     if (M.done.size === M.b.pairs.length){ G.locked = true; setTimeout(next, 750); }
   } else {
-    M.missed.add(L); Sfx.wrong();
+    M.missed.add(L); Sfx.wrong(); bookMissPair(M.b, L, Rr);
     [lb, rb].forEach(x => { x.classList.remove('sel'); x.classList.add('err'); setTimeout(() => x.classList.remove('err'), 400); });
     G.mistakes.push({ sent: esc(M.b.pairs[L][0]) + ' <mark>' + esc(M.b.pairs[L][1]) + '</mark>', your: M.b.pairs[Rr][1] });
   }
+}
+
+/* ===================== MISTAKES BOOK =====================
+   Every wrong answer is kept (store.book), one entry per question, until the student has answered that
+   question correctly BOOK_CLEAR times in a row (in review or in normal play). An entry stores the question's
+   id and a signature of its text, so if the item bank is edited later a changed question is dropped instead of
+   being shown wrongly. Entries: { key, k (g m f s x), p (point), sec, n (misses), ok (correct in a row),
+   first, last, sig, h (sentence as html, correct answer marked), y (what they wrote), r (rule key) }. */
+const BOOK_CLEAR = 2;
+const splitKey = k => { const j = k.lastIndexOf('#'); return [k.slice(0, j), +k.slice(j + 1)]; };
+const bkKey = e => e.k === 's' ? e.id : e.it.id;
+const bkPoint = e => e.k === 's' ? e.card[2] : e.it.p;
+const bkSig = e => e.k === 's' ? e.card[0] + '|' + e.set.id : e.k === 'f' ? e.it.c.join('|') : e.it.t;
+function bookDrop(b){ delete store.book[b.key]; store.cleared = (store.cleared || 0) + 1; }
+function bookMiss(e){
+  const key = bkKey(e), p = bkPoint(e);
+  const b = store.book[key] || (store.book[key] = { key, k: e.k, p, sec: PT[p].sec, n: 0, ok: 0, first: Date.now() });
+  b.n++; b.ok = 0; b.last = Date.now(); b.sig = bkSig(e); return key;
+}
+function bookHit(e){ const b = store.book[bkKey(e)]; if (b && ++b.ok >= BOOK_CLEAR) bookDrop(b); }
+function bookFill(o){
+  const b = store.book[G.missKey]; G.missKey = null; if (!b) return;
+  b.h = o.sent || b.h || ''; b.y = o.your || ''; b.r = o.rule || ''; save();
+}
+function bookMissPair(board, L, R){
+  const key = board.id + '#' + L, p = board.p;
+  const b = store.book[key] || (store.book[key] = { key, k: 'x', p, sec: PT[p].sec, n: 0, ok: 0, first: Date.now() });
+  b.n++; b.ok = 0; b.last = Date.now(); b.sig = board.pairs[L].join('|');
+  b.h = esc(board.pairs[L][0]) + ' <mark>' + esc(board.pairs[L][1]) + '</mark>'; b.y = board.pairs[R][1]; b.r = p === '8B' ? 'c_match' : ''; save();
+}
+function bookHitPair(board, L){ const b = store.book[board.id + '#' + L]; if (b && ++b.ok >= BOOK_CLEAR) bookDrop(b); save(); }
+const bookCount = sec => Object.values(store.book).filter(b => !sec || b.sec === sec).length;
+
+/* turn a stored entry back into a playable queue entry, or null if the question has changed or gone */
+function bookResolve(b){
+  if (b.k === 'x'){
+    const [bid, L] = splitKey(b.key), bd = MATCHES.find(x => x.id === bid);
+    return bd && bd.pairs[L] && bd.pairs[L].join('|') === b.sig ? { k: 'x', board: bd, id: bd.id } : null;
+  }
+  if (b.k === 's'){
+    const [sid, i] = splitKey(b.key), s = SORTS.find(x => x.id === sid), c = s && s.cards[i];
+    return c && c[0] + '|' + s.id === b.sig ? { k: 's', set: s, card: c, id: b.key } : null;
+  }
+  const it = ITEM_BY_ID[b.key];
+  return it && (it.k === 'f' ? it.c.join('|') : it.t) === b.sig ? { k: it.k, it } : null;
+}
+/* up to n of this section's most-missed playable questions (not match boards) */
+function bookItems(sec, n){
+  return Object.values(store.book).filter(b => b.sec === sec && b.k !== 'x').sort((a, c) => c.n - a.n || a.last - c.last)
+    .map(bookResolve).filter(Boolean).slice(0, n);
+}
+/* a review round: for the 3 points with most misses, a rule card, the missed questions again, then 2 new ones */
+function buildReview(sec){
+  const live = [];
+  Object.values(store.book).forEach(b => { if (b.sec !== sec) return; const r = bookResolve(b); if (r) live.push({ b, r }); else delete store.book[b.key]; });
+  save();
+  const byP = {}; live.forEach(x => (byP[x.b.p] = byP[x.b.p] || []).push(x));
+  const pts = Object.keys(byP).sort((a, c) => byP[c].reduce((s, x) => s + x.b.n, 0) - byP[a].reduce((s, x) => s + x.b.n, 0)).slice(0, 3);
+  const q = [];
+  pts.forEach(p => {
+    const rows = byP[p].sort((a, c) => c.b.n - a.b.n || a.b.last - c.b.last).slice(0, 4), boards = new Set();
+    q.push({ k: 'r', p, rows: rows.map(x => x.b) });
+    rows.forEach(x => { if (x.r.k === 'x'){ if (boards.has(x.r.id)) return; boards.add(x.r.id); } q.push(x.r); });
+    leastSeen(mixPool(p).filter(it => !store.book[it.id]), 2, x => x.id).forEach(it => q.push({ k: it.k, it }));
+  });
+  return q;
+}
+function renderReview(e){
+  const P = PT[e.p];
+  stage().innerHTML = `
+    <div class="ins">Review: read these, then try them again</div>
+    <div class="rv-head"><b>${P.code}</b> ${esc(P.title)}</div>
+    ${e.rows.map(b => `<div class="rv-item"><div class="rv-s">${b.h || ''}</div>${b.y ? `<div class="fb-your">You wrote: <s>${esc(b.y)}</s></div>` : ''}</div>`).join('')}
+    ${[...new Set(e.rows.map(b => ruleText(b.r)).filter(Boolean))].map(r => `<div class="fb-rule" style="margin-top:8px">${esc(r)}</div>`).join('')}
+    <button class="btn primary wide" id="nextBtn" data-act="next" style="margin-top:12px">Try again</button>`;
+}
+
+/* ---- the book screen and the text export ---- */
+const plain = h => { const d = document.createElement('div'); d.innerHTML = String(h).replace(/<br\s*\/?>/g, ' '); return d.textContent.replace(/\s+/g, ' ').trim(); };
+const fmtDay = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+function bookGroups(sec){
+  const out = [];
+  secPoints(sec).forEach(p => {
+    const rows = Object.values(store.book).filter(b => b.p === p.id).sort((a, c) => c.last - a.last);
+    if (rows.length) out.push({ p, rows });
+  });
+  return out;
+}
+function bookText(){
+  const d = new Date(), L = [];
+  L.push('ENGLISH FILE PRE-INTERMEDIATE · UNITS 5–8 REVISION', 'My mistakes book', 'Saved: ' + fmtDay(d) + ', ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    'Questions to review: ' + bookCount() + '    Fixed so far: ' + (store.cleared || 0), '');
+  ['G', 'V'].forEach(sec => {
+    const gs = bookGroups(sec); if (!gs.length) return;
+    L.push(THEME[sec].name.toUpperCase(), '='.repeat(THEME[sec].name.length), '');
+    gs.forEach(({ p, rows }) => {
+      L.push(`${p.code} ${p.title} (${rows.length})`, '-'.repeat(p.code.length + p.title.length + String(rows.length).length + 4));
+      rows.forEach((b, i) => {
+        L.push(`${i + 1}. ${plain(b.h || '')}`);
+        if (b.y) L.push(`   You wrote: ${b.y}`);
+        if (ruleText(b.r)) L.push(`   Rule: ${ruleText(b.r)}`);
+        L.push(`   Missed ${b.n} time${b.n === 1 ? '' : 's'}; last on ${fmtDay(b.last)}.`, '');
+      });
+    });
+  });
+  if (!bookCount()) L.push('No mistakes to review. Well done!');
+  return L.join('\r\n');
+}
+function saveText(name, text){
+  const a = document.createElement('a'), url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function copyText(text){
+  const done = () => toast('Copied. Paste it into a notes app.');
+  const old = () => { const t = document.createElement('textarea'); t.value = text; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); done(); } catch (e) { toast('Could not copy. Open “Show the text” and copy it by hand.'); } t.remove(); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, old); else old();
+}
+function renderBook(){
+  const n = bookCount(), cleared = store.cleared || 0;
+  const sect = sec => {
+    const gs = bookGroups(sec), c = bookCount(sec); if (!c) return '';
+    return `<div class="sec-title">${THEME[sec].name} · ${c} to review</div>
+      <button class="btn primary wide" data-act="bookReview" data-s="${sec}">Review my ${THEME[sec].name.toLowerCase()} mistakes</button>
+      ${gs.map(({ p, rows }) => `<div class="bk-point"><b>${p.code}</b> ${esc(p.title)} <span class="muted small">(${rows.length})</span></div>
+        ${rows.map(b => `<div class="bk-item"><div class="bk-s">${b.h || ''}</div>${b.y ? `<div class="fb-your">You wrote: <s>${esc(b.y)}</s></div>` : ''}
+          ${ruleText(b.r) ? `<details class="bk-rule"><summary>Rule</summary>${esc(ruleText(b.r))}</details>` : ''}
+          <div class="muted small">Missed ${b.n} time${b.n === 1 ? '' : 's'} · last ${fmtDay(b.last)}</div></div>`).join('')}`).join('')}`;
+  };
+  $('#book').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="ret">${BACK}Back</button><div class="eyebrow">My mistakes book</div></div>
+    <div class="panel">
+      <div class="stat-row" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><b>${n}</b><span>to review</span></div>
+        <div class="stat"><b>${cleared}</b><span>fixed so far</span></div>
+      </div>
+      <div class="muted small">Every question you get wrong is saved here. Get it right ${BOOK_CLEAR} times in a row and it leaves the book.</div>
+      ${n ? sect('G') + sect('V') + `
+      <div class="sec-title">Keep a copy</div>
+      <div class="btn-col" style="margin-top:6px">
+        <button class="btn ghost wide" data-act="bookSave">Save as a text file</button>
+        <button class="btn ghost wide" data-act="bookCopy">Copy the text</button>
+      </div>
+      <details class="rev" style="margin-top:10px"><summary>Show the text</summary><textarea class="bk-text" readonly rows="10"></textarea></details>
+      <div class="muted small" style="margin-top:8px">The book is saved only in this browser. If you clear your browser data or change phone it is lost, so save a text file if you want to keep it.</div>` : '<div class="muted" style="margin-top:14px;text-align:center">Nothing to review right now. Mistakes you make will appear here.</div>'}
+    </div>`;
+  const ta = $('#book .bk-text'); if (ta) ta.value = bookText();
 }
 
 /* ---- end of round ---- */
@@ -2522,7 +2693,7 @@ function endRound(){
 function renderResult(){
   const p = pct(G.c, G.t), lp = levelProgress(store.xp);
   const msg = p === 100 ? THEME[SEC].perfect : p >= 80 ? 'Brilliant work!' : p >= 60 ? 'Good – just a few mistakes left.' : 'Keep practising – you\u2019ll get there.';
-  const title = G.p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : G.p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : `${PT[G.p].code} ${PT[G.p].title} · ${MODES[G.mode].name}`;
+  const title = G.p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : G.p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : G.p === 'BOOK' ? 'Mistakes review · ' + THEME[SEC].name : `${PT[G.p].code} ${PT[G.p].title} · ${MODES[G.mode].name}`;
   $('#result').innerHTML = `
     <div class="panel result">
       <div class="eyebrow">${esc(title)}</div>
@@ -2537,6 +2708,7 @@ function renderResult(){
       <div class="btn-col">
         <button class="btn primary wide" data-act="again">Play again</button>
         ${PT[G.p] ? `<button class="btn ghost wide" data-act="point" data-p="${G.p}">Choose another game for ${PT[G.p] ? PT[G.p].code : ''}</button>` : ''}
+        ${bookCount() ? `<button class="btn ghost wide" data-act="book">My mistakes book (${bookCount()})</button>` : ''}
         <button class="btn ghost wide" data-act="home">${THEME[SEC].back}</button>
       </div>
     </div>`;
@@ -2575,7 +2747,7 @@ function renderReport(){
       ${vT[1] ? `<div class="sec-title">Vocabulary · ${vT[0]}/${vT[1]} · ${pct(vT[0], vT[1])}%</div><div class="bars">${barsHtml(st.by, 'V')}</div>` : ''}
       ${weak.length ? `<div class="sec-title">Focus on</div><div class="focus-chips">${weak.map(x => `<span class="chip">${x.sec === 'V' ? 'Vocab ' : 'Grammar '}${x.code} ${esc(x.title)}</span>`).join('')}</div>` : ''}
       <div class="sec-title">Games played</div>
-      <div class="list">${s ? s.rounds.map(r => `<div class="li"><span>${r.p === 'ALL' || r.p === 'WEAK' ? (r.p === 'ALL' ? 'Mixed revision' : 'Weak spots') + ' · ' + THEME[r.sec || 'G'].name : (PT[r.p].sec === 'V' ? 'Vocab ' : 'Grammar ') + PT[r.p].code + ' · ' + MODES[r.mode].name}</span><b>${r.c}/${r.t}</b></div>`).join('') : ''}</div>
+      <div class="list">${s ? s.rounds.map(r => `<div class="li"><span>${PT[r.p] ? (PT[r.p].sec === 'V' ? 'Vocab ' : 'Grammar ') + PT[r.p].code + ' · ' + MODES[r.mode].name : ({ ALL: 'Mixed revision', WEAK: 'Weak spots', BOOK: 'Mistakes review' })[r.p] + ' · ' + THEME[r.sec || 'G'].name}</span><b>${r.c}/${r.t}</b></div>`).join('') : ''}</div>
       <div class="stamp">Level ${levelOf(store.xp)} ${levelName(levelOf(store.xp))} · ${d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' })} ${d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}</div>
     </div>
     <div class="btn-col">
@@ -2622,6 +2794,7 @@ function renderHelp(){
       <p><b>Split</b> – swipe or tap each card into the right group.</p>
       <p><b>Halves</b> – match the beginnings and endings of sentences.</p>
       <p><b>Star Mix</b>, <b>Mixed revision</b> and <b>Weak spots</b> mix the game types together.</p>
+      <h3>My mistakes book</h3><p>Every question you get wrong is saved in <b>My mistakes</b>, with the rule. Open it from the menu to review them: you see what you wrote, the right answer and the rule, try the questions again, and get a few new questions on the same point. Get a question right twice in a row and it leaves the book. You can save the book as a text file or copy it into a notes app.</p>
       <h3>Scores</h3><p>Every correct answer earns XP, with extra XP for streaks. All your games add up into one <b>session report</b> – open it from the top of any menu screen. When you finish a session, it’s saved in your history.</p>
       <p class="muted small">Your progress is saved only on this phone, in this browser.</p>
     </div>`;
@@ -2668,11 +2841,15 @@ document.addEventListener('click', ev => {
     case 'history': retTo = curScreen(); renderHistory(); show('history'); break;
     case 'help': retTo = curScreen(); renderHelp(); show('help'); break;
     case 'reset':
-      ask('Reset ALL progress?', 'Your XP, stars and history on this phone will be deleted. This cannot be undone.', 'Delete everything', () => {
+      ask('Reset ALL progress?', 'Your XP, stars, mistakes book and history on this phone will be deleted. This cannot be undone.', 'Delete everything', () => {
         const m = store.muted; store = freshStore(); store.muted = m; save(); goLanding(); toast('Progress reset');
       });
       break;
     case 'askYes': { const fn = ask.fn; ask.fn = null; $('#overlay').classList.remove('show'); if (fn) fn(); break; }
+    case 'book': retTo = curScreen(); Sfx.tap(); renderBook(); show('book'); break;
+    case 'bookReview': { const sec = el.dataset.s; if (!bookCount(sec)){ toast('Nothing to review here yet'); break; } if (SEC !== sec) setSection(sec); Sfx.tap(); startRound('BOOK', 'book'); break; }
+    case 'bookSave': saveText('my-mistakes-' + new Date().toISOString().slice(0, 10) + '.txt', bookText()); break;
+    case 'bookCopy': copyText(bookText()); break;
     case 'closeOverlay': $('#overlay').classList.remove('show'); break;
   }
 });
