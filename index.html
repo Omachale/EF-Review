@@ -238,6 +238,16 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
 .rv-head{font-size:1.15rem;margin:2px 0 10px}
 .rv-head b{color:var(--gold2)}
 .bk-text{width:100%;margin-top:8px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:.8rem/1.4 ui-monospace,Menlo,Consolas,monospace;padding:8px}
+/* ---------- share with teacher ---------- */
+.share-link{justify-content:space-between;margin:-6px 0 14px;min-height:46px}
+.share-state{padding:10px 12px;border-radius:10px;background:var(--panel2);margin-bottom:6px}
+.share-state.on{background:rgba(95,224,181,.12);color:var(--teal)}
+.help ul.notice{margin:.2em 0 .9em;padding-left:1.3em}
+.help ul.notice li{margin:.15em 0}
+.help a{color:var(--gold2)}
+.share-lab{display:block;font-weight:800;margin:14px 0 6px}
+.share-in{width:100%;height:50px;border-radius:14px;border:2px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:1.05rem;font-weight:700;padding:0 14px;outline:none}
+.share-in:focus{border-color:var(--gold)}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
@@ -261,6 +271,7 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
   <section id="history" class="screen"></section>
   <section id="help" class="screen"></section>
   <section id="book" class="screen"></section>
+  <section id="share" class="screen"></section>
 </div>
 <div class="overlay" id="overlay"></div>
 <div id="toast"></div>
@@ -1865,7 +1876,7 @@ const pct = (c, t) => t ? Math.round(100 * c / t) : 0;
 
 /* ===================== STORAGE (this device only) ===================== */
 const KEY = 'grammarObservatory.v1';
-function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null, book:{}, cleared:0 }; }
+function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0, stats:{}, seen:{}, history:[], session:null, book:{}, cleared:0, share:{ on:false, name:'' }, outbox:[] }; }
 let store = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(freshStore(), s); } catch (e) {} return freshStore(); })();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 let SEC = store.lastSec === 'V' ? 'V' : 'G';
@@ -2311,6 +2322,7 @@ function renderLanding(){
         <span class="muted small">12 topics · ${secStars('V')} / 60 gears</span></span>
       </button>
     </div>
+    ${SHARE_URL ? `<button class="btn ghost wide share-link" data-act="share"><span>Share results with my teacher</span><span class="bk-count">${sharing() ? 'On' : 'Off'}</span></button>` : ''}
     <nav class="foot"><button class="btn ghost small" data-act="history">Progress & history</button><button class="btn ghost small" data-act="book">My mistakes${bookCount() ? ' (' + bookCount() + ')' : ''}</button><button class="btn ghost small" data-act="help">How to play</button></nav>`;
   animBar('#landing');
 }
@@ -2367,7 +2379,7 @@ function startRound(p, mode){
   if (!q.length){ toast('Nothing to practise here yet'); return; }
   const total = q.reduce((a, e) => a + (e.k === 'r' ? 0 : e.k === 'x' ? e.board.pairs.length : 1), 0);
   if (!total){ toast('Nothing to practise here yet'); return; }
-  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], cur: null, missKey: null, lvlBefore: levelOf(store.xp), locked: false };
+  G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], cur: null, missKey: null, start: Date.now(), lvlBefore: levelOf(store.xp), locked: false };
   const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : p === 'BOOK' ? 'Mistakes review · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
   $('#hudTitle').textContent = label;
   show('game'); Sky.setRound(total); updateHud(); renderItem();
@@ -2422,7 +2434,7 @@ function feedback(ok, o){
     ${ruleText(o.rule) ? `<div class="fb-rule ${ok ? 'hide-rule' : ''}">${esc(ruleText(o.rule))}</div>` : ''}
     <div class="fb-actions">${ok && ruleText(o.rule) ? '<button class="btn ghost small" data-act="why">Why?</button>' : ''}<button class="btn primary" data-act="next" id="nextBtn">${isLastItem() ? 'Finish' : 'Next'}</button></div>
   </div>`;
-  if (!ok && o.sent) G.mistakes.push({ sent: o.sent, your: o.your || '' });
+  if (!ok && o.sent) G.mistakes.push({ sent: o.sent, your: o.your || '', p: G.cur && G.cur.k !== 'r' && G.cur.k !== 'x' ? bkPoint(G.cur) : '' });
   if (!ok && G.missKey) bookFill(o);
   setTimeout(() => { fb.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 30);
 }
@@ -2584,7 +2596,7 @@ function matchTap(side, btn){
   } else {
     M.missed.add(L); Sfx.wrong(); bookMissPair(M.b, L, Rr);
     [lb, rb].forEach(x => { x.classList.remove('sel'); x.classList.add('err'); setTimeout(() => x.classList.remove('err'), 400); });
-    G.mistakes.push({ sent: esc(M.b.pairs[L][0]) + ' <mark>' + esc(M.b.pairs[L][1]) + '</mark>', your: M.b.pairs[Rr][1] });
+    G.mistakes.push({ sent: esc(M.b.pairs[L][0]) + ' <mark>' + esc(M.b.pairs[L][1]) + '</mark>', your: M.b.pairs[Rr][1], p: M.b.p });
   }
 }
 
@@ -2734,10 +2746,74 @@ function renderBook(){
   const ta = $('#book .bk-text'); if (ta) ta.value = bookText();
 }
 
+/* ===================== SHARE WITH MY TEACHER (opt-in) =====================
+   Off unless the student turns it on and types a name. Then, after each game, one small message goes to
+   the teacher's Google Sheet (teacher-sheet/Code.gs): the name, section, topic, game, score, seconds taken,
+   the time the session started, and the wrong answers. Nothing else is sent (no device details, no ids).
+   Messages wait in store.outbox until they get through, so results played offline arrive later.
+   SHARE_URL is the Sheet's web-app address; while it is empty the whole feature is hidden. */
+const SHARE_URL = '';
+const SHARE_KEEP = 'about 6 months';   // must match KEEP_DAYS in teacher-sheet/Code.gs
+const sharing = () => !!(SHARE_URL && store.share && store.share.on && store.share.name);
+function shareRound(){
+  if (!sharing() || !G || !G.t) return;
+  const P = PT[G.p];
+  store.outbox.push({ v: 1, name: store.share.name, sec: THEME[SEC].name, topic: P ? P.code : 'Mixed',
+    title: P ? P.title : ({ ALL: 'Mixed revision', WEAK: 'Weak spots', BOOK: 'Mistakes review' })[G.p] || '',
+    mode: P ? MODES[G.mode].name : '', c: G.c, t: G.t, secs: Math.round((Date.now() - G.start) / 1000),
+    session: store.session ? store.session.start : 0,
+    mistakes: G.mistakes.map(m => ({ p: m.p ? PT[m.p].code : '', q: plain(m.sent), a: m.your || '' })) });
+  store.outbox = store.outbox.slice(-200); save(); flushOutbox();
+}
+async function flushOutbox(){
+  if (flushOutbox.busy || !SHARE_URL || !store.outbox.length) return;
+  flushOutbox.busy = true;
+  try {
+    while (store.outbox.length && sharing()){
+      // text/plain + no-cors: the only way a static page can post to Apps Script; the reply can't be read,
+      // so a message counts as sent when the network accepts it
+      await fetch(SHARE_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(store.outbox[0]) });
+      store.outbox.shift(); save();
+    }
+  } catch (e) { /* offline: try again after the next game or next time the app opens */ }
+  flushOutbox.busy = false;
+}
+const SHARE_NOTICE = () => `
+  <p>This is <b>optional</b>. Nothing is sent unless you turn it on.</p>
+  <p><b>If you turn it on</b>, after each game this app sends your teacher:</p>
+  <ul class="notice">
+    <li>the name you type below (a nickname is fine)</li>
+    <li>the topic and game, your score, and how long the game took</li>
+    <li>the questions you got wrong, with your answers</li>
+    <li>the time your session started</li>
+  </ul>
+  <p><b>It does not send</b> anything else from your phone: no email, no contacts, no location, no device or account details. The app does not record your IP address. (Like every website, Google’s computers see it when the results arrive, as part of normal internet traffic.)</p>
+  <p><b>Where it goes:</b> a Google Sheet that only your teacher can open. Google stores the Sheet, so <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google’s privacy policy</a> also applies.</p>
+  <p><b>Why:</b> so your teacher can help you, see how much the app is used, and see which topics people find hardest.</p>
+  <p><b>How long:</b> results are deleted automatically after ${SHARE_KEEP}.</p>
+  <p><b>Stopping:</b> you can turn this off at any time. That stops new results being sent. Results already sent stay in the Sheet until they are deleted automatically, or until your teacher deletes them if you ask.</p>`;
+function renderShare(){
+  const S = store.share || {}, on = sharing(), wait = store.outbox.length;
+  $('#share').innerHTML = `
+    <div class="back-row"><button class="btn ghost small back-btn" data-act="ret">${BACK}Back</button><div class="eyebrow">Share with my teacher</div></div>
+    <div class="panel help">
+      <div class="share-state ${on ? 'on' : ''}">${on ? `Sharing is <b>on</b>, as “${esc(S.name)}”.` : 'Sharing is <b>off</b>.'}</div>
+      ${SHARE_NOTICE()}
+      <label class="share-lab" for="shareName">Your name</label>
+      <input id="shareName" class="share-in" type="text" maxlength="40" autocomplete="off" value="${esc(S.name || '')}" placeholder="Type a name">
+      <div class="btn-col">
+        <button class="btn primary wide" data-act="shareOn">${on ? 'Save name' : 'Turn on sharing'}</button>
+        ${on ? '<button class="btn ghost wide" data-act="shareOff">Turn off sharing</button>' : ''}
+      </div>
+      ${on && wait ? `<div class="muted small" style="margin-top:10px">${wait} game${wait === 1 ? '' : 's'} waiting to send. They will go when you are online.</div>` : ''}
+    </div>`;
+}
+
 /* ---- end of round ---- */
 function endRound(){
   const r = { p: G.p, mode: G.mode, c: G.c, t: G.t, xp: G.xp, by: G.by, at: Date.now(), sec: SEC };
   if (G.t > 0){ const s = ensureSession(); s.rounds.push(r); s.xp += G.xp; }
+  shareRound();
   save();
   const perfect = G.t > 0 && G.c === G.t;
   Sky.complete(perfect);
@@ -2835,7 +2911,7 @@ function renderHistory(){
       <div class="list">${secPoints(x).map(p => { const a = recentAcc(p.id); return `<div class="li"><span><b>${p.code}</b> ${esc(p.title)}</span><span>${starsHtml(mastery(p.id))} <span class="muted small">${a === null ? '–' : Math.round(a * 100) + '%'}</span></span></div>`; }).join('')}</div>`).join('')}
       <div class="sec-title">Past sessions</div>
       <div class="list">${store.history.length ? store.history.map(h => `<div class="li"><span>${fmtD(h.end)} · ${h.games} game${h.games === 1 ? '' : 's'}</span><b>${h.c}/${h.t} · ${pct(h.c, h.t)}%</b></div>`).join('') : '<div class="muted small">Finished sessions appear here. Open the session report and tap “Finish this session”.</div>'}</div>
-      <div class="muted small" style="margin-top:14px">Everything is saved only in this browser on this phone. Nothing is sent anywhere.</div>
+      <div class="muted small" style="margin-top:14px">${sharing() ? 'Your progress is saved in this browser on this phone. Because you turned on <b>Share results with my teacher</b>, each game’s score and wrong answers are also sent to your teacher, under the name you chose.' : 'Your progress is saved only in this browser on this phone. None of it is sent anywhere.'}</div>
     </div>
     <div class="btn-col"><button class="btn ghost wide" data-act="reset">Reset all progress</button></div>`;
 }
@@ -2853,7 +2929,8 @@ function renderHelp(){
       <p><b>Star Mix</b> and <b>Mixed revision</b> mix the game types together. <b>Weak spots</b> opens after your first mistake: it takes the three points you have made most mistakes on, gives you some of those questions again and adds new ones.</p>
       <h3>My mistakes book</h3><p>Every question you get wrong is saved in <b>My mistakes</b>, with the rule. Open it from the menu to review them: you see what you wrote, the right answer and the rule, try the questions again, and get a few new questions on the same point. Get a question right twice in a row and it leaves the book. You can save the book as a text file or copy it into a notes app.</p>
       <h3>Scores</h3><p>Every correct answer earns XP, with extra XP for streaks. All your games add up into one <b>session report</b> – open it from the top of any menu screen. When you finish a session, it’s saved in your history.</p>
-      <p class="muted small">Your progress is saved only on this phone, in this browser.</p>
+      <h3>Your data</h3><p>Your progress, stars and mistakes book are saved only in this browser on this phone. ${SHARE_URL ? (sharing() ? 'You have turned on <b>Share results with my teacher</b>, so each game’s score and wrong answers are also sent to your teacher, under the name you chose. You can turn this off on the first screen.' : 'Nothing is sent to your teacher unless you turn on <b>Share results with my teacher</b> on the first screen.') : 'None of it is sent anywhere.'}</p>
+      <p class="muted small">Like any website, opening this page contacts the companies that deliver it: GitHub (which hosts the page), Google Fonts (the lettering) and cdnjs by Cloudflare (the 3D sky). Their servers see your IP address as part of normal internet traffic. This app does not record it.</p>
     </div>`;
 }
 
@@ -2889,7 +2966,7 @@ document.addEventListener('click', ev => {
     case 'why': { const r = $('.fb-rule'); if (r) r.classList.remove('hide-rule'); el.remove(); break; }
     case 'again': startRound(G.p, G.mode); break;
     case 'quit':
-      if (G && G.t > 0){ const s = ensureSession(); s.rounds.push({ p: G.p, mode: G.mode, c: G.c, t: G.t, xp: G.xp, by: G.by, at: Date.now(), sec: SEC }); s.xp += G.xp; save(); }
+      if (G && G.t > 0){ const s = ensureSession(); s.rounds.push({ p: G.p, mode: G.mode, c: G.c, t: G.t, xp: G.xp, by: G.by, at: Date.now(), sec: SEC }); s.xp += G.xp; save(); shareRound(); }
       { const back = G && PT[G.p] ? G.p : null; G = null;
         if (back){ renderPoint(back); show('point'); } else { renderHome(); show('home'); } }
       break;
@@ -2907,6 +2984,10 @@ document.addEventListener('click', ev => {
     case 'bookReview': { const sec = el.dataset.s; if (!bookCount(sec)){ toast('Nothing to review here yet'); break; } if (SEC !== sec) setSection(sec); Sfx.tap(); startRound('BOOK', 'book'); break; }
     case 'bookSave': saveText('my-mistakes-' + new Date().toISOString().slice(0, 10) + '.txt', bookText()); break;
     case 'bookCopy': copyText(bookText()); break;
+    case 'share': retTo = 'landing'; Sfx.tap(); renderShare(); show('share'); break;
+    case 'shareOn': { const n = $('#shareName').value.trim().slice(0, 40); if (!n){ toast('Please type a name first'); $('#shareName').focus(); break; }
+      const was = sharing(); store.share = { on: true, name: n }; save(); toast(was ? 'Name saved' : 'Sharing is on'); renderShare(); flushOutbox(); break; }
+    case 'shareOff': store.share = { on: false, name: store.share.name }; store.outbox = []; save(); toast('Sharing is off'); renderShare(); break;
     case 'closeOverlay': $('#overlay').classList.remove('show'); break;
   }
 });
@@ -2917,6 +2998,7 @@ document.addEventListener('keydown', ev => {
 
 /* ===================== BOOT ===================== */
 renderLanding(); document.body.dataset.theme = 'sky';
+flushOutbox();
 (function loadThree(){
   const s = document.createElement('script');
   s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
