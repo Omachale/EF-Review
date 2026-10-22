@@ -1812,6 +1812,46 @@ m('P4','The pharmacist gave me some ___ for my cough.',['medicine','receipt','sy
 POINTS.forEach(p => { p.sec = 'G'; p.code = p.id; }); VPOINTS.forEach(p => { p.sec = 'V'; });
 const ALLP = [...POINTS, ...VPOINTS];
 const ITEM_BY_ID = {}; [...GAP, ...MC, ...FAULT].forEach(it => { ITEM_BY_ID[it.id] = it; });
+/* ===================== KEY WORDS (no repeats within a round) =====================
+   Each question gets the "key words" its answer depends on: the content words of the correct answer,
+   reduced to a rough stem so that bad / worse / worst, busy / busier and take / took all match.
+   Grammar words (will, should, have to, the, most, a few …) are ignored; if the answer is only grammar
+   words (e.g. "don't have to", "mine"), the next content word after the gap is used instead (the verb or
+   noun it goes with). Rounds then avoid two questions that share a key word whenever the pool allows. */
+const IRR = {better:'good',best:'good',well:'good',worse:'bad',worst:'bad',badly:'bad',
+  went:'go',gone:'go',been:'be',was:'be',were:'be',is:'be',are:'be',am:'be',saw:'see',seen:'see',ate:'eat',eaten:'eat',
+  bought:'buy',did:'do',done:'do',got:'get',gotten:'get',met:'meet',wrote:'write',written:'write',lost:'lose',found:'find',
+  taught:'teach',sold:'sell',sent:'send',won:'win',broke:'break',broken:'break',caught:'catch',lent:'lend',loaned:'lend',learnt:'learn',
+  told:'tell',said:'say',made:'make',took:'take',taken:'take',ran:'run',spent:'spend',paid:'pay',gave:'give',given:'give',came:'come',
+  felt:'feel',knew:'know',known:'know',thought:'think',left:'leave',kept:'keep',flew:'fly',brought:'bring',heard:'hear',slept:'sleep',
+  understood:'understand',began:'begin',begun:'begin',forgot:'forget',forgotten:'forget',rode:'ride',ridden:'ride',drove:'drive',driven:'drive',
+  swam:'swim',swum:'swim',read:'read',had:'have',has:'have',children:'child',people:'person',teeth:'tooth',eldest:'old',elder:'old'};
+const STOP = new Set(('the a an to of in on at for with by from and or but than as so if when that this these those there here ' +
+  'more most less least very too much many few little lot lots enough some any no not never ever always just only also ' +
+  'will would shall should must can could may might do does did have has had having be being am is are was were ' +
+  'i you he she it we they me him her us them my your his its our their mine yours hers ours theirs myself ' +
+  'one what who whose where how why which bit').split(' '));
+const words = s => String(s).toLowerCase().replace(/[‘’ʼ`]/g, "'").replace(/'ll\b/g,' will').replace(/n't\b/g,' not').replace(/'(s|re|ve|m|d)\b/g,' ').replace(/[^a-z' -]/g,' ').split(/[\s-]+/).filter(Boolean);
+function stem(w){
+  w = w.replace(/'/g, ''); if (IRR[w]) w = IRR[w];
+  if (w === 'won') return 'win';
+  for (const [suf, rep] of [['iest','i'],['ier','i'],['ily','i'],['ies','i'],['ied','i'],['est',''],['ing',''],['ed',''],['er',''],['ly',''],['es',''],['s','']]){
+    if (w.endsWith(suf) && w.length - suf.length >= 3 && !(suf === 's' && w.endsWith('ss'))){ w = w.slice(0, -suf.length) + rep; break; }
+  }
+  w = w.replace(/e$/, '').replace(/y$/, 'i').replace(/([bcdfghjklmnpqrstvwz])\1$/, '$1');
+  return w;
+}
+const content = s => words(s).filter(w => !STOP.has(w.replace(/'/g,'')) && w !== 'not').map(stem).filter(w => w.length > 1);
+function itemKeys(it){
+  let ans, after = '', before = '';
+  if (it.k === 'f'){ ans = it.x[0]; after = it.c.slice(it.w + 1).join(' '); before = it.c.slice(0, it.w).join(' '); }
+  else { const [b, a = ''] = it.t.split('___'); ans = it.k === 'g' ? it.a[0] : it.o[0]; after = a; before = b; }
+  let k = content(ans);
+  if (!k.length){ const a = content(after); k = a.length ? [a[0]] : content(before).slice(-1); }
+  return [...new Set(k)];
+}
+[...GAP, ...MC, ...FAULT].forEach(it => { it.keys = itemKeys(it); });
+
 
 /* ===================== UTILITIES ===================== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2173,21 +2213,35 @@ function modesFor(p){
   m.push('mix'); return m;
 }
 function leastSeen(arr, n, idf){ return shuffle(arr).sort((a, b) => (store.seen[idf(a)] || 0) - (store.seen[idf(b)] || 0)).slice(0, n); }
+/* like leastSeen, but skips a question whose key words are already in the round (used); only if the pool
+   runs out are skipped questions used to fill the gap */
+function pickVaried(arr = [], n, used = new Set()){
+  const out = [], later = [];
+  for (const it of leastSeen(arr, arr.length, x => x.id)){
+    if (out.length >= n) break;
+    const ks = it.keys || [];
+    if (ks.some(k => used.has(k))) later.push(it); else { out.push(it); ks.forEach(k => used.add(k)); }
+  }
+  for (const it of later){ if (out.length >= n) break; out.push(it); (it.keys || []).forEach(k => used.add(k)); }
+  return out;
+}
+const keysOf = e => (e.it && e.it.keys) || [];
 const markSeen = id => { store.seen[id] = Date.now(); };
 function weakScore(p){ const a = recentAcc(p); return a === null ? 0.6 : a; }
 function buildQueue(p, mode){
   const K = { gap:'g', mc:'m', fault:'f' };
-  if (K[mode]) return leastSeen(POOL[K[mode]][p], 8, x => x.id).map(it => ({ k: it.k, it }));
-  if (mode === 'mix') return leastSeen(mixPool(p), 9, x => x.id).map(it => ({ k: it.k, it }));
+  if (K[mode]) return pickVaried(POOL[K[mode]][p], 8).map(it => ({ k: it.k, it }));
+  if (mode === 'mix') return pickVaried(mixPool(p), 9).map(it => ({ k: it.k, it }));
   if (mode === 'sort'){ const cards = []; sortsFor(p).forEach(s => s.cards.forEach((c, i) => cards.push({ k:'s', set:s, card:c, id:s.id + '#' + i }))); return leastSeen(cards, 10, x => x.id); }
   if (mode === 'match') return leastSeen(matchesFor(p), 2, x => x.id).map(b => ({ k:'x', board:b, id:b.id }));
-  if (mode === 'all') return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = leastSeen(mixPool(pt.id), 1, x => x.id)[0]; return { k: it.k, it }; }));
+  if (mode === 'all'){ const used = new Set(); return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = pickVaried(mixPool(pt.id), 1, used)[0]; return { k: it.k, it }; })); }
   if (mode === 'book') return buildReview(SEC);
   if (mode === 'weak'){
     // the questions this student has actually missed come first, then new ones from the 3 weakest points
     const mine = bookItems(SEC, 4), have = new Set(mine.map(bkKey));
     const pts = shuffle(secPoints().filter(x => mixPool(x.id).length).map(x => x.id)).sort((a, b) => weakScore(a) - weakScore(b)).slice(0, 3);
-    const fill = leastSeen(pts.flatMap(mixPool).filter(it => !have.has(it.id)), 10 - mine.length, x => x.id).map(it => ({ k: it.k, it }));
+    const used = new Set(mine.flatMap(keysOf));
+    const fill = pickVaried(pts.flatMap(mixPool).filter(it => !have.has(it.id)), 10 - mine.length, used).map(it => ({ k: it.k, it }));
     return shuffle([...mine, ...fill]);
   }
   return [];
@@ -2587,12 +2641,12 @@ function buildReview(sec){
   save();
   const byP = {}; live.forEach(x => (byP[x.b.p] = byP[x.b.p] || []).push(x));
   const pts = Object.keys(byP).sort((a, c) => byP[c].reduce((s, x) => s + x.b.n, 0) - byP[a].reduce((s, x) => s + x.b.n, 0)).slice(0, 3);
-  const q = [];
+  const q = [], used = new Set(live.flatMap(x => keysOf(x.r)));
   pts.forEach(p => {
     const rows = byP[p].sort((a, c) => c.b.n - a.b.n || a.b.last - c.b.last).slice(0, 4), boards = new Set();
     q.push({ k: 'r', p, rows: rows.map(x => x.b) });
     rows.forEach(x => { if (x.r.k === 'x'){ if (boards.has(x.r.id)) return; boards.add(x.r.id); } q.push(x.r); });
-    leastSeen(mixPool(p).filter(it => !store.book[it.id]), 2, x => x.id).forEach(it => q.push({ k: it.k, it }));
+    pickVaried(mixPool(p).filter(it => !store.book[it.id]), 2, used).forEach(it => q.push({ k: it.k, it }));
   });
   return q;
 }
