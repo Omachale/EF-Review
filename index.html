@@ -459,13 +459,12 @@ g('5B','It was the ___ exam I’ve ever done.','difficult','most difficult','sup
 g('5B','It’s the ___ city I’ve ever been to.','beautiful','most beautiful','sup_most');
 g('5B','July is the ___ month of the year in Spain.','hot','hottest','sup_double');
 g('5B','Who’s the ___ person you’ve ever met?','interesting','most interesting','sup_most');
-const PP_INS = 'Write the {past participle} of the verb in brackets.';
-g('5B','It’s the best book I’ve ever ___.','read','read','sup_pp',PP_INS);
-g('5B','It’s the most beautiful beach I’ve ever ___ to.','be','been','sup_pp',PP_INS);
-g('5B','It’s the worst film I’ve ever ___.','see','seen','sup_pp',PP_INS);
-g('5B','It’s the most expensive thing I’ve ever ___.','buy','bought','sup_pp',PP_INS);
-g('5B','It’s the hardest sport I’ve ever ___.','do','done','sup_pp',PP_INS);
-g('5B','That’s the nicest food I’ve ever ___.','eat','eaten','sup_pp',PP_INS);
+g('5B','It’s the ___ book I’ve ever read.','good','best','sup_irr');
+g('5B','It’s the ___ beach I’ve ever been to.','beautiful','most beautiful','sup_most');
+g('5B','It’s the ___ city I’ve ever seen.','ugly','ugliest','sup_y');
+g('5B','It’s the ___ thing I’ve ever bought.','expensive','most expensive','sup_most');
+g('5B','It’s the ___ sport I’ve ever done.','hard','hardest','sup_est');
+g('5B','That’s the ___ food I’ve ever eaten.','nice','nicest','sup_est');
 
 m('5B','Friday is ___ day of the week for me.',['the busiest','the busier','the most busy'],'sup_y');
 m('5B','It’s ___ road in the world.',['the most dangerous','the more dangerous','most dangerous'],'sup_the');
@@ -523,14 +522,14 @@ g('6A','Take an umbrella. It ___ later.','rain','will rain','w_pred');
 g('6A','I’m sure you ___ the film. It’s brilliant.','love','will love','w_pred');
 g('6A','Don’t worry about the test. It ___ difficult.','not be','won’t be','w_neg');
 g('6A','I think we ___ the match. They’re a much better team.','lose','will lose','w_pred');
-g('6A','Hurry up! We ___ the train.','miss','will miss','w_pred');
+g('6A','I’m sure we ___ the train. We always leave too late.','miss','will miss','w_pred');
 g('6A','I don’t think he ___ the job. He hasn’t got any experience.','get','will get','w_pred');
 g('6A','Don’t worry. She ___ late. She’s never late.','not be','won’t be','w_neg');
 g('6A','You ___ the party. Everyone will be there.','enjoy','will enjoy','w_pred');
 g('6A','I’m sure she ___ the exam. She’s studied really hard.','pass','will pass','w_pred');
 
 m('6A','A: My exam is today.  B: Don’t worry. You ___.',['will pass','passing','will to pass'],'w_form');
-m('6A','They’re playing really badly. They ___ the match.',['won’t win','don’t will win','won’t to win'],'w_neg');
+m('6A','I don’t think they’re a very good team. I’m sure they ___ the match.',['won’t win','don’t will win','won’t to win'],'w_neg');
 m('6A','I think it ___ tomorrow.',['will rain','will rains','will to rain'],'w_form');
 m('6A','Do you think she ___ the job?',['will get','will gets','is get'],'w_form');
 m('6A','I’m sure he ___ pay you back.',['will','will to','wills'],'w_form');
@@ -1232,10 +1231,10 @@ g('5B','It’s the ___ room in the house. It’s only two metres long.','small',
 g('5B','What’s the ___ country you’ve ever been to?','hot','hottest','sup_double');
 g('5B','This is the ___ sofa in the shop.','comfortable','most comfortable','sup_most');
 g('5B','Monday is the ___ day of the week for me.','bad','worst','sup_irr');
-g('5B','It’s the best present I’ve ever ___.','get',['got','gotten'],'sup_pp',PP_INS);
-g('5B','It’s the most difficult thing I’ve ever ___.','do','done','sup_pp',PP_INS);
-g('5B','He’s the nicest person I’ve ever ___.','meet','met','sup_pp',PP_INS);
-g('5B','That’s the longest letter I’ve ever ___.','write','written','sup_pp',PP_INS);
+g('5B','It’s the ___ present I’ve ever got.','big','biggest','sup_double');
+g('5B','It’s the ___ thing I’ve ever done.','dangerous','most dangerous','sup_most');
+g('5B','He’s the ___ person I’ve ever met.','kind','kindest','sup_est');
+g('5B','That’s the ___ letter I’ve ever written.','long','longest','sup_est');
 
 m('5B','It’s ___ hotel in the city.',['the cheapest','the most cheap','cheapest'],'sup_the');
 m('5B','She’s the ___ person in my family.',['oldest','most old','older'],'sup_old');
@@ -1305,7 +1304,7 @@ g('6A','Take a jacket. It ___ cold tonight.','be','will be','w_pred');
 g('6A','I don’t think they ___ the match. Their team is terrible.','win','will win','w_pred');
 g('6A','You ___ the film. It’s really boring.','not like','won’t like','w_neg');
 g('6A','Ask Anna. I’m sure she ___ you.','help','will help','w_pred');
-g('6A','Hurry up! We ___ home before dark.','not get','won’t get','w_neg');
+g('6A','We left very late. I’m sure we ___ home before dark.','not get','won’t get','w_neg');
 g('6A','Don’t worry about your interview. It ___ well.','go','will go','w_pred');
 
 m('6A','I think you ___ your new school.',['will love','will loves','will to love'],'w_form');
@@ -1316,7 +1315,7 @@ m('6A','Don’t worry. The test ___ be difficult.',['won’t','doesn’t will','
 m('6A','Will you ___ home late tonight?',['be','are','to be'],'w_q');
 m('6A','He’s very clever. I’m sure he ___ the exam.',['will pass','will passes','passing'],'w_form');
 m('6A','I don’t think they ___ the house. It’s too expensive.',['will buy','will to buy','buys'],'w_form');
-m('6A','Look at the traffic! We ___ on time.',['won’t arrive','don’t will arrive','won’t to arrive'],'w_neg');
+m('6A','There’s always a lot of traffic at this time. I’m sure we ___ on time.',['won’t arrive','don’t will arrive','won’t to arrive'],'w_neg');
 
 f('6A',['I think','it','will snowing','tomorrow.'],2,['will snow','will to snow','wills snow'],'w_form');
 f('6A',['Don’t worry.','You','don’t will','be late.'],2,['won’t','willn’t','not will'],'w_neg');
@@ -1449,7 +1448,7 @@ m('7B','Do you feel like ___ for a walk?',['going','to go','go'],'ger_verb');
 m('7B','She’s afraid of ___ alone at night.',['walking','to walk','walk'],'ger_prep');
 m('7B','___ fruit and vegetables is good for you.',['Eating','Eat','Eats'],'ger_subj');
 m('7B','I’m tired of ___ the same food every day.',['eating','to eat','eat'],'ger_prep');
-m('7B','Would you like ___ with us?',['to come','coming','come'],'ger_both');
+m('7B','I don’t mind ___ with you.',['coming','to come','come'],'ger_verb');
 m('7B','He keeps ___ late for class.',['arriving','to arrive','arrive'],'ger_verb');
 m('7B','I’m very bad at ___ names.',['remembering','to remember','remember'],'ger_prep');
 m('7B','We spent the afternoon ___ in the park.',['sitting','to sit','sit'],'ger_verb');
@@ -1462,7 +1461,7 @@ f('7B',['We','finished','to eat','at ten.'],2,['eating','eat','eats'],'ger_verb'
 f('7B',['Learn','languages','is','fun.'],0,['Learning','Learns','Learned'],'ger_subj');
 f('7B',['I’m','looking forward to','see','you.'],2,['seeing','saw','seen'],'ger_verb');
 f('7B',['He','spends','all day','to play','video games.'],3,['playing','play','plays'],'ger_verb');
-f('7B',['I’d like','going','to the cinema.'],1,['to go','go','goes'],'ger_both');
+f('7B',['I enjoy','to go','to the cinema.'],1,['going','go','goes'],'ger_verb');
 
 /* ---------------- 7C have to / must (extra) ---------------- */
 g('7C','My mum ___ get up at five every day for work.','have to',['has to','has got to'],'ht_form');
@@ -1472,7 +1471,7 @@ g('7C','You ___ bring anything to the party. We’ve got lots of food.','not hav
 g('7C','She ___ wear glasses. She can see very well.','not have to',['doesn’t have to','hasn’t got to'],'ht_dont');
 g('7C','My parents ___ work tomorrow. It’s a holiday.','not have to',['don’t have to','won’t have to','haven’t got to'],'ht_dont');
 g('7C','I ___ take the train last week because my car was broken.','have to','had to','ht_form');
-g('7C','Teachers at my school ___ arrive before 8.30 every day.','have to',['have to','have got to','had to'],'ht_form');
+g('7C','Teachers at my school ___ arrive before 8.30 every day.','have to',['have to','have got to'],'ht_form');
 
 m('7C','You ___ smoke in the restaurant. It’s not allowed.',['mustn’t','don’t have to','must'],'ht_mustnt');
 m('7C','It’s Sunday. I ___ work today.',['don’t have to','mustn’t','haven’t to'],'ht_dont');
@@ -2215,19 +2214,21 @@ function modesFor(p){
 function leastSeen(arr, n, idf){ return shuffle(arr).sort((a, b) => (store.seen[idf(a)] || 0) - (store.seen[idf(b)] || 0)).slice(0, n); }
 /* like leastSeen, but skips a question whose key words are already in the round (used); only if the pool
    runs out are skipped questions used to fill the gap */
+/* questions that practise a related pattern rather than the point itself (5B: I've ever + past participle,
+   ever / never) are limited to RELATED_MAX per round */
+const RELATED_RULES = new Set(['sup_pp', 'sup_ever']), RELATED_MAX = 2;
 function pickVaried(arr = [], n, used = new Set()){
-  const out = [], later = [];
+  const out = [], later = []; let rel = 0;
   for (const it of leastSeen(arr, arr.length, x => x.id)){
     if (out.length >= n) break;
-    const ks = it.keys || [];
-    if (ks.some(k => used.has(k))) later.push(it); else { out.push(it); ks.forEach(k => used.add(k)); }
+    const ks = it.keys || [], isRel = RELATED_RULES.has(it.r);
+    if (ks.some(k => used.has(k)) || (isRel && rel >= RELATED_MAX)) later.push(it); else { out.push(it); ks.forEach(k => used.add(k)); if (isRel) rel++; }
   }
   for (const it of later){ if (out.length >= n) break; out.push(it); (it.keys || []).forEach(k => used.add(k)); }
   return out;
 }
 const keysOf = e => (e.it && e.it.keys) || [];
 const markSeen = id => { store.seen[id] = Date.now(); };
-function weakScore(p){ const a = recentAcc(p); return a === null ? 0.6 : a; }
 function buildQueue(p, mode){
   const K = { gap:'g', mc:'m', fault:'f' };
   if (K[mode]) return pickVaried(POOL[K[mode]][p], 8).map(it => ({ k: it.k, it }));
@@ -2237,9 +2238,11 @@ function buildQueue(p, mode){
   if (mode === 'all'){ const used = new Set(); return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = pickVaried(mixPool(pt.id), 1, used)[0]; return { k: it.k, it }; })); }
   if (mode === 'book') return buildReview(SEC);
   if (mode === 'weak'){
-    // the questions this student has actually missed come first, then new ones from the 3 weakest points
-    const mine = bookItems(SEC, 4), have = new Set(mine.map(bkKey));
-    const pts = shuffle(secPoints().filter(x => mixPool(x.id).length).map(x => x.id)).sort((a, b) => weakScore(a) - weakScore(b)).slice(0, 3);
+    // weak spots come from the mistakes book: the 3 points with most mistakes, some of the missed
+    // questions again, then new questions from those points
+    const tally = {}; Object.values(store.book).forEach(b => { if (b.sec === SEC) tally[b.p] = (tally[b.p] || 0) + b.n; });
+    const pts = Object.keys(tally).filter(p => mixPool(p).length).sort((a, b) => tally[b] - tally[a]).slice(0, 3);
+    const mine = bookItems(SEC, 20).filter(e => pts.includes(bkPoint(e))).slice(0, 4), have = new Set(mine.map(bkKey));
     const used = new Set(mine.flatMap(keysOf));
     const fill = pickVaried(pts.flatMap(mixPool).filter(it => !have.has(it.id)), 10 - mine.length, used).map(it => ({ k: it.k, it }));
     return shuffle([...mine, ...fill]);
@@ -2329,7 +2332,7 @@ function renderHome(){
     ${sessionStrip()}
     <div class="quick">
       <button class="btn primary" data-act="start" data-p="ALL" data-mode="all"><span>Mixed revision</span><span class="small" style="font-weight:700">all 12 ${SEC === 'V' ? 'topics' : 'points'}</span></button>
-      <button class="btn ghost" data-act="start" data-p="WEAK" data-mode="weak"><span>Weak spots</span><span class="small muted" style="font-weight:700">your lowest 3</span></button>
+      <button class="btn ghost" data-act="start" data-p="WEAK" data-mode="weak"${bookCount(SEC) ? '' : ' disabled'}><span>Weak spots</span><span class="small muted" style="font-weight:700">${bookCount(SEC) ? 'from your mistakes' : 'after your first mistake'}</span></button>
     </div>
     <button class="btn ghost wide book-link" data-act="book"><span>My mistakes book</span><span class="bk-count">${bookCount(SEC)}</span></button>
     ${units}
@@ -2361,9 +2364,9 @@ const stage = () => $('#stage');
 function startRound(p, mode){
   ensureSession();
   const q = buildQueue(p, mode);
-  if (!q.length) return;
+  if (!q.length){ toast('Nothing to practise here yet'); return; }
   const total = q.reduce((a, e) => a + (e.k === 'r' ? 0 : e.k === 'x' ? e.board.pairs.length : 1), 0);
-  if (!total) return;
+  if (!total){ toast('Nothing to practise here yet'); return; }
   G = { p, mode, q, qi: 0, slot: 0, total, c: 0, t: 0, streak: 0, xp: 0, by: {}, mistakes: [], cur: null, missKey: null, lvlBefore: levelOf(store.xp), locked: false };
   const label = p === 'ALL' ? 'Mixed revision · ' + THEME[SEC].name : p === 'WEAK' ? 'Weak spots · ' + THEME[SEC].name : p === 'BOOK' ? 'Mistakes review · ' + THEME[SEC].name : `${PT[p].code} · ${MODES[mode].name}`;
   $('#hudTitle').textContent = label;
@@ -2847,7 +2850,7 @@ function renderHelp(){
       <p><b>Fault Line</b> – tap the wrong part of the sentence, then choose the correction.</p>
       <p><b>Split</b> – swipe or tap each card into the right group.</p>
       <p><b>Halves</b> – match the beginnings and endings of sentences.</p>
-      <p><b>Star Mix</b>, <b>Mixed revision</b> and <b>Weak spots</b> mix the game types together.</p>
+      <p><b>Star Mix</b> and <b>Mixed revision</b> mix the game types together. <b>Weak spots</b> opens after your first mistake: it takes the three points you have made most mistakes on, gives you some of those questions again and adds new ones.</p>
       <h3>My mistakes book</h3><p>Every question you get wrong is saved in <b>My mistakes</b>, with the rule. Open it from the menu to review them: you see what you wrote, the right answer and the rule, try the questions again, and get a few new questions on the same point. Get a question right twice in a row and it leaves the book. You can save the book as a text file or copy it into a notes app.</p>
       <h3>Scores</h3><p>Every correct answer earns XP, with extra XP for streaks. All your games add up into one <b>session report</b> – open it from the top of any menu screen. When you finish a session, it’s saved in your history.</p>
       <p class="muted small">Your progress is saved only on this phone, in this browser.</p>
