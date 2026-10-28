@@ -248,6 +248,7 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
 .share-lab{display:block;font-weight:800;margin:14px 0 6px}
 .share-in{width:100%;height:50px;border-radius:14px;border:2px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:1.05rem;font-weight:700;padding:0 14px;outline:none}
 .share-in:focus{border-color:var(--gold)}
+.preview-tag{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:40;padding:3px 12px;border-radius:0 0 10px 10px;background:#ff8068;color:#2a0b00;font-weight:800;font-size:.75rem;pointer-events:none}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
@@ -278,6 +279,16 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
 
 <script>
 'use strict';
+/* ===================== RELEASE: what students can see =====================
+   Students only see the units listed here. Everything else is hidden: not on the menus, not in Mixed
+   revision, Weak spots or the mistakes book.
+     '9'    = Unit 9 (its grammar and its vocabulary)
+     'PE5'  = Practical English episode 5
+     '9B'   = one lesson only (grammar 9B and vocabulary 9B)
+   To release more, add to the list, save, and push. To check hidden content yourself, open the game with
+   ?preview at the end of the address (e.g. …/EF-Review/?preview). Note: hidden content is still inside
+   this file, so a student who reads the page's source code could see it. */
+const RELEASED = ['5', '6', '7', '8', 'PE3', 'PE4'];
 /* ===================== ITEM BANK =====================
    Conventions
    g(point, text, base, answers, rule, instruction?)  typed gap-fill ("___" marks the gap)
@@ -1818,9 +1829,1849 @@ m('P4','I feel ___. I think I’m going to be sick.',['ill','allergic','better']
 m('P4','The pharmacist gave me some ___ for my cough.',['medicine','receipt','symptoms'],'medicine = something you take when you are ill.');
 
 
+/* ===================== UNITS 1–4, 9–12 AND PRACTICAL ENGLISH 1, 2, 5, 6 ===================== */
+/* ===================== UNIT 1 ===================== */
+POINTS.push(
+  { id:'1A', unit:1, title:'Word order in questions', sub:'Where were you born? What do you do?', star:'The Question Mark' },
+  { id:'1B', unit:1, title:'Present simple', sub:'works, studies; always, twice a week', star:'The Clock' },
+  { id:'1C', unit:1, title:'Present continuous', sub:'She’s wearing … ; present simple or continuous?', star:'The Painter' }
+);
+UNITS[1] = 'Questions, present tenses';
+Object.assign(GAP_INS, {
+  '1A':'Write the missing word: a form of the verb in brackets ({do}, {be} …).',
+  '1B':'Write the verb in brackets in the {present simple}.',
+  '1C':'Write the verb in brackets in the {present continuous} or {present simple}.'
+});
+Object.assign(RULES, {
+  q_order:'Questions with be and can: put the verb before the subject (Is she a teacher? Where were you born? Can you swim?).',
+  q_aux:'With other verbs: (question word) + do / does / did + subject + infinitive (Where do you live? What did you do?).',
+  q_does:'With he / she / it use does, and the main verb has no -s: Where does she work? NOT Where does she works?',
+  q_prep:'A preposition often goes at the end of the question: Who do you live with? What are you talking about?',
+  ps_s:'Present simple, he / she / it: add -s (works). After ch, sh, s, x add -es (watches, finishes). Consonant + y → -ies (studies). go → goes, do → does, have → has.',
+  ps_neg:'Negative: don’t / doesn’t + infinitive (She doesn’t like coffee NOT She doesn’t likes coffee).',
+  ps_q:'Questions: Do / Does + subject + infinitive (Does he work here? Do you like it?).',
+  freq_pos:'Adverbs of frequency (always, usually, often, sometimes, hardly ever, never) go BEFORE the main verb but AFTER be: I often go … / She’s never late.',
+  freq_exp:'Expressions of frequency (every day, once a week, twice a month) usually go at the end: I go to the gym twice a week.',
+  freq_never:'never is already negative: It never rains here. NOT It doesn’t never rain.',
+  pc_form:'Present continuous: am / is / are + verb + -ing (I’m working. They aren’t listening. What are you doing?).',
+  pc_spell:'-ing spelling: live → living (no e), run → running, swim → swimming (double the consonant), study → studying.',
+  pc_vs:'Present simple for things you do often or always. Present continuous for now, for this week, and to describe a picture: I usually wear jeans, but today I’m wearing a suit.',
+  pc_state:'Some verbs are not normally used in the continuous: like, love, want, need, know, understand. I need a coffee NOT I’m needing a coffee.'
+});
+
+/* ---------------- 1A Word order in questions ---------------- */
+g('1A','Where ___ you born?','be','were','q_order');
+g('1A','What ___ you do last weekend?','do','did','q_aux');
+g('1A','Where ___ your sister work now?','do','does','q_does');
+g('1A','What kind of music ___ you listen to these days?','do','do','q_aux');
+g('1A','How often ___ your parents go to the cinema these days?','do','do','q_aux');
+g('1A','Where ___ you yesterday afternoon? I called you three times.','be','were','q_order');
+g('1A','What time ___ your brother usually get up?','do','does','q_does');
+g('1A','___ your parents live in a house or a flat now?','do','do','q_aux');
+g('1A','Who ___ you have lunch with yesterday?','do','did','q_prep');
+g('1A','What ___ that noise? It was really loud.','be','was','q_order');
+g('1A','Where ___ your cousins from? Are they Italian?','be','are','q_order');
+g('1A','Why ___ you late for class this morning?','be','were','q_order');
+g('1A','What ___ your English teacher’s name this year?','be','is','q_order');
+g('1A','Who ___ your best friend live with now?','do','does','q_does');
+
+m('1A','Where ___ from?',['are you','you are','do you'],'q_order');
+m('1A','What time ___?',['do you usually get up','you usually get up','do you get usually up'],'q_aux');
+m('1A','___ last night?',['What did you do','What you did','What did you'],'q_aux');
+m('1A','Who ___ with?',['do you live','you live','does you live'],'q_prep');
+m('1A','Where ___?',['does your brother work','does work your brother','your brother works'],'q_does');
+m('1A','___ swim?',['Can you','Do you can','You can'],'q_order');
+m('1A','What ___ about?',['is the film','the film is','does the film'],'q_prep');
+m('1A','Where ___ born?',['was your mother','did your mother','your mother was'],'q_order');
+m('1A','What music ___?',['does she like','she likes','does she likes'],'q_does');
+m('1A','___ any brothers or sisters?',['Do you have','Does you have','You have'],'q_aux');
+m('1A','How often ___ to the gym?',['do you go','you go','go you'],'q_aux');
+m('1A','What ___ yesterday?',['did she buy','did she bought','she bought'],'q_aux');
+m('1A','Who ___ to on the phone?',['are you talking','you are talking','do you talking'],'q_prep');
+m('1A','Where ___ on holiday last year?',['did you go','did you went','you went'],'q_aux');
+
+f('1A',['Where','you live?'],1,['do you live?','you do live?','does you live?'],'q_aux');
+f('1A',['What time','you did get up','yesterday?'],1,['did you get up','did you got up','you got up'],'q_aux');
+f('1A',['Where','does','your father','works?'],3,['work?','working?','to work?'],'q_does');
+f('1A',['Do you can','play','the piano?'],0,['Can you','You can','Are you can'],'q_order');
+f('1A',['What','you are','doing?'],1,['are you','do you','you do'],'q_order');
+f('1A',['Where','your mother was','born?'],1,['was your mother','did your mother','your mother did'],'q_order');
+f('1A',['What kind of music','you like?'],1,['do you like?','you do like?','does you like?'],'q_aux');
+f('1A',['How many languages','does','she','speaks?'],3,['speak?','speaking?','to speak?'],'q_does');
+f('1A',['Who','did you go','to the cinema?'],2,['to the cinema with?','with to the cinema?','to with the cinema?'],'q_prep');
+
+/* ---------------- 1B Present simple ---------------- */
+g('1B','My sister ___ in a bank.','work','works','ps_s');
+g('1B','He ___ his homework after dinner.','do','does','ps_s');
+g('1B','She ___ TV every evening.','watch','watches','ps_s');
+g('1B','My brother ___ medicine at university.','study','studies','ps_s');
+g('1B','The film ___ at ten o’clock.','finish','finishes','ps_s');
+g('1B','He ___ to the gym three times a week.','go','goes','ps_s');
+g('1B','My grandmother ___ three cats.','have','has','ps_s');
+g('1B','Our teacher ___ very quickly.','speak','speaks','ps_s');
+g('1B','I ___ meat. I’m a vegetarian.','not eat','don’t eat','ps_neg');
+g('1B','My father ___ coffee. He only drinks tea.','not drink','doesn’t drink','ps_neg');
+g('1B','___ your sister live near you?','do','does','ps_q');
+g('1B','The museum ___ on Mondays.','not open','doesn’t open','ps_neg');
+g('1B','My best friend ___ football every Saturday.','play','plays','ps_s');
+g('1B','She ___ her bike to work every day.','ride','rides','ps_s');
+g('1B','Lucy always ___ in the shower.','sing','sings','ps_s');
+g('1B','He ___ the bus home after work.','catch','catches','ps_s');
+
+m('1B','She ___ late.',['is never','never is','does never be'],'freq_pos');
+m('1B','I ___ coffee in the morning.',['always drink','drink always','always drinks'],'freq_pos');
+m('1B','We go swimming ___.',['twice a week','twice week','a week twice'],'freq_exp');
+m('1B','He ___ his grandparents.',['hardly ever visits','visits hardly ever','hardly ever visit'],'freq_pos');
+m('1B','It ___ here in summer.',['never rains','doesn’t never rain','never doesn’t rain'],'freq_never');
+m('1B','___ your brother play the guitar?',['Does','Do','Is'],'ps_q');
+m('1B','My parents ___ in a flat in the city centre.',['live','lives','are live'],'ps_s');
+m('1B','She ___ three languages.',['speaks','speak','is speak'],'ps_s');
+m('1B','He ___ like spicy food.',['doesn’t','don’t','isn’t'],'ps_neg');
+m('1B','They ___ tired after work.',['are usually','usually are','usually'],'freq_pos');
+m('1B','I see my cousins ___.',['once a month','one a month','a month once'],'freq_exp');
+m('1B','What time ___ the concert start?',['does','do','is'],'ps_q');
+m('1B','My son ___ his teeth after breakfast.',['brushes','brushs','brush'],'ps_s');
+m('1B','She ___ her phone off at night.',['doesn’t turn','doesn’t turns','don’t turn'],'ps_neg');
+
+f('1B',['She','don’t','eat','meat.'],1,['doesn’t','isn’t','not'],'ps_neg');
+f('1B',['He','often is','late for class.'],1,['is often','is oftens','does often be'],'freq_pos');
+f('1B',['I','go','to the cinema','once week.'],3,['once a week.','one a week.','a week once.'],'freq_exp');
+f('1B',['My brother','study','engineering.'],1,['studies','studys','is study'],'ps_s');
+f('1B',['Does','she','likes','jazz?'],2,['like','liking','to like'],'ps_q');
+f('1B',['It','doesn’t never','snow','here.'],1,['never','not never','no'],'freq_never');
+f('1B',['We','have usually','lunch','at one o’clock.'],1,['usually have','have usual','usual have'],'freq_pos');
+f('1B',['He','finishs','work','at six.'],1,['finishes','finish','finishies'],'ps_s');
+
+/* ---------------- 1C Present continuous ---------------- */
+g('1C','Look! The man over there ___ a red cap.','wear','is wearing','pc_vs');
+g('1C','Listen! The neighbours ___ a party.','have','are having','pc_vs');
+g('1C','I ___ a really good book at the moment.','read','am reading','pc_form');
+g('1C','My sister usually ___ jeans to work.','wear','wears','pc_vs');
+g('1C','Where’s Tom? He ___ a shower.','have','is having','pc_form');
+g('1C','We ___ with my aunt this week.','stay','are staying','pc_vs');
+g('1C','Can you turn the TV off? Nobody ___ it.','watch','is watching','pc_form');
+g('1C','I ___ Italian food. It’s my favourite.','like','like','pc_state');
+g('1C','In the photo, the woman ___ milk into a bowl.','pour','is pouring','pc_vs');
+g('1C','My dad ___ to work every day.','drive','drives','pc_vs');
+g('1C','Sorry, I ___ what you mean.','not understand','don’t understand','pc_state');
+g('1C','Hurry up! Everybody ___ for us.','wait','is waiting','pc_form');
+g('1C','The children ___ in the garden right now.','play','are playing','pc_form');
+g('1C','Anna ___ a new phone. Her old one is broken.','need','needs','pc_state');
+g('1C','It’s sunny today, but Mark ___ an umbrella.','carry','is carrying','pc_vs');
+g('1C','I ___ for my exams this week, so I can’t go out.','study','am studying','pc_spell');
+
+m('1C','Shh! I ___ to the radio.',['am listening','listen','listening'],'pc_form');
+m('1C','They ___ TV at the moment.',['aren’t watching','don’t watching','not watching'],'pc_form');
+m('1C','What ___? It smells delicious!',['are you cooking','do you cook','you are cooking'],'pc_vs');
+m('1C','I ___ a coffee. I’m really tired.',['need','am needing','needing'],'pc_state');
+m('1C','She usually ___ the bus, but today she’s walking.',['takes','is taking','take'],'pc_vs');
+m('1C','In the photo, the man ___ a cap.',['isn’t wearing','doesn’t wear','not wearing'],'pc_vs');
+m('1C','People often ___ aprons in the kitchen.',['wear','are wearing','wearing'],'pc_vs');
+m('1C','Sorry, I can’t talk now. I ___.',['am driving','drive','driving'],'pc_form');
+m('1C','He ___ the answer to every question.',['knows','is knowing','know'],'pc_state');
+m('1C','Why ___ that big coat? It’s hot today!',['are you wearing','do you wear','you wearing'],'pc_vs');
+m('1C','We ___ to the beach every summer.',['go','are going','going'],'pc_vs');
+m('1C','Sam is ___ in the park.',['running','runing','runnning'],'pc_spell');
+m('1C','Why are you ___?',['smiling','smileing','smilling'],'pc_spell');
+m('1C','I’m ___ for my driving test.',['practising','practiseing','practisseing'],'pc_spell');
+
+f('1C',['Look!','The cat','sits','on the car.'],2,['is sitting','sitting','is siting'],'pc_vs');
+f('1C',['I','am wanting','a new phone.'],1,['want','wanting','am want'],'pc_state');
+f('1C',['She','is','writeing','an email.'],2,['writing','writting','write'],'pc_spell');
+f('1C',['They','not','listening','to the teacher.'],1,['aren’t','don’t','isn’t'],'pc_form');
+f('1C',['What','you are','doing','here?'],1,['are you','do you','you do'],'pc_form');
+f('1C',['My dad','is drinking','coffee','every morning.'],1,['drinks','drink','drinking'],'pc_vs');
+f('1C',['Sorry,','I','am not understanding','you.'],2,['don’t understand','not understand','doesn’t understand'],'pc_state');
+f('1C',['The children','are swiming','in the lake.'],1,['are swimming','are swim','is swimming'],'pc_spell');
+
+SORTS.push({ id:'1C-time', bins:['Present simple','Present continuous'], rules:['pc_vs','pc_vs'], cards:[
+  ['usually',0,'1C'], ['every morning',0,'1C'], ['never',0,'1C'], ['twice a week',0,'1C'], ['always',0,'1C'], ['once a month',0,'1C'],
+  ['at the moment',1,'1C'], ['right now',1,'1C'], ['this week',1,'1C'], ['Look!',1,'1C'], ['Listen!',1,'1C']
+]});
+
+/* ===================== VOCABULARY, UNIT 1 ===================== */
+VPOINTS.push(
+  { id:'V1A', code:'1A', unit:1, title:'Common verb phrases', sub:'get up, have lunch, listen to music' },
+  { id:'V1B', code:'1B', unit:1, title:'Describing people', sub:'curly hair, slim; generous, shy' },
+  { id:'V1C', code:'1C', unit:1, title:'Clothes and prepositions of place', sub:'cardigan, scarf; behind, between' }
+);
+VUNITS[1] = 'Verb phrases, people, clothes';
+Object.assign(GAP_INS, {
+  'V1B':'Complete the word. The first letter or letters are given.',
+  'V1C':'Complete the word. The first letter or letters are given.'
+});
+Object.assign(RULES, {
+  look_like_q:'What does he / she look like? = appearance (tall, curly hair). What’s he / she like? = personality (kind, funny).',
+  adj_order:'Adjective order: size, then style, then colour: long straight blonde hair, big brown eyes.',
+  pers_opp:'Personality opposites: friendly / unfriendly, talkative / quiet, generous / mean, kind / unkind, lazy / hard-working, funny / serious, clever / stupid, shy / extrovert.',
+  wear_dress:'wear clothes, shoes, jewellery (She’s wearing a dress). carry a bag. dress = put on clothes, no object (He dresses very well).',
+  place:'Prepositions of place: in, on, under, above, behind, in front of, next to, between (two things), opposite, in the corner, in the middle of, on the left of.'
+});
+
+/* ---------------- V1A common verb phrases ---------------- */
+m('V1A','Do you ___ any brothers or sisters?',['have','do','make'],'have brothers and sisters, have a pet.');
+m('V1A','A: What do you ___?  B: I’m a nurse.',['do','make','work'],'What do you do? = What’s your job?');
+m('V1A','What time do you ___ up during the week?',['get','go','do'],'get up = get out of bed.');
+m('V1A','Where do you usually ___ lunch?',['have','do','go'],'have breakfast / lunch / dinner.');
+m('V1A','What time do you usually ___ to bed?',['go','do','have'],'go to bed.');
+m('V1A','What kind of music do you ___ to?',['listen','hear','watch'],'listen to music.');
+m('V1A','What TV series do you ___?',['watch','look','listen'],'watch TV, watch a series.');
+m('V1A','Do you ___ any sport or exercise?',['do','make','go'],'do sport, do exercise.');
+m('V1A','What kind of books do you ___?',['read','watch','listen'],'read books and magazines.');
+m('V1A','How often do you ___ to the cinema?',['go','do','make'],'go to the cinema.');
+m('V1A','Can you ___ any other languages?',['speak','talk','say'],'speak a language.');
+m('V1A','Do you ___ in a house or a flat?',['live','do','go'],'live in a house / a flat.');
+m('V1A','Where did you ___ English before?',['study','do','make'],'study (or learn) English.');
+m('V1A','A: Where are you from?  B: I’m from Rome. ___?',['And you','And your','And yours'],'Return a question with And you? or What about you?');
+m('V1A','A: Where are you from?  B: I’m from Kyoto. What ___ you?',['about','of','for'],'Return a question with And you? or What about you?');
+MATCHES.push({ id:'V1A-q1', p:'V1A', title:'Getting to know you', pairs:[
+  ['What do you','do?'], ['Do you have any','pets?'], ['What time do you','get up?'], ['Can you speak any other','languages?']
+]});
+MATCHES.push({ id:'V1A-q2', p:'V1A', title:'Getting to know you', pairs:[
+  ['Where were you','born?'], ['How often do you go','to the cinema?'], ['What kind of music do you','listen to?'], ['What did you do','last weekend?']
+]});
+
+/* ---------------- V1B describing people ---------------- */
+vg('V1B','He doesn’t have any hair. He’s ___.','b…  = with no hair','bald','bald = with no hair.','b');
+vg('V1B','She has ___ hair, with lots of small circles.','c…  = the opposite of straight','curly','curly ↔ straight hair.','c');
+vg('V1B','My brother has a ___ and a moustache.','b…  = hair on a man’s chin','beard','beard = hair on a man’s chin and face.','b');
+vg('V1B','She isn’t fat. She’s very ___.','sl…  = thin in an attractive way','slim','slim = thin in an attractive way.','sl');
+vg('V1B','He’s a bit ___. He needs to eat less.','o…  = a polite way to say fat','overweight','(a bit) overweight is more polite than fat.','o');
+vg('V1B','He’s very ___. He looks like a film star.','h…  = good-looking (for a man)','handsome','handsome (men), beautiful (women), good-looking (both).','h');
+vg('V1B','He isn’t tall and he isn’t short. He’s ___ height.','m…  = in the middle','medium','medium height = not tall, not short.','m');
+vg('V1B','She talks a lot. She’s very ___.','t…  = talks a lot','talkative','talkative ↔ quiet.','t');
+vg('V1B','He never wants to do any work. He’s really ___.','l…  = doesn’t want to work','lazy','lazy ↔ hard-working.','l');
+vg('V1B','My grandfather gives everybody presents. He’s very ___.','g…  = likes giving','generous','generous ↔ mean.','g');
+vg('V1B','He never pays for anything. He’s so ___!','m…  = the opposite of generous','mean','mean ↔ generous.','m');
+vg('V1B','She makes everybody laugh. She’s really ___.','f…  = makes people laugh','funny','funny ↔ serious.','f');
+vg('V1B','He learns things very quickly. He’s very ___.','c…  = quick at learning','clever','clever ↔ stupid.','c');
+vg('V1B','She finds it difficult to talk to people she doesn’t know. She’s ___.','sh…  = the opposite of extrovert','shy','shy ↔ extrovert.','sh');
+vg('V1B','He works ten hours a day. He’s very ___.','h…-w…  = the opposite of lazy',['hard-working','hard working','hardworking'],'hard-working ↔ lazy.','h');
+vg('V1B','Our new neighbours are very ___. They always say hello.','fr…  = open and warm','friendly','friendly ↔ unfriendly.','fr');
+vg('V1B','She’s always ___ to other people and she helps everybody.','k…  = friendly and good to others','kind','kind ↔ unkind.','k');
+vg('V1B','He’s very ___. He doesn’t laugh much.','se…  = the opposite of funny','serious','serious ↔ funny.','se');
+m('V1B','A: What does she look like?  B: ___',['She’s tall with long dark hair.','She’s very friendly.','She likes reading.'],'look_like_q');
+m('V1B','A: What’s he like?  B: ___',['He’s kind and very generous.','He likes pizza and pasta.','He looks like his father.'],'look_like_q');
+m('V1B','She has ___ hair.',['long straight blonde','blonde long straight','straight blonde long'],'adj_order');
+m('V1B','He has ___ eyes.',['big brown','brown big','bigs brown'],'adj_order');
+m('V1B','She’s ___ height and very slim.',['medium','middle','half'],'medium height = not tall, not short.');
+m('V1B','The opposite of shy is ___.',['extrovert','lazy','mean'],'pers_opp');
+m('V1B','The opposite of generous is ___.',['mean','kind','lazy'],'pers_opp');
+m('V1B','The opposite of hard-working is ___.',['lazy','serious','clever'],'pers_opp');
+m('V1B','The opposite of clever is ___.',['stupid','shy','quiet'],'pers_opp');
+MATCHES.push({ id:'V1B-opp1', p:'V1B', title:'Opposites', pairs:[ ['friendly','unfriendly'], ['talkative','quiet'], ['generous','mean'], ['funny','serious'] ]});
+MATCHES.push({ id:'V1B-opp2', p:'V1B', title:'Opposites', pairs:[ ['kind','unkind'], ['lazy','hard-working'], ['clever','stupid'], ['shy','extrovert'] ]});
+
+/* ---------------- V1C clothes and prepositions of place ---------------- */
+vg('V1C','It’s very cold. Don’t forget your hat and ___.','gl…  = you wear them on your hands','gloves','gloves = you wear them on your hands.','gl');
+vg('V1C','He’s wearing a suit, a white shirt and a ___.','t…  = men wear it round the neck with a shirt','tie','tie = men wear it with a shirt.','t');
+vg('V1C','I sleep in my ___.','p…  = clothes you wear in bed',['pyjamas','pajamas'],'pyjamas = clothes you wear in bed.','p');
+vg('V1C','It’s hot today. I’m going to wear ___ and a T-shirt.','sh…  = short trousers','shorts','shorts = short trousers.','sh');
+vg('V1C','It’s cold, so she’s wearing a warm ___ round her neck.','sc…  = a long piece of cloth for your neck','scarf','scarf = you wear it round your neck.','sc');
+vg('V1C','These trousers are too big. I need a ___.','b…  = you wear it round your waist','belt','belt = it holds your trousers up.','b');
+vg('V1C','At the beach I always wear ___.','fl…-fl…  = open shoes for the beach',['flip-flops','flip flops','flipflops'],'flip-flops = open rubber shoes for the beach.','fl');
+vg('V1C','She’s wearing a gold ___ on her finger.','r…  = jewellery for your finger','ring','ring = jewellery for your finger.','r');
+vg('V1C','I always wear ___ when I go running.','tr…  = sports shoes','trainers','trainers = sports shoes.','tr');
+vg('V1C','My grandmother always wears a pearl ___.','n…  = jewellery you wear round your neck','necklace','necklace = jewellery for your neck.','n');
+vg('V1C','She’s wearing a short ___ and a blouse.','sk…  = women wear it instead of trousers','skirt','skirt = women wear it instead of trousers.','sk');
+vg('V1C','Put on a ___. It’s like a sweater, but it has buttons.','c…  = a sweater with buttons','cardigan','cardigan = a sweater with buttons.','c');
+m('V1C','She’s ___ a beautiful red dress.',['wearing','carrying','dressing'],'wear_dress');
+m('V1C','He always ___ very well.',['dresses','wears','carries'],'wear_dress');
+m('V1C','I bought a new ___ of jeans.',['pair','set','piece'],'a pair of jeans, trousers, shoes, trainers.');
+m('V1C','She’s ___ a big bag.',['carrying','wearing','dressing'],'wear_dress');
+m('V1C','The young man is ___ the kitchen.',['in','on','at'],'place');
+m('V1C','There’s a picture ___ the sofa.',['above','in','between'],'place');
+m('V1C','The cat is sleeping ___ the table.',['under','between','in front'],'place');
+m('V1C','The bank is ___ the café and the supermarket.',['between','next','opposite of'],'place');
+m('V1C','There’s a big plant ___ of the room.',['in the corner','on the corner','at corner'],'in the corner of a room.');
+m('V1C','The table is ___ the room.',['in the middle of','in the middle','on the middle of'],'place');
+m('V1C','Our car is parked ___ the house.',['in front of','in front','front of'],'place');
+m('V1C','The bathroom is ___ the bedroom.',['next to','next','next of'],'place');
+m('V1C','The window is ___ the left of the door.',['on','in','at'],'on the left of, on the right of.');
+f('V1C',['There’s a lamp','in front','the sofa.'],1,['in front of','in the front','front of'],'place');
+f('V1C',['The bag is','between','the chair.'],1,['next to','between of','in middle of'],'between = in the middle of TWO things. One thing: next to.');
+f('V1C',['He’s','carrying','a blue suit.'],1,['wearing','dressing','carry'],'wear_dress');
+f('V1C',['I need','a new pair','of jean.'],2,['of jeans.','of a jean.','of jeanses.'],'jeans, trousers and shorts are always plural: a pair of jeans.');
+SORTS.push({ id:'V1C-wear', bins:['Clothes','Shoes','Jewellery'], rules:['Clothes: blouse, cardigan, shorts …','Shoes: boots, sandals, trainers …','Jewellery: bracelet, earrings, necklace, ring.'], cards:[
+  ['blouse',0,'V1C'], ['cardigan',0,'V1C'], ['shorts',0,'V1C'], ['jacket',0,'V1C'], ['leggings',0,'V1C'],
+  ['boots',1,'V1C'], ['sandals',1,'V1C'], ['trainers',1,'V1C'], ['flip-flops',1,'V1C'],
+  ['bracelet',2,'V1C'], ['earrings',2,'V1C'], ['necklace',2,'V1C'], ['ring',2,'V1C']
+]});
+
+/* ===================== UNIT 2 ===================== */
+POINTS.push(
+  { id:'2A', unit:2, title:'Past simple', sub:'stayed, went; didn’t go; Did you …?', star:'The Suitcase' },
+  { id:'2B', unit:2, title:'Past continuous', sub:'I was walking home when …', star:'The Storm' },
+  { id:'2C', unit:2, title:'Sequencers and connectors', sub:'after that, suddenly; so, because, although', star:'The Chain' }
+);
+UNITS[2] = 'Past tenses, telling a story';
+Object.assign(GAP_INS, {
+  '2A':'Write the verb in brackets in the {past simple}.',
+  '2B':'Write the verb in brackets in the {past continuous} or {past simple}.',
+  '2C':'Write one word with the meaning in brackets ({reason}, {result}, {contrast} …).'
+});
+Object.assign(RULES, {
+  past_reg:'Regular verbs: + -ed (worked, stayed). Ends in e: + -d (liked). Consonant + y: -ied (studied). One vowel + one consonant: double it (stopped).',
+  past_irr:'Irregular verbs have their own past form: go → went, buy → bought, take → took, have → had (see the list of irregular verbs).',
+  past_neg:'Negative: didn’t + infinitive (I didn’t go NOT I didn’t went). With be: wasn’t / weren’t.',
+  past_q:'Questions: (question word) + did + subject + infinitive (Where did you go? NOT Where did you went?). With be: Was it …? Were you …?',
+  pastc_form:'Past continuous: was / were + verb + -ing (I was working. They weren’t listening. What were you doing?).',
+  pastc_use:'Past continuous for an action in progress at a moment in the past: At 8 o’clock last night I was having dinner.',
+  pastc_ps:'A longer action in progress (past continuous) is interrupted by a short action (past simple): I was walking home when it started to rain.',
+  pastc_bg:'Use the past continuous to describe the background at the start of a story: The sun was shining and people were sitting outside.',
+  seq:'Sequencers show the order of events: Then, After that, The next day, Two minutes later, Suddenly, When …',
+  seq_after:'To start a new sentence, use Then or After that, not After: I got up. After that, I had a shower. NOT After, I had a shower.',
+  conn_because:'because + the reason: She was late because she missed the bus.',
+  conn_so:'so + the result: She missed the bus, so she was late.',
+  conn_although:'although and but show a contrast. although can go at the beginning or in the middle: Although it was cold, we went out. but goes in the middle: It was cold, but we went out.'
+});
+
+/* ---------------- 2A Past simple ---------------- */
+g('2A','We ___ in a lovely hotel near the beach.','stay','stayed','past_reg');
+g('2A','Last summer we ___ to Greece.','go','went','past_irr');
+g('2A','I ___ a lot of photos in Rome.','take','took','past_irr');
+g('2A','She ___ English at university.','study','studied','past_reg');
+g('2A','The bus ___ right outside our hotel.','stop','stopped','past_reg');
+g('2A','We really ___ the museum. It was fantastic.','like','liked','past_reg');
+g('2A','They ___ a car and drove round the island.','hire','hired','past_reg');
+g('2A','I ___ some souvenirs for my family.','buy','bought','past_irr');
+g('2A','We ___ a great time in Paris.','have','had','past_irr');
+g('2A','The weather ___ very good. It rained every day.','not be','wasn’t','past_neg');
+g('2A','We ___ to the beach because it was too cold.','not go','didn’t go','past_neg');
+g('2A','He ___ his passport at the hotel and had to go back.','leave','left','past_irr');
+g('2A','Our plane ___ at ten o’clock at night.','arrive','arrived','past_reg');
+g('2A','I ___ my friends at the airport.','meet','met','past_irr');
+g('2A','We ___ in the sea every day.','swim','swam','past_irr');
+g('2A','___ you have a good time on holiday?','do','did','past_q');
+
+m('2A','Where ___ last summer?',['did you go','did you went','you went'],'past_q');
+m('2A','We ___ the castle because it was closed.',['didn’t visit','didn’t visited','not visited'],'past_neg');
+m('2A','I ___ dinner in a lovely restaurant.',['had','haved','hadded'],'past_irr');
+m('2A','They ___ in Italy for two weeks.',['stayed','staid','stayd'],'past_reg');
+m('2A','Yesterday she ___ the early train to work.',['caught','catched','catch'],'past_irr');
+m('2A','___ the weather good?',['Was','Did','Were'],'past_q');
+m('2A','We ___ a lot of money in New York last year.',['spent','spended','spend'],'past_irr');
+m('2A','He ___ his sister a postcard yesterday.',['sent','sended','send'],'past_irr');
+m('2A','I ___ the film. It was boring.',['didn’t like','didn’t liked','not liked'],'past_neg');
+m('2A','The hotel ___ very comfortable.',['wasn’t','didn’t','weren’t'],'past_neg');
+m('2A','What time ___ the train leave yesterday?',['did','was','were'],'past_q');
+m('2A','We ___ the plane by five minutes!',['missed','misted','misses'],'past_reg');
+m('2A','They ___ married in 2015.',['got','getted','gotted'],'past_irr');
+m('2A','I ___ to call you, but I forgot.',['wanted','wantted','want'],'past_reg');
+
+f('2A',['Did','you','enjoyed','the holiday?'],2,['enjoy','enjoying','enjoys'],'past_q');
+f('2A',['We','didn’t went','to the beach.'],1,['didn’t go','didn’t going','not went'],'past_neg');
+f('2A',['I','buyed','a new jacket','yesterday.'],1,['bought','buy','buied'],'past_irr');
+f('2A',['She','studyed','in London','for a year.'],1,['studied','studed','study'],'past_reg');
+f('2A',['Where','you stayed','in Rome?'],1,['did you stay','did you stayed','you did stay'],'past_q');
+f('2A',['The train','stoped','at every station.'],1,['stopped','stoppt','stop'],'past_reg');
+f('2A',['The food','didn’t be','very good.'],1,['wasn’t','didn’t was','weren’t'],'past_neg');
+f('2A',['They','arrive','at the hotel','late last night.'],1,['arrived','arrived at','arriving'],'past_reg');
+
+/* ---------------- 2B Past continuous ---------------- */
+g('2B','At eight o’clock last night I ___ dinner.','have','was having','pastc_use');
+g('2B','I ___ along the beach when I saw a dolphin.','walk','was walking','pastc_ps');
+g('2B','We were sleeping when the phone ___.','ring','rang','pastc_ps');
+g('2B','It ___ when we left the house, so we took an umbrella.','rain','was raining','pastc_ps');
+g('2B','When I arrived, my friends ___ for me outside the cinema.','wait','were waiting','pastc_ps');
+g('2B','She ___ her leg when she was skiing.','break','broke','pastc_ps');
+g('2B','The sun ___ and people were sitting outside the cafés.','shine','was shining','pastc_bg');
+g('2B','They ___ TV when the lights went out.','watch','were watching','pastc_ps');
+g('2B','I ___ a strange noise while I was reading in bed.','hear','heard','pastc_ps');
+g('2B','At six o’clock this morning I ___.','sleep','was sleeping','pastc_use');
+g('2B','He was driving to work when he ___ an accident.','see','saw','pastc_ps');
+g('2B','Sorry I didn’t answer when you called. I ___ a shower.','have','was having','pastc_use');
+g('2B','While we ___ on the beach, somebody stole our bags.','sit','were sitting','pastc_ps');
+g('2B','It was a cold night and the wind ___.','blow','was blowing','pastc_bg');
+
+m('2B','What ___ when I called you?',['were you doing','did you doing','was you doing'],'pastc_form');
+m('2B','I ___ to music when my brother came in.',['was listening','listen','were listening'],'pastc_ps');
+m('2B','She was cooking when she ___ her finger.',['cut','was cutting','cutted'],'pastc_ps');
+m('2B','They ___ football when it started to snow.',['were playing','was playing','are playing'],'pastc_ps');
+m('2B','Where ___ when you lost your phone?',['were you','did you','was you'],'pastc_form');
+m('2B','The children ___ in the garden at five o’clock.',['were playing','was playing','playing'],'pastc_use');
+m('2B','He ___ a red jacket when I saw him.',['was wearing','were wearing','wearing'],'pastc_ps');
+m('2B','While I was waiting for the bus, I ___ an old friend.',['saw','was seeing','seed'],'pastc_ps');
+m('2B','It ___ when we got to the airport.',['was snowing','snowing','were snowing'],'pastc_ps');
+m('2B','I ___ TV when the electricity went off.',['was watching','were watching','watching'],'pastc_ps');
+m('2B','We ___ dinner when Dad came home.',['were having','was having','having'],'pastc_ps');
+m('2B','In 2015 my parents ___ in a small flat in London.',['were living','was living','living'],'pastc_bg');
+
+f('2B',['I','was walk','home','when I saw her.'],1,['was walking','walked was','were walking'],'pastc_form');
+f('2B',['They','was','having','lunch','at two o’clock.'],1,['were','did','be'],'pastc_form');
+f('2B',['She was taking a photo','when he','was falling','into the river.'],2,['fell','falled','was fall'],'pastc_ps');
+f('2B',['We','were sleeping','when','the phone','was ringing.'],4,['rang.','rung.','ringed.'],'pastc_ps');
+f('2B',['It','were raining','when we','left.'],1,['was raining','raining','were rain'],'pastc_form');
+f('2B',['He','were','driving','too fast.'],1,['was','did','be'],'pastc_form');
+f('2B',['What','did you doing','at ten o’clock?'],1,['were you doing','was you doing','you were doing'],'pastc_form');
+
+/* ---------------- 2C Sequencers and connectors ---------------- */
+g('2C','___ the hotel was expensive, it wasn’t very comfortable.','contrast',['although','though','even though'],'conn_although');
+g('2C','I was very tired, ___ I went to bed early.','result','so','conn_so');
+g('2C','We stayed at home ___ it was raining.','reason',['because','as','since'],'conn_because');
+g('2C','She called him, ___ he didn’t answer.','contrast',['but','although','though'],'conn_although');
+g('2C','He was hungry, ___ he made a sandwich.','result','so','conn_so');
+g('2C','The plane took off at six. Two hours ___, it landed in Rome.','after some time','later','seq');
+g('2C','I didn’t go to the party ___ I had a terrible headache.','reason',['because','as','since'],'conn_because');
+
+m('2C','She was driving very fast ___ she was in a hurry.',['because','so','although'],'conn_because');
+m('2C','He was wearing a dark coat, ___ Hannah didn’t see him at first.',['so','because','although'],'conn_so');
+m('2C','___ the food wasn’t very good, they had a great time.',['Although','But','So'],'conn_although');
+m('2C','It was raining, ___ we stayed at home.',['so','because','although'],'conn_so');
+m('2C','I went to bed early ___ I was very tired.',['because','so','but'],'conn_because');
+m('2C','We didn’t play well, ___ we won the match.',['but','because','so'],'conn_although');
+m('2C','I got up and had a shower. ___, I made some coffee.',['After that','After','Before'],'seq_after');
+m('2C','They met at a party in June. Two months ___, they got married.',['later','after','next'],'seq');
+m('2C','I was watching TV ___ the phone rang.',['when','after that','then'],'seq');
+m('2C','She opened the door. ___, a cat ran into the room.',['Suddenly','Although','Because'],'seq');
+m('2C','They had dinner on Friday. ___ day, he phoned her again.',['The next','The after','After the'],'seq');
+m('2C','He didn’t study, ___ he failed the exam.',['so','because','although'],'conn_so');
+m('2C','I couldn’t sleep ___ it was very hot.',['because','so','but'],'conn_because');
+m('2C','___ it was very cold, we went for a walk.',['Although','So','But'],'conn_although');
+
+f('2C',['I got up.','After,','I had a shower.'],1,['After that,','After this time,','Afterwards that,'],'seq_after');
+f('2C',['It was very hot,','because','we went to the beach.'],1,['so','although','but'],'conn_so');
+f('2C',['But','it was raining,','we played tennis.'],0,['Although','So','Because'],'conn_although');
+f('2C',['I couldn’t go to the party','so','I was ill.'],1,['because','although','but'],'conn_because');
+f('2C',['Although','I studied a lot,','but I failed.'],2,['I failed.','so I failed.','because I failed.'],'conn_although');
+f('2C',['We were having dinner','then','the lights went out.'],1,['when','after that','so'],'seq');
+f('2C',['Two minutes','after,','the police arrived.'],1,['later,','next,','then,'],'seq');
+
+/* ===================== VOCABULARY, UNIT 2 ===================== */
+VPOINTS.push(
+  { id:'V2A', code:'2A', unit:2, title:'Holidays', sub:'go camping, stay at a campsite, sunbathe' },
+  { id:'V2B', code:'2B', unit:2, title:'Prepositions: at, in, on', sub:'in March, on Monday, at six o’clock' },
+  { id:'V2C', code:'2C', unit:2, title:'Verb phrases', sub:'invite somebody to dinner, be in a hurry' }
+);
+VUNITS[2] = 'Holidays, at / in / on, verb phrases';
+Object.assign(GAP_INS, { 'V2A':'Complete the word. The first letter or letters are given.' });
+Object.assign(RULES, {
+  hol_go:'go + -ing for activities: go camping, go sightseeing, go swimming, go skiing. Also go abroad, go away (no to).',
+  rent_hire:'rent = pay to use something for a long time (an apartment, a flat). hire = for a short time (a bike, skis, a boat). You can rent or hire a car.',
+  prep_time:'in + months, seasons, years, parts of the day (in March, in winter, in 2015, in the morning). on + days and dates (on Monday, on 4th July). at + times, night, the weekend, Christmas (at six o’clock, at night).',
+  prep_place:'in + countries, cities, rooms, buildings (in Spain, in the kitchen). on + transport and surfaces (on the bus, on the table, on the wall). at + places like school, work, home, the station, a bus stop.'
+});
+
+/* ---------------- V2A holidays ---------------- */
+m('V2A','Last summer we went ___ in the mountains.',['camping','camp','to camp'],'hol_go');
+m('V2A','We went ___ for the weekend.',['away','on','to'],'go away for the weekend = leave home for a short time.');
+m('V2A','I love going ___. I visited three countries last year.',['abroad','to abroad','in abroad'],'go abroad (no to) = go to another country.');
+m('V2A','We ___ an apartment by the sea for two weeks.',['rented','hired','borrowed'],'rent_hire');
+m('V2A','We ___ a lot of photos.',['took','did','made'],'take photos.');
+m('V2A','I ___ some souvenirs for my family.',['bought','took','spent'],'buy souvenirs.');
+m('V2A','Did you ___ a good time?',['have','make','do'],'have a good time.');
+m('V2A','We went ___ every day and saw all the famous buildings.',['sightseeing','sightsee','to sightseeing'],'hol_go');
+m('V2A','A: What was the weather like?  B: It was ___ and we couldn’t see anything.',['foggy','sunny','warm'],'foggy = with a lot of fog, so you can’t see far.');
+m('V2A','The hotel was ___. The bed was very hard and the room was dirty.',['uncomfortable','luxurious','lovely'],'comfortable ↔ uncomfortable.');
+m('V2A','The people were very ___. They always helped us.',['helpful','unhelpful','crowded'],'helpful = happy to help you.');
+m('V2A','The beach was very ___. There were people everywhere.',['crowded','empty','quiet'],'crowded = full of people.');
+m('V2A','A: How was your holiday?  B: ___! It rained every day.',['Awful','Fantastic','Wonderful'],'awful = very bad.');
+m('V2A','We ___ our flight online.',['booked','rented','hired'],'book a flight, book a hotel.');
+m('V2A','We went ___ in the sea every morning.',['swimming','swim','swam'],'hol_go');
+vg('V2A','I love lying on the beach and ___.','s…  = lying in the sun','sunbathing','sunbathe = lie in the sun.','s');
+vg('V2A','We ___ in a five-star hotel.','st…  = live in a place for a short time','stayed','stay in a hotel / at a campsite / with friends.','st');
+vg('V2A','We went ___. We put up our tent next to a lake.','c…  = sleeping in a tent','camping','go camping = sleep in a tent.','c');
+vg('V2A','It was very ___. Our hats blew away!','w…  = with a lot of wind','windy','windy = with a lot of wind.','w');
+vg('V2A','The hotel was ___ – a beautiful room, a big pool and fantastic food.','l…  = very expensive and comfortable','luxurious','luxurious ↔ basic.','l');
+vg('V2A','It was a very ___ hotel – just a bed and a chair.','b…  = simple, the opposite of luxurious','basic','basic = simple, with only the things you need.','b');
+MATCHES.push({ id:'V2A-hol', p:'V2A', title:'Holiday phrases', pairs:[
+  ['go','sightseeing'], ['have','a good time'], ['sunbathe','on the beach'], ['book','a flight online']
+]});
+
+/* ---------------- V2B at / in / on ---------------- */
+m('V2B','My birthday is ___ March.',['in','on','at'],'prep_time');
+m('V2B','I’ll see you ___ Monday.',['on','in','at'],'prep_time');
+m('V2B','The class starts ___ nine o’clock.',['at','in','on'],'prep_time');
+m('V2B','We met ___ 2015.',['in','on','at'],'prep_time');
+m('V2B','What do you usually do ___ the weekend?',['at','in','to'],'prep_time');
+m('V2B','I never go out ___ night.',['at','in','on'],'prep_time');
+m('V2B','We always visit my grandparents ___ Christmas.',['at','in','on'],'prep_time');
+m('V2B','She was born ___ 4th July.',['on','in','at'],'prep_time');
+m('V2B','I usually study ___ the evening.',['in','on','at'],'prep_time');
+m('V2B','I’ll wait for you ___ the bus stop.',['at','in','on'],'prep_place');
+m('V2B','Your keys are ___ the table.',['on','in','at'],'prep_place');
+m('V2B','There’s a lot of traffic ___ the city centre.',['in','at','on'],'prep_place');
+m('V2B','He works ___ a hospital.',['in','on','to'],'prep_place');
+m('V2B','Let’s meet ___ the station.',['at','on','to'],'prep_place');
+m('V2B','I always read the news ___ the bus.',['on','at','to'],'prep_place');
+m('V2B','There’s a beautiful picture ___ the wall.',['on','in','at'],'prep_place');
+m('V2B','It’s very cold here ___ winter.',['in','on','at'],'prep_time');
+m('V2B','They live ___ Brazil.',['in','at','on'],'prep_place');
+m('V2B','We had a party ___ New Year’s Day.',['on','in','at'],'prep_time');
+m('V2B','The children are ___ school until three o’clock.',['at','on','to'],'prep_place');
+f('V2B',['I was born','on','1998.'],1,['in','at','to'],'prep_time');
+f('V2B',['See you','in','Friday!'],1,['on','at','for'],'prep_time');
+f('V2B',['She’s','in','work','at the moment.'],1,['at','on','to'],'prep_place');
+f('V2B',['The film','starts','on','half past seven.'],2,['at','in','to'],'prep_time');
+f('V2B',['They’re going to Japan','at','the summer.'],1,['in','on','to'],'prep_time');
+SORTS.push({ id:'V2B-prep', bins:['in','on','at'], rules:['prep_time','prep_time','prep_time'], cards:[
+  ['March',0,'V2B'], ['the summer',0,'V2B'], ['2020',0,'V2B'], ['the morning',0,'V2B'],
+  ['Tuesday',1,'V2B'], ['1st May',1,'V2B'], ['my birthday',1,'V2B'], ['New Year’s Day',1,'V2B'],
+  ['six o’clock',2,'V2B'], ['night',2,'V2B'], ['the weekend',2,'V2B'], ['Christmas',2,'V2B']
+]});
+
+/* ---------------- V2C verb phrases ---------------- */
+m('V2C','He ___ her to dinner at a French restaurant.',['invited','asked for','called'],'invite somebody to dinner.');
+m('V2C','They ___ a great time.',['had','made','did'],'have a great time.');
+m('V2C','She was ___ a hurry.',['in','on','at'],'be in a hurry = need to go fast.');
+m('V2C','A man ran ___ the road.',['across','between','at'],'run across the road = from one side to the other.');
+m('V2C','He ___ for her at the door of the club.',['waited','hoped','expected'],'wait for somebody.');
+m('V2C','She ___ him her phone number.',['gave','said','told'],'give somebody your phone number.');
+m('V2C','They ___ the club very late.',['left','went','came'],'leave a place (no to).');
+m('V2C','The DJ ___ a song for her.',['played','put','did'],'play a song.');
+m('V2C','Every evening they ___ in a coffee bar.',['met','knew','saw'],'meet = see somebody by arrangement.');
+m('V2C','He ___ her to a romantic restaurant.',['took','carried','went'],'take somebody to a restaurant.');
+MATCHES.push({ id:'V2C-vp1', p:'V2C', title:'Verb phrases from the story', pairs:[
+  ['invite','somebody to dinner'], ['be','in a hurry'], ['give somebody','your phone number'], ['run','across the road']
+]});
+MATCHES.push({ id:'V2C-vp2', p:'V2C', title:'Verb phrases from the story', pairs:[
+  ['have','a great time'], ['wait','for somebody'], ['leave','the club very late'], ['drive','along the high street']
+]});
+
+/* ===================== UNIT 3 ===================== */
+POINTS.push(
+  { id:'3A', unit:3, title:'be going to', sub:'plans and predictions', star:'The Plane' },
+  { id:'3B', unit:3, title:'Present continuous (future)', sub:'I’m meeting Anna tonight.', star:'The Diary' },
+  { id:'3C', unit:3, title:'Relative clauses', sub:'who, which, where', star:'The Dictionary' }
+);
+UNITS[3] = 'Future plans, relative clauses';
+Object.assign(GAP_INS, {
+  '3A':'Use the correct form of {be going to} + the verb in brackets.',
+  '3B':'Write the verb in brackets in the {present continuous} (a future arrangement).',
+  '3C':'Write {who}, {which} or {where}. (that is also correct for people and things.)'
+});
+Object.assign(RULES, {
+  gt_form:'be going to + infinitive: I’m going to stay. She isn’t going to come. Are you going to buy it?',
+  gt_plan:'Use be going to for plans and intentions: We’re going to visit the Louvre.',
+  gt_pred:'Use be going to for a prediction when you can see or know something now: Look at those clouds! It’s going to rain.',
+  arr_pc:'Use the present continuous for future arrangements, with a fixed time or place: I’m meeting Anna at seven tonight.',
+  arr_notps:'Don’t use the present simple for your arrangements: I’m seeing an old friend tonight NOT I see an old friend tonight.',
+  arr_both:'For plans, be going to and the present continuous are often both possible: I’m going to see Anna on Tuesday = I’m seeing Anna on Tuesday.',
+  rel_who:'who for people: a person who works in a hospital. (that is also possible.)',
+  rel_which:'which for things: a machine which makes coffee. (that is also possible.) A place which is the subject of the verb also takes which: a shop which sells bread.',
+  rel_where:'where for places: a place where you can buy stamps.',
+  rel_subj:'After where you need a subject: a shop where you can buy bread NOT a shop where can buy bread.'
+});
+
+/* ---------------- 3A be going to ---------------- */
+g('3A','We ___ the Louvre tomorrow.','visit','are going to visit','gt_plan');
+g('3A','I ___ a new car next year.','buy','am going to buy','gt_plan');
+g('3A','Look at that man on the bike! He ___.','fall','is going to fall','gt_pred');
+g('3A','My sister ___ engineering at university.','study','is going to study','gt_plan');
+g('3A','They ___ to the party. They’re too tired.','not come','aren’t going to come','gt_form');
+g('3A','Be careful! You ___ that glass.','drop','are going to drop','gt_pred');
+g('3A','We ___ a taxi to the airport.','take','are going to take','gt_plan');
+g('3A','We ___ the match. We’re losing 4–0 and there are only two minutes left.','not win','aren’t going to win','gt_pred');
+g('3A','I ___ my grandparents this weekend.','see','am going to see','gt_plan');
+g('3A','Mark ___ for a job in London.','look','is going to look','gt_plan');
+g('3A','The traffic is terrible. We ___ late.','be','are going to be','gt_pred');
+g('3A','I ___ English every day this year. That’s my plan.','practise',['am going to practise','am going to practice'],'gt_plan');
+
+m('3A','I’m going ___ a new phone.',['to buy','buy','buying'],'gt_form');
+m('3A','Who ___ cook dinner tonight?',['is going to','are going to','going to'],'gt_form');
+m('3A','We ___ going to stay in a hotel.',['aren’t','don’t','not'],'gt_form');
+m('3A','Look out! That car ___ hit the wall!',['is going to','goes to','is going'],'gt_pred');
+m('3A','They ___ sell their house.',['are going to','are go to','going to'],'gt_form');
+m('3A','What ___ do after the class?',['are you going to','you are going to','do you going to'],'gt_form');
+m('3A','She ___ be a doctor. She’s studying medicine now.',['is going to','going to','goes to'],'gt_plan');
+m('3A','It’s really cold and the sky is grey. I think it ___.',['is going to snow','snows','going to snow'],'gt_pred');
+m('3A','Are you going to ___ the party on Saturday?',['come to','coming to','came to'],'gt_form');
+m('3A','He isn’t going ___ the exam. He hasn’t studied at all.',['to pass','pass','passing'],'gt_pred');
+m('3A','I ___ to watch the match tonight.',['’m going','go','going'],'gt_form');
+
+f('3A',['I','going to','visit','my aunt.'],1,['’m going to','go to','am go to'],'gt_form');
+f('3A',['We','are going','buy','a new sofa.'],1,['are going to','are go to','going to'],'gt_form');
+f('3A',['Look at the clouds!','It’s going to','raining.'],2,['rain.','rains.','rained.'],'gt_pred');
+f('3A',['Are','they','go to','move house?'],2,['going to','gone to','go'],'gt_form');
+f('3A',['She','doesn’t going to','come.'],1,['isn’t going to','not going to','doesn’t go to'],'gt_form');
+f('3A',['What','you are going to','wear?'],1,['are you going to','you going to','do you going to'],'gt_form');
+
+/* ---------------- 3B Present continuous for future arrangements ---------------- */
+g('3B','I ___ my sister at the airport at six.','meet','am meeting','arr_pc');
+g('3B','We ___ for Paris early on Friday morning.','leave','are leaving','arr_pc');
+g('3B','They ___ married in June.','get','are getting','arr_pc');
+g('3B','My parents ___ dinner with us on Sunday.','have','are having','arr_pc');
+g('3B','I ___ tomorrow. It’s a holiday.','not work','am not working','arr_pc');
+g('3B','The plumber ___ at ten tomorrow morning.','come','is coming','arr_pc');
+g('3B','Next week we ___ in a hotel near the beach.','stay','are staying','arr_pc');
+g('3B','I can’t come to the cinema on Saturday. I ___ my grandparents.','visit','am visiting','arr_notps');
+g('3B','Tom ___ a party on Saturday. Are you going?','have','is having','arr_pc');
+g('3B','We ___ to the concert tonight. We’ve got the tickets.','go','are going','arr_pc');
+g('3B','My brother ___ back from Australia next week.','come','is coming','arr_pc');
+g('3B','Sorry, I can’t talk now. I ___ lunch with a client in five minutes.','have','am having','arr_pc');
+
+m('3B','What ___ this weekend?',['are you doing','do you do','you are doing'],'arr_pc');
+m('3B','I ___ an old friend tonight.',['’m seeing','see','seeing'],'arr_notps');
+m('3B','We ___ to Rome next week.',['’re driving','drive','driving'],'arr_notps');
+m('3B','A: Are you free on Saturday?  B: No, sorry. I ___ my brother move house.',['’m helping','help','helping'],'arr_notps');
+m('3B','Sorry, I can’t meet you tomorrow evening. I ___ late.',['’m working','work','working'],'arr_notps');
+m('3B','When ___ to London?',['are you going back','do you go back','you are going back'],'arr_pc');
+m('3B','They ___ for dinner on Friday. I’m cooking a curry.',['are coming','come','coming'],'arr_notps');
+m('3B','I ___ lunch with Kate tomorrow.',['’m having','have','having'],'arr_notps');
+m('3B','Is your brother ___ to the party tonight?',['coming','come','comes'],'arr_pc');
+m('3B','We can’t come next week. We ___ house.',['’re moving','move','moving'],'arr_notps');
+m('3B','A: What are you doing on Sunday?  B: I’m going to visit my aunt. = I ___ my aunt.',['’m visiting','visit','visited'],'arr_both');
+
+f('3B',['I','see','the dentist','tomorrow at ten.'],1,['’m seeing','seeing','am see'],'arr_notps');
+f('3B',['What','do you do','tonight?'],1,['are you doing','you are doing','do you doing'],'arr_pc');
+f('3B',['We','fly','to Lisbon','on Monday.'],1,['’re flying','flying','are fly'],'arr_notps');
+f('3B',['She’s','have','a party','on Saturday.'],1,['having','has','had'],'arr_pc');
+f('3B',['They','are','meet','us at the station.'],2,['meeting','meet to','met'],'arr_pc');
+f('3B',['Are you','work','next weekend?'],1,['working','works','to work'],'arr_pc');
+
+/* ---------------- 3C Defining relative clauses ---------------- */
+g('3C','A waiter is a person ___ works in a restaurant.','person',['who','that'],'rel_who');
+g('3C','A fridge is a thing ___ keeps food cold.','thing',['which','that'],'rel_which');
+g('3C','A bakery is a place ___ you can buy bread.','place','where','rel_where');
+g('3C','That’s the man ___ lives next door.','person',['who','that'],'rel_who');
+g('3C','It’s the hotel ___ we stayed last year.','place','where','rel_where');
+g('3C','Is this the book ___ you wanted?','thing',['which','that'],'rel_which');
+g('3C','A tour guide is somebody ___ shows you round a city.','person',['who','that'],'rel_who');
+g('3C','A post office is somewhere ___ people send letters and parcels.','place','where','rel_where');
+g('3C','It’s a word ___ means very, very big.','thing',['which','that'],'rel_which');
+g('3C','She’s the teacher ___ helped me with my English.','person',['who','that'],'rel_who');
+g('3C','This is the café ___ I met my wife.','place','where','rel_where');
+g('3C','I lost the keys ___ you gave me.','thing',['which','that'],'rel_which');
+g('3C','A library is a building ___ you can borrow books.','place','where','rel_where');
+g('3C','He’s the actor ___ won the prize.','person',['who','that'],'rel_who');
+
+m('3C','A chef is a person ___ cooks in a restaurant.',['who','which','where'],'rel_who');
+m('3C','A trolley is something ___ you use to carry your bags at an airport.',['which','who','where'],'rel_which');
+m('3C','An airport is a place ___ you catch a plane.',['where','which','who'],'rel_where');
+m('3C','Lazy is an adjective for a person ___ doesn’t like working.',['who','which','where'],'rel_who');
+m('3C','Crowded describes a place ___ there are a lot of people.',['where','who','which'],'rel_where');
+m('3C','A museum is a place ___ you can see old or interesting things.',['where','who','which'],'rel_where');
+m('3C','Do you know the woman ___ is talking to Tom?',['who','which','where'],'rel_who');
+m('3C','I need a phone ___ takes good photos.',['which','who','where'],'rel_which');
+m('3C','A bakery is a shop ___ sells bread and cakes.',['which','where','who'],'rel_which');
+m('3C','That’s the restaurant ___ we had dinner last night.',['where','which','who'],'rel_where');
+m('3C','It’s a place where ___ buy stamps.',['you can','can','can you'],'rel_subj');
+m('3C','A dentist is somebody ___ looks after your teeth.',['who','which','where'],'rel_who');
+
+f('3C',['A nurse is','a person','which','works in a hospital.'],2,['who','where','what'],'rel_who');
+f('3C',['A bank is','a place','who','you can get money.'],2,['where','which','what'],'rel_where');
+f('3C',['It’s a machine','who','washes clothes.'],1,['which','where','what'],'rel_which');
+f('3C',['A supermarket is a shop','where','sells food.'],1,['which','what','who'],'rel_which');
+f('3C',['It’s a place','where','can buy','medicine.'],2,['you can buy','can you buy','can buying'],'rel_subj');
+f('3C',['She’s the girl','what','sits next to me.'],1,['who','which','where'],'rel_who');
+
+/* ===================== VOCABULARY, UNIT 3 ===================== */
+VPOINTS.push(
+  { id:'V3A', code:'3A', unit:3, title:'Airports', sub:'check-in, gate, baggage reclaim' },
+  { id:'V3B', code:'3B', unit:3, title:'Verbs + prepositions', sub:'arrive in, wait for, depend on' },
+  { id:'V3C', code:'3C', unit:3, title:'Paraphrasing', sub:'It’s somebody who … It’s similar to …' }
+);
+VUNITS[3] = 'Airports, verbs + prepositions, explaining words';
+Object.assign(GAP_INS, { 'V3A':'Complete the word or phrase. The first letter or letters are given.' });
+Object.assign(RULES, {
+  airport:'At the airport: check-in → security check → passport control → departure lounge → gate. When you land: passport control → baggage reclaim → customs → arrivals.',
+  vprep:'Learn verbs with their prepositions: arrive in (a city) / at (a building), wait for, depend on, agree with, ask for, listen to, pay for, spend (money) on, worry about, believe in, think about, belong to.',
+  para:'To explain a word you don’t know: It’s somebody who … / It’s something which … / It’s somewhere where … / It’s a kind of … / It’s the opposite of … / It’s like … / It’s similar to … / For example, …'
+});
+
+/* ---------------- V3A airports ---------------- */
+vg('V3A','When you land, you collect your suitcases in ___.','b… r…  = where you get your bags after a flight',['baggage reclaim','baggage claim'],'baggage reclaim = where you collect your bags.','b');
+vg('V3A','Our flight is boarding at ___ 23.','g…  = where you get on the plane','gate','gate = where you get on the plane.','g');
+vg('V3A','Put the bags on a ___. They’re very heavy.','tr…  = you push it with your bags on it','trolley','trolley = you push it with your bags on it.','tr');
+vg('V3A','Show your passport at ___.','p… c…  = where they check your passport','passport control','passport control = where they check your passport.','p');
+vg('V3A','At the ___, they check you and your bags for dangerous things.','s… c…  = where they look for things that are not allowed',['security check','security'],'security check = where they check you and your bags.','s');
+vg('V3A','Go to ___ to get your boarding pass and leave your suitcase.','ch…  = the desk where you get your boarding pass',['check-in','check in','checkin'],'check-in = where you get your boarding pass.','ch');
+vg('V3A','Take the ___ to the first floor.','l…  = it takes you up and down in a building',['lift','lifts'],'lift (American English: elevator).','l');
+vg('V3A','Our flight leaves from ___ 3, not terminal 2.','te…  = one of the main buildings of an airport','terminal','terminal = one of the main buildings of an airport.','te');
+vg('V3A','After baggage reclaim you go through ___.','cu…  = where they can check what you bring into the country','customs','customs = where they check what you bring into a country.','cu');
+vg('V3A','Let’s wait in the ___ until they call our flight.','d… l…  = where you wait for your flight','departure lounge','departure lounge = where you wait before your flight.','d');
+m('V3A','I’m going to the airport to ___ my sister. She’s arriving at six.',['pick up','drop off','check in'],'pick somebody up = go and get them in your car.');
+m('V3A','Can you ___ me at the airport tomorrow? My flight leaves at eight.',['drop off','pick up','check in'],'drop somebody off = take them in your car and leave them there.');
+m('V3A','I have a five-hour ___ in Frankfurt, so I won’t arrive until midnight.',['stopover','gate','terminal'],'stopover = a stop between two flights.');
+m('V3A','Hurry up! We’re going to ___ our flight!',['miss','lose','catch'],'miss_lose');
+m('V3A','Look at the ___ board to see which gate our plane is leaving from.',['departures','arrivals','customs'],'departures = planes that are leaving.');
+m('V3A','You meet people who are arriving at ___.',['arrivals','departures','check-in'],'arrivals = where passengers come out after a flight.');
+m('V3A','If you’ve checked in online, you can leave your suitcase at the ___ drop.',['bag','trolley','gate'],'bag drop = where you leave your suitcase if you checked in online.');
+m('V3A','We had to wait two hours for our ___ flight to Rome.',['connecting','connected','connect'],'connecting flight = your second flight on a journey.');
+MATCHES.push({ id:'V3A-air', p:'V3A', title:'At the airport', pairs:[
+  ['check-in','where you get your boarding pass'], ['gate','where you get on the plane'], ['baggage reclaim','where you collect your suitcase'], ['customs','where they check what you bring into the country']
+]});
+
+/* ---------------- V3B verbs + prepositions ---------------- */
+m('V3B','We arrived ___ London at six o’clock.',['in','at','to'],'arrive in + a city or country.');
+m('V3B','We arrived ___ the station at six o’clock.',['at','to','on'],'arrive at + a building, a station, an airport.');
+m('V3B','I’m waiting ___ the bus.',['for','to','at'],'vprep');
+m('V3B','A: Are you going to the beach tomorrow?  B: It depends ___ the weather.',['on','of','from'],'vprep');
+m('V3B','I don’t agree ___ you.',['with','to','about'],'vprep');
+m('V3B','Excuse me, can I ask ___ the bill, please?',['for','to','of'],'vprep');
+m('V3B','I love listening ___ jazz.',['to','at','for'],'vprep');
+m('V3B','How much did you pay ___ your car?',['for','to','on'],'vprep');
+m('V3B','I spend too much money ___ clothes.',['on','for','in'],'vprep');
+m('V3B','Don’t worry ___ the exam. You’ll be fine.',['about','for','of'],'vprep');
+m('V3B','Do you believe ___ ghosts?',['in','on','to'],'vprep');
+m('V3B','What are you thinking ___? You look sad.',['about','on','in'],'vprep');
+m('V3B','What do you think ___ my new jacket? Do you like it?',['of','on','to'],'think of = have an opinion about.');
+m('V3B','Who does this bag belong ___?',['to','for','of'],'vprep');
+m('V3B','I need to speak ___ my boss about a holiday.',['to','for','at'],'speak / talk to somebody about something.');
+m('V3B','Write ___ me when you get there!',['to','for','at'],'write to somebody.');
+f('V3B',['We arrived','to','Paris','late at night.'],1,['in','at','on'],'vprep');
+f('V3B',['I’m waiting','the bus.'],0,['I’m waiting for','I’m waiting to','I’m waiting at'],'vprep');
+f('V3B',['It','depends','of','the price.'],2,['on','from','in'],'vprep');
+f('V3B',['I','spent','€200','in','clothes.'],3,['on','for','with'],'vprep');
+f('V3B',['Don’t','worry','for','me.'],2,['about','of','on'],'vprep');
+f('V3B',['Listen','me,','please!'],1,['to me,','at me,','for me,'],'vprep');
+
+/* ---------------- V3C paraphrasing ---------------- */
+m('V3C','It’s ___ who shows you round a city or a museum.',['somebody','something','somewhere'],'para');
+m('V3C','It’s ___ which we use to pay, instead of cash.',['something','somebody','somewhere'],'para');
+m('V3C','It’s ___ where people go when they want to send a parcel.',['somewhere','something','somebody'],'para');
+m('V3C','It’s a ___ of fruit. It’s long and yellow.',['kind','like','example'],'para');
+m('V3C','It’s the ___ of expensive.',['opposite','similar','kind'],'para');
+m('V3C','It’s ___ a sweater, but it has buttons.',['like','similar','opposite'],'para');
+m('V3C','It’s similar ___ a wallet, but it’s for a woman.',['to','like','as'],'para');
+m('V3C','It’s a verb. For ___, you do this to the TV when you’ve finished watching.',['example','kind','like'],'para');
+m('V3C','It’s somebody who shows you round a city. = ___',['a tour guide','a waiter','a pilot'],'tour guide = somebody who shows you round a city.');
+m('V3C','It’s something which you wear on your head. = ___',['a hat','a scarf','a belt'],'hat = something you wear on your head.');
+m('V3C','It’s somewhere where you can buy bread and cakes. = ___',['a bakery','a library','a bank'],'bakery = a shop where you can buy bread and cakes.');
+m('V3C','It’s similar to a wallet, but it’s for a woman. = ___',['a purse','a belt','a ring'],'purse = a small bag for money (usually for a woman).');
+m('V3C','It’s the opposite of expensive. = ___',['cheap','rich','poor'],'expensive ↔ cheap.');
+m('V3C','It’s a verb which means the opposite of love. = ___',['hate','like','leave'],'love ↔ hate.');
+m('V3C','It’s somebody who plays music at a club or a party. = ___',['a DJ','a waiter','a guide'],'DJ = somebody who plays music at a club or party.');
+m('V3C','It’s a kind of document. You show it at passport control. = ___',['a passport','a receipt','a map'],'passport = the document you show at passport control.');
+
+/* ===================== UNIT 4 ===================== */
+POINTS.push(
+  { id:'4A', unit:4, title:'Present perfect + yet, just, already', sub:'I’ve just made the bed.', star:'The Duster' },
+  { id:'4B', unit:4, title:'Present perfect or past simple? (1)', sub:'Have you ever …? When did you …?', star:'The Map' },
+  { id:'4C', unit:4, title:'something, anything, nothing', sub:'somebody, anywhere, nowhere …', star:'The Mystery' }
+);
+UNITS[4] = 'Present perfect, something / anything';
+Object.assign(GAP_INS, {
+  '4A':'Write the verb in brackets in the {present perfect} (or the past participle).',
+  '4B':'Write the verb in brackets in the {present perfect} or {past simple}.',
+  '4C':'Write one word for the meaning in brackets: {somebody}, {something}, {somewhere}, {anybody}, {anything}, {anywhere}, {nobody}, {nothing} or {nowhere}.'
+});
+Object.assign(RULES, {
+  pp_form:'Present perfect: have / has + past participle (I’ve finished. She hasn’t called. Have you seen it?).',
+  pp_yet:'yet goes at the END of questions and negative sentences: Have you finished yet? I haven’t finished yet.',
+  pp_just:'just = a very short time ago. It goes before the main verb: I’ve just had lunch.',
+  pp_already:'already = earlier than expected. It goes before the main verb: I’ve already done my homework.',
+  pp_notime:'Don’t use the present perfect with a finished time (yesterday, ten minutes ago, last year): I cleaned the fridge ten minutes ago NOT I’ve cleaned the fridge ten minutes ago.',
+  pp_exp:'Present perfect for experiences in your life, when we don’t say when: Have you ever been to Rome? I’ve never eaten sushi.',
+  pp_ps:'Past simple when we say or ask when, or for details (where, who with): I went there in 2019. When did you go?',
+  pp_conv:'A conversation often starts with the present perfect and then changes to the past simple for the details: Have you ever lost your phone? – Yes, I have. – Where did you lose it?',
+  been_gone:'been to = went and came back (She’s been to Paris three times). gone to = went and is still there (She’s gone to the bank – she isn’t here now).',
+  some_pos:'something, somebody (someone), somewhere in positive sentences: I bought something. There’s somebody at the door.',
+  any_neg:'anything, anybody (anyone), anywhere in questions and negative sentences: Did you buy anything? I didn’t see anybody.',
+  no_word:'nothing, nobody (no one), nowhere with a positive verb, or as a one-word answer: There’s nothing in the fridge. A: Who called? B: Nobody.',
+  no_double:'Don’t use two negatives: I didn’t do anything NOT I didn’t do nothing.',
+  some_offer:'Use something in offers and requests: Would you like something to drink?',
+  any_pos:'anywhere / anything + a positive verb = it doesn’t matter which: You can sit anywhere you like.'
+});
+
+/* ---------------- 4A Present perfect + yet, just, already ---------------- */
+g('4A','I ___ the washing-up. The kitchen is clean now.','do','have done','pp_form');
+g('4A','Have you ___ your room yet?','tidy','tidied','pp_yet');
+g('4A','Emma ___ the shopping yet. The fridge is empty.','not do','hasn’t done','pp_yet');
+g('4A','We’ve just ___ dinner, so we aren’t hungry.','have','had','pp_just');
+g('4A','He’s already ___ the rubbish out.','take','taken','pp_already');
+g('4A','They ___ their new flat yet.','not see','haven’t seen','pp_yet');
+g('4A','Has the film ___ yet?','start','started','pp_yet');
+g('4A','I ___ my keys! I can’t find them anywhere.','lose','have lost','pp_form');
+g('4A','My brother ___ a new job. He starts on Monday.','get',['has got','has gotten'],'pp_form');
+g('4A','I’ve just ___ an email from my boss.','receive','received','pp_just');
+g('4A','We ___ the beds. Can you lay the table?','make','have made','pp_form');
+g('4A','Have you ___ the dishwasher yet?','load','loaded','pp_yet');
+g('4A','The children ___ all the cake! There’s none left.','eat','have eaten','pp_form');
+g('4A','I ___ to the supermarket yet. I’ll go this afternoon.','not be','haven’t been','pp_yet');
+g('4A','Mum’s just ___ the floor. Don’t walk on it!','clean','cleaned','pp_just');
+g('4A','I’ve already ___ that film. Let’s watch a different one.','see','seen','pp_already');
+
+m('4A','Have you finished your homework ___?',['yet','just','still'],'pp_yet');
+m('4A','I haven’t done the ironing ___.',['yet','already','just'],'pp_yet');
+m('4A','A: Do you want a coffee?  B: No, thanks. I’ve ___ had one.',['just','yet','ever'],'pp_just');
+m('4A','This book is great. I’ve ___ read it twice!',['already','yet','ever'],'pp_already');
+m('4A','She ___ her homework.',['has done','have done','has did'],'pp_form');
+m('4A','___ you made the beds yet?',['Have','Did','Are'],'pp_form');
+m('4A','We’ve ___ cleaned the kitchen. Look how clean it is!',['just','yet','ago'],'pp_just');
+m('4A','I ___ the vacuuming ten minutes ago.',['did','have done','am doing'],'pp_notime');
+m('4A','Has he ___ the rubbish out?',['taken','took','take'],'pp_form');
+m('4A','They haven’t ___ a new car yet.',['bought','buyed','buy'],'pp_yet');
+m('4A','I’ve already ___ the table.',['laid','layed','lay'],'pp_already');
+m('4A','Look! It’s ___ started to snow.',['just','yet','ever'],'pp_just');
+
+f('4A',['I’ve','yet','finished','my homework.'],1,['already','ever','still'],'pp_already');
+f('4A',['Have','you','did','your homework?'],2,['done','do','doing'],'pp_form');
+f('4A',['She','has','just','went','out.'],3,['gone','go','going'],'pp_form');
+f('4A',['I','have cleaned','the bathroom','yesterday.'],1,['cleaned','clean','am cleaning'],'pp_notime');
+f('4A',['He','hasn’t','called','me','already.'],4,['yet.','just.','ever.'],'pp_yet');
+f('4A',['They','has','tidied','their rooms.'],1,['have','are','is'],'pp_form');
+f('4A',['I’ve','just','buyed','some bread.'],2,['bought','buy','buying'],'pp_form');
+
+/* ---------------- 4B Present perfect or past simple? (1) ---------------- */
+g('4B','Have you ever ___ to New York?','be','been','pp_exp');
+g('4B','I ___ to Rome in 2018.','go','went','pp_ps');
+g('4B','A: Have you ever lost your passport?  B: Yes, I ___ it in Spain last year.','lose','lost','pp_conv');
+g('4B','I’ve never ___ Chinese food.','try','tried','pp_exp');
+g('4B','When ___ you buy that jacket?','do','did','pp_ps');
+g('4B','She ___ in three different countries so far.','live','has lived','pp_exp');
+g('4B','We ___ that film last week.','see','saw','pp_ps');
+g('4B','Has your sister ever ___ a famous person?','meet','met','pp_exp');
+g('4B','I ___ my phone yesterday, but I found it this morning.','lose','lost','pp_ps');
+g('4B','A: Where’s Tom?  B: He ___ to the shops. He’ll be back soon.','go','has gone','been_gone');
+g('4B','A: Have you ever bought anything online?  B: Yes, I ___ a dress last month.','buy','bought','pp_conv');
+g('4B','They ___ married in 2010.','get','got','pp_ps');
+g('4B','A: Did you like the hotel?  B: Yes, it ___ fantastic.','be','was','pp_ps');
+g('4B','A: Have you ever been to a music festival?  B: Yes, I ___ to one in Spain two years ago.','go','went','pp_conv');
+
+m('4B','___ to Paris?',['Have you ever been','Did you ever been','Have you ever went'],'pp_exp');
+m('4B','When ___ to Rome?',['did you go','have you gone','have you been'],'pp_ps');
+m('4B','I ___ him last Friday.',['saw','’ve seen','have saw'],'pp_ps');
+m('4B','A: Have you ever been to a concert?  B: Yes, I ___ to one last summer.',['went','’ve been','’ve gone'],'pp_conv');
+m('4B','She isn’t here. She’s ___ to the bank.',['gone','been','went'],'been_gone');
+m('4B','I’ve ___ to Madrid three times. I love it.',['been','gone','went'],'been_gone');
+m('4B','Have you ever ___ snails?',['eaten','ate','eat'],'pp_exp');
+m('4B','A: Have you ever met a famous person?  B: Yes, I ___ a famous actor in 2017.',['met','’ve met','have meet'],'pp_conv');
+m('4B','___ you go out last night?',['Did','Have','Were'],'pp_ps');
+m('4B','My brother has ___ been to the USA.',['never','ever','yet'],'pp_exp');
+m('4B','A: Have you ever broken your arm?  B: Yes, I ___. I fell off my bike.',['have','did','was'],'pp_conv');
+m('4B','What time ___ last night?',['did you get home','have you got home','have you get home'],'pp_ps');
+
+f('4B',['I’ve visited','London','last year.'],0,['I visited','I’ve visit','I visit'],'pp_ps');
+f('4B',['Have','you ever','went','to Italy?'],2,['been','go','going'],'pp_exp');
+f('4B',['When','have you bought','your car?'],1,['did you buy','have you buy','did you bought'],'pp_ps');
+f('4B',['She’s','been','to the shops.','She’ll be back soon.'],1,['gone','went','go'],'been_gone');
+f('4B',['I','have never','saw','that film.'],2,['seen','see','seeing'],'pp_exp');
+f('4B',['We have had','a great time','in Rome last summer.'],0,['We had','We have','We has had'],'pp_ps');
+
+/* ---------------- 4C something, anything, nothing ---------------- */
+g('4C','There’s ___ at the door. Can you open it?','a person',['somebody','someone'],'some_pos');
+g('4C','I can’t find my glasses ___.','a place','anywhere','any_neg');
+g('4C','A: What did you buy?  B: ___. Everything was too expensive.','no thing','nothing','no_word');
+g('4C','I didn’t speak to ___ at the party.','a person',['anybody','anyone'],'any_neg');
+g('4C','A: Who did you see?  B: ___. The office was empty.','no person',['nobody','no one','no-one'],'no_word');
+g('4C','Let’s go ___ nice for dinner tonight.','a place','somewhere','some_pos');
+g('4C','I’m bored. There’s ___ to do here.','no thing','nothing','no_word');
+g('4C','I’ve got ___ in my eye.','a thing','something','some_pos');
+g('4C','We didn’t go ___ last weekend.','a place','anywhere','any_neg');
+g('4C','I knocked on the door, but ___ answered.','no person',['nobody','no one','no-one'],'no_word');
+g('4C','She bought ___ for her mum’s birthday.','a thing','something','some_pos');
+g('4C','Shh! I heard ___ in the garden.','a thing','something','some_pos');
+g('4C','A: Where did you go?  B: ___. We stayed at home.','no place','nowhere','no_word');
+g('4C','I didn’t eat ___ for breakfast, so I’m really hungry.','a thing','anything','any_neg');
+
+m('4C','I didn’t do ___ last night.',['anything','nothing','anywhere'],'no_double');
+m('4C','Would you like ___ to drink?',['something','nothing','nowhere'],'some_offer');
+m('4C','Is there ___ good on TV tonight?',['anything','nothing','nowhere'],'any_neg');
+m('4C','There’s ___ in the fridge. It’s completely empty.',['nothing','anything','something'],'no_word');
+m('4C','I’d like to go ___ hot for my holiday.',['somewhere','somebody','nowhere'],'some_pos');
+m('4C','A: Who did you meet in town?  B: ___.',['Nobody','Anybody','Nowhere'],'no_word');
+m('4C','Has ___ seen my phone?',['anybody','nobody','somewhere'],'any_neg');
+m('4C','I didn’t see ___ I knew at the party.',['anyone','no one','anywhere'],'no_double');
+m('4C','There’s ___ in the garden. Can you hear them?',['somebody','anybody','nowhere'],'some_pos');
+m('4C','We looked everywhere, but we couldn’t find it ___.',['anywhere','nowhere','somewhere'],'no_double');
+m('4C','You can sit ___ you like.',['anywhere','nowhere','somewhere'],'any_pos');
+m('4C','A: What’s wrong?  B: ___. I’m fine.',['Nothing','Anything','Something'],'no_word');
+
+f('4C',['I','didn’t do','nothing','at the weekend.'],2,['anything','nobody','nowhere'],'no_double');
+f('4C',['There’s','anybody','at the door.'],1,['somebody','anywhere','anything'],'some_pos');
+f('4C',['We','didn’t meet','nobody','interesting.'],2,['anybody','somewhere','anything'],'no_double');
+f('4C',['I’ve lost','my keys.','I can’t find them','nowhere.'],3,['anywhere.','somewhere.','nothing.'],'no_double');
+f('4C',['Would you like','nothing','to eat?'],1,['something','nowhere','nobody'],'some_offer');
+
+/* ===================== VOCABULARY, UNIT 4 ===================== */
+VPOINTS.push(
+  { id:'V4A', code:'4A', unit:4, title:'Housework, make or do?', sub:'make the bed, do the ironing' },
+  { id:'V4B', code:'4B', unit:4, title:'Shopping', sub:'checkout, receipt; fit or suit?; online' },
+  { id:'V4C', code:'4C', unit:4, title:'Adjectives ending -ed and -ing', sub:'bored / boring, excited / exciting' }
+);
+VUNITS[4] = 'Housework, shopping, -ed / -ing adjectives';
+Object.assign(GAP_INS, { 'V4A':'Complete the word. The first letter or letters are given.', 'V4B':'Complete the word. The first letter or letters are given.' });
+Object.assign(RULES, {
+  make_do:'make: a mistake, a noise, a phone call, friends, plans, an excuse, the bed, lunch. do: housework, homework, an exam, an exercise, a course, sport, exercise, the shopping, the ironing, the washing-up.',
+  housework:'Housework: lay / clear the table, load / unload the dishwasher, take out the rubbish, tidy your room, pick up your clothes, put away your clothes, make the bed, dust the furniture.',
+  fit_suit:'fit = be the right size (These jeans don’t fit me – they’re too big). suit = look good on you (Red really suits you).',
+  shop_online:'Shopping online: create an account, put things in your basket, proceed to checkout, give your delivery address and payment details, pay with a credit or debit card.',
+  edi:'-ed adjectives describe how a person feels (I’m bored, I’m interested in history). -ing adjectives describe the thing or situation that causes the feeling (The film is boring, It’s an interesting book).'
+});
+
+/* ---------------- V4A housework, make or do ---------------- */
+m('V4A','I always ___ a lot of mistakes in English.',['make','do','have'],'make_do');
+m('V4A','I need to ___ an exam next week.',['do','make','give'],'make_do');
+m('V4A','Please don’t ___ a noise. The baby’s asleep.',['make','do','have'],'make_do');
+m('V4A','Can I ___ a phone call, please?',['make','do','give'],'make_do');
+m('V4A','I want to ___ a cooking course.',['do','make','give'],'make_do');
+m('V4A','It’s easy to ___ friends at university.',['make','do','get'],'make_do');
+m('V4A','I ___ exercise every morning.',['do','make','play'],'make_do');
+m('V4A','Let’s ___ plans for the weekend.',['make','do','take'],'make_do');
+m('V4A','He didn’t come to class, and then he ___ an excuse.',['made','did','took'],'make_do');
+m('V4A','Have you ___ your homework?',['done','made','had'],'make_do');
+m('V4A','I hate ___ housework.',['doing','making','having'],'make_do');
+m('V4A','Can you ___ the table? Dinner is ready.',['lay','put on','load'],'housework');
+m('V4A','Can you ___ the rubbish out, please?',['take','pick','do'],'housework');
+m('V4A','I always ___ my bed in the morning.',['make','do','clean'],'housework');
+m('V4A','Can you ___ the dishwasher? These plates are dirty.',['load','lay','clear'],'housework');
+m('V4A','Your room is a mess! ___ it now!',['Tidy','Make','Do'],'housework');
+m('V4A','Pick ___ your dirty clothes from the floor!',['up','away','out'],'housework');
+m('V4A','Put your clothes ___ in the cupboard.',['away','up','off'],'housework');
+m('V4A','After dinner, I always do the ___.',['washing-up','washing-down','cleaning-up'],'do the washing-up = wash the plates, glasses, etc.');
+m('V4A','Can you ___ the table? We’ve finished eating.',['clear','lay','load'],'lay the table (before a meal) ↔ clear the table (after a meal).');
+vg('V4A','Can you ___ the furniture? It’s very dusty.','d…  = clean with a cloth','dust','dust the furniture.','d');
+vg('V4A','I do the ___ on Sundays – all the shirts and trousers.','ir…  = making clothes smooth','ironing','do the ironing.','ir');
+vg('V4A','Can you do the ___? The carpet is dirty.','v…  = cleaning the floor with a machine',['vacuuming','hoovering'],'do the vacuuming (hoovering).','v');
+SORTS.push({ id:'V4A-makedo', bins:['make','do'], rules:['make_do','make_do'], cards:[
+  ['a mistake',0,'V4A'], ['a noise',0,'V4A'], ['a phone call',0,'V4A'], ['friends',0,'V4A'], ['plans',0,'V4A'], ['an excuse',0,'V4A'], ['the bed',0,'V4A'],
+  ['a course',1,'V4A'], ['an exam',1,'V4A'], ['homework',1,'V4A'], ['housework',1,'V4A'], ['exercise',1,'V4A'], ['the shopping',1,'V4A'], ['the ironing',1,'V4A']
+]});
+
+/* ---------------- V4B shopping ---------------- */
+vg('V4B','Put the things you want in a ___. You carry it on your arm.','b…  = you carry things in it in a shop','basket','basket = you carry it round a shop.','b');
+vg('V4B','I always use a ___ at the supermarket because I buy a lot.','tr…  = you push it round a supermarket','trolley','trolley = you push it round a supermarket.','tr');
+vg('V4B','You pay at the ___ at the end of the supermarket.','ch…  = where you pay in a supermarket',['checkout','check-out','check out'],'checkout = where you pay in a supermarket.','ch');
+vg('V4B','Clothes are much cheaper in the ___ in January.','s…  = when shops sell things for less money','sales','the sales = when shops sell things more cheaply.','s');
+vg('V4B','A ___ is a person who buys things in a shop.','c…  = a person who buys things','customer','customer = a person who buys things.','c');
+vg('V4B','The milk is on the bottom ___.','sh…  = you put things on it in a shop or cupboard','shelf','one shelf, two shelves.','sh');
+vg('V4B','Keep your ___ in case you want to take it back.','r…  = the paper that shows what you paid','receipt','receipt = the paper that shows what you paid.','r');
+m('V4B','These jeans don’t ___ me. They’re too big.',['fit','suit','match'],'fit_suit');
+m('V4B','That colour really ___ you. You look great in red.',['suits','fits','dresses'],'fit_suit');
+m('V4B','Can I ___ on these trousers, please?',['try','test','wear'],'try something on = put it on to see if it fits.');
+m('V4B','I’m going to ___ these shoes back to the shop. They’re too small.',['take','carry','give'],'take something back to a shop.');
+m('V4B','First, go to the website and ___ an account.',['create','do','build'],'shop_online');
+m('V4B','Click on the things you want and put them in your ___.',['basket','till','receipt'],'shop_online');
+m('V4B','When you’re ready to pay, proceed to ___.',['checkout','till','customer'],'shop_online');
+m('V4B','Type in your ___ address, where they will send the things you buy.',['delivery','sending','posting'],'shop_online');
+m('V4B','You can pay with a credit or ___ card.',['debit','money','pay'],'shop_online');
+m('V4B','I paid extra for ___ delivery, so my parcel arrives tomorrow.',['next-day','tomorrow','fast-day'],'next-day delivery = it arrives the next day.');
+m('V4B','A: What size are you?  B: I’m a ___.',['medium','middle','half'],'S = small, M = medium, L = large.');
+f('V4B',['This jacket','doesn’t suit me.','It’s too small.'],1,['doesn’t fit me.','doesn’t suit to me.','doesn’t fit to me.'],'fit_suit');
+f('V4B',['Can I','try on it,','please?'],1,['try it on,','try on,','try it,'],'With it / them, the word goes in the middle: try it on, NOT try on it.');
+
+/* ---------------- V4C adjectives ending -ed and -ing ---------------- */
+m('V4C','Do you think Sundays are usually ___?',['boring','bored'],'edi');
+m('V4C','Are you ___ with your job?',['bored','boring'],'edi');
+m('V4C','What kind of weather makes you feel ___?',['depressed','depressing'],'edi');
+m('V4C','The news is always so ___.',['depressing','depressed'],'edi');
+m('V4C','A hot bath is very ___.',['relaxing','relaxed'],'edi');
+m('V4C','I feel really ___ after my holiday.',['relaxed','relaxing'],'edi');
+m('V4C','I read a very ___ article about sleep.',['interesting','interested'],'edi');
+m('V4C','Are you ___ in history?',['interested','interesting'],'edi');
+m('V4C','The children are very ___ about Christmas.',['excited','exciting'],'edi');
+m('V4C','It was a really ___ match.',['exciting','excited'],'edi');
+m('V4C','I was very ___ of the dark when I was a child.',['frightened','frightening'],'edi');
+m('V4C','I find storms very ___.',['frightening','frightened'],'edi');
+m('V4C','I was very ___ when I heard the news.',['surprised','surprising'],'edi');
+m('V4C','The end of the film was very ___.',['surprising','surprised'],'edi');
+m('V4C','I’m so ___. I worked all day.',['tired','tiring'],'edi');
+m('V4C','It was a long and ___ journey.',['tiring','tired'],'edi');
+m('V4C','I’m really ___ about my exam tomorrow.',['worried','worrying'],'edi');
+m('V4C','The news about the storm is very ___.',['worrying','worried'],'edi');
+m('V4C','The instructions were very ___. I didn’t understand them.',['confusing','confused'],'edi');
+m('V4C','I was completely ___. I didn’t know which bus to take.',['confused','confusing'],'edi');
+f('V4C',['I’m','very','interesting','in music.'],2,['interested','interest','interestingly'],'edi');
+f('V4C',['The film','was','so','bored','that I fell asleep.'],3,['boring','bore','boredom'],'edi');
+f('V4C',['She was','exciting','about the holiday.'],1,['excited','excite','excitement'],'edi');
+f('V4C',['This weather','is','really','depressed.'],3,['depressing.','depress.','depression.'],'edi');
+
+/* ===================== UNIT 9 ===================== */
+POINTS.push(
+  { id:'9A', unit:9, title:'Second conditional', sub:'If a bear attacked me, I’d …', star:'The Daydream' },
+  { id:'9B', unit:9, title:'Present perfect + for and since', sub:'I’ve had it since I was a child.', star:'The Spider' },
+  { id:'9C', unit:9, title:'Present perfect or past simple? (2)', sub:'She was married … / She’s been married …', star:'The Film Star' }
+);
+UNITS[9] = 'Second conditional, present perfect';
+Object.assign(GAP_INS, {
+  '9A':'Write the verb in brackets in the {past simple} or with {would} / {wouldn’t}.',
+  '9B':'Write the verb in brackets in the {present perfect}.',
+  '9C':'Write the verb in brackets in the {present perfect} or {past simple}.'
+});
+Object.assign(RULES, {
+  c2_form:'Second conditional: if + past simple, would / wouldn’t + infinitive: If I won the lottery, I would (I’d) buy a house.',
+  c2_use:'Use the second conditional for imaginary or unlikely situations: If a bear attacked me, I’d run. If I had more time, I’d learn Japanese.',
+  c2_were:'After if you can use were or was with I / he / she / it: If I were (was) rich … To give advice we usually say If I were you, I’d …',
+  c2_would:'Don’t use would after if: If I had a car … NOT If I would have a car …',
+  c2_could:'You can use could + infinitive instead of would: If I had a car, I could drive to work.',
+  c2_noif:'You can use would without if for imaginary situations: I’d never have a cat. I wouldn’t like to live there.',
+  c12:'First conditional (if + present, will) for real possibilities: If it doesn’t rain, we’ll go. Second conditional (if + past, would) for imaginary situations: If I had wings, I’d fly.',
+  forsince_pp:'Use the present perfect for something that started in the past and is still true now: I’ve lived here for 20 years. NOT I live here for 20 years.',
+  for_since:'for + a period of time (for two weeks, for ages, for a long time). since + the point when it started (since 2014, since Monday, since I was a child).',
+  howlong:'Ask How long have you …? (How long have you known her?) NOT How long do you know her?',
+  pp_unfin:'Present perfect (+ for / since) for a situation that continues now: She’s been married since 1984 (she is still married).',
+  ps_fin:'Past simple for a finished period: She was married to him for 11 years (they are not married now). He lived in Paris for five years (he doesn’t live there now).',
+  dead:'For people who are dead, use the past simple: Picasso painted thousands of pictures. NOT Picasso has painted …',
+  alive_pp:'For people who are alive, use the present perfect for their life up to now: She has written several books (and she may write more).'
+});
+
+/* ---------------- 9A Second conditional ---------------- */
+g('9A','If I ___ the lottery, I would buy a house by the sea.','win','won','c2_form');
+g('9A','If I had more time, I ___ Japanese.','learn','would learn','c2_form');
+g('9A','If we ___ a car, we could go to the beach.','have','had','c2_could');
+g('9A','I ___ that jacket if I were you. It’s too expensive.','not buy','wouldn’t buy','c2_were');
+g('9A','If a bee ___ into the room, I would run out.','fly','flew','c2_use');
+g('9A','What would you do if you ___ a snake in your garden?','see','saw','c2_use');
+g('9A','If I were you, I ___ to the doctor.','go','would go','c2_were');
+g('9A','If she ___ harder, she’d pass the exam.','study','studied','c2_form');
+g('9A','If my parents lived nearer, I ___ them more often.','visit','would visit','c2_form');
+g('9A','If I ___ his number, I’d call him.','know','knew','c2_form');
+g('9A','If I ___ you, I’d take an umbrella.','be',['were','was'],'c2_were');
+g('9A','If it ___ so cold, we could go for a walk.','not be',['wasn’t','weren’t'],'c2_could');
+g('9A','We ___ a dog if our flat was bigger.','get','would get','c2_form');
+g('9A','If you ___ in this river, a crocodile would eat you!','swim','swam','c2_use');
+g('9A','If I didn’t have to work, I ___ in bed all day.','stay','would stay','c2_form');
+g('9A','If a spider ___ on my arm, I would scream.','walk','walked','c2_use');
+
+m('9A','If I ___ a lot of money, I’d travel round the world.',['had','would have','have'],'c2_would');
+m('9A','If I won the lottery, I ___ stop working.',['would','will','did'],'c2_form');
+m('9A','If I ___ you, I’d say sorry.',['were','am','would be'],'c2_were');
+m('9A','What would you do if a shark ___ next to you?',['swam','would swim','swims'],'c2_use');
+m('9A','If I had a garden, I ___ some chickens.',['’d have','’ll have','had'],'c2_form');
+m('9A','I wouldn’t go there if I ___ you.',['were','am','be'],'c2_were');
+m('9A','If she knew the answer, she ___ tell us.',['would','will','does'],'c2_form');
+m('9A','If we had a bigger house, we ___ invite more friends.',['could','can','will'],'c2_could');
+m('9A','If it doesn’t rain tomorrow, we ___ have a picnic.',['’ll','’d','would'],'c12');
+m('9A','If you didn’t eat so much chocolate, you ___ feel better.',['would','will','are'],'c2_form');
+m('9A','If you ___ a famous person, who would you be?',['were','are','would be'],'c2_were');
+m('9A','I ___ live in a big city. I prefer the countryside.',['wouldn’t like to','won’t like to','don’t would like to'],'c2_noif');
+m('9A','If a bear attacked you, what ___ do?',['would you','will you','did you'],'c2_use');
+
+f('9A',['If','I','would have','more money,','I’d buy','a new car.'],2,['had','have','will have'],'c2_would');
+f('9A',['If','I','won','the lottery,','I','will buy','a house.'],5,['would buy','buy','bought'],'c2_form');
+f('9A',['If','I','am','you,','I’d','go','to bed.'],2,['were','will be','be'],'c2_were');
+f('9A',['If','she','had','a dog,','she','would walks','every day.'],5,['would walk','walks','will walk'],'c2_form');
+f('9A',['What','will','you do','if you saw a snake?'],1,['would','did','do'],'c2_form');
+f('9A',['If','it','would be','sunny,','we could','go to the beach.'],2,['was','will be','be'],'c2_would');
+
+/* ---------------- 9B Present perfect + for and since ---------------- */
+g('9B','I ___ here for ten years.','work','have worked','forsince_pp');
+g('9B','We ___ in this flat since 2019.','live','have lived','forsince_pp');
+g('9B','How long have you ___ your best friend?','know','known','howlong');
+g('9B','She ___ afraid of spiders since she was a child.','be','has been','forsince_pp');
+g('9B','My parents ___ married for 35 years.','be','have been','forsince_pp');
+g('9B','I ___ this phone for two years.','have','have had','forsince_pp');
+g('9B','Paul ___ a fan of Real Madrid since he was six.','be','has been','forsince_pp');
+g('9B','They ___ each other since they were at school.','know','have known','forsince_pp');
+g('9B','How long have you ___ in London?','live','lived','howlong');
+g('9B','I ___ to the dentist for more than 15 years.','not be','haven’t been','forsince_pp');
+g('9B','We ___ him since last June.','not see','haven’t seen','forsince_pp');
+g('9B','My sister ___ in that shop for three months.','work','has worked','forsince_pp');
+g('9B','How long has your brother ___ a vegetarian?','be','been','howlong');
+
+m('9B','I’ve lived here ___ 2015.',['since','for','from'],'for_since');
+m('9B','She’s worked there ___ six months.',['for','since','during'],'for_since');
+m('9B','We’ve been married ___ ages.',['for','since','from'],'for_since');
+m('9B','I’ve had this car ___ last June.',['since','for','in'],'for_since');
+m('9B','He’s been afraid of dogs ___ he was a child.',['since','for','from'],'for_since');
+m('9B','I haven’t eaten anything ___ breakfast.',['since','for','after'],'for_since');
+m('9B','They’ve known each other ___ a long time.',['for','since','during'],'for_since');
+m('9B','I’ve been here ___ 8.15.',['since','for','at'],'for_since');
+m('9B','How long ___ your dog?',['have you had','do you have','are you having'],'howlong');
+m('9B','I ___ her for ten years.',['’ve known','know','am knowing'],'forsince_pp');
+m('9B','How long ___ in this city?',['have you lived','do you live','are you living'],'howlong');
+m('9B','She ___ a member of the club since 2018.',['has been','is','was'],'forsince_pp');
+m('9B','I ___ to the cinema for months.',['haven’t been','am not going','don’t go'],'forsince_pp');
+
+f('9B',['I','live','here','for five years.'],1,['’ve lived','am living','was live'],'forsince_pp');
+f('9B',['She’s been','a teacher','since','ten years.'],2,['for','from','during'],'for_since');
+f('9B',['How long','do you know','Mark?'],1,['have you known','are you knowing','you have known'],'howlong');
+f('9B',['We’ve','had','this house','for 2010.'],3,['since 2010.','from 2010.','in 2010.'],'for_since');
+f('9B',['He','has','been','ill','since','three days.'],4,['for','during','from'],'for_since');
+f('9B',['I','have','work','here','since 2012.'],2,['worked','working','works'],'forsince_pp');
+
+/* ---------------- 9C Present perfect or past simple? (2) ---------------- */
+g('9C','Janet Leigh ___ in more than 50 films. She died in 2004.','be','was','dead');
+g('9C','Jamie Lee Curtis ___ several children’s books, and she’s writing another one.','write','has written','alive_pp');
+g('9C','My grandfather ___ in the same factory for 40 years. He retired in 2010.','work','worked','ps_fin');
+g('9C','My mother ___ in the same hospital for 20 years. She loves her job.','work','has worked','pp_unfin');
+g('9C','They ___ married for ten years, but now they’re divorced.','be','were','ps_fin');
+g('9C','We ___ married since 2015.','be','have been','pp_unfin');
+g('9C','Shakespeare ___ 37 plays.','write','wrote','dead');
+g('9C','Carlos ___ in Madrid since 2018.','live','has lived','pp_unfin');
+g('9C','She ___ in Paris for five years, and then she moved to Rome.','live','lived','ps_fin');
+g('9C','I ___ my best friend since we were six.','know','have known','pp_unfin');
+g('9C','My grandparents ___ for 50 years. My grandfather died last year.','be married','were married','ps_fin');
+g('9C','My uncle ___ three times, and he’s still married to his third wife.','be married','has been married','alive_pp');
+g('9C','She ___ school when she was 16.','leave','left','ps_fin');
+g('9C','Picasso ___ thousands of pictures.','paint','painted','dead');
+
+m('9C','Picasso ___ in France for many years.',['lived','has lived','lives'],'dead');
+m('9C','She ___ married to Tony Curtis for 11 years.',['was','has been','is'],'ps_fin');
+m('9C','She ___ married to Christopher Guest since 1984.',['has been','was','is'],'pp_unfin');
+m('9C','How many books ___ she written? She’s still writing.',['has','did','was'],'alive_pp');
+m('9C','How many books ___ Agatha Christie write?',['did','has','was'],'dead');
+m('9C','I ___ at this school since September.',['’ve been','was','am'],'pp_unfin');
+m('9C','He ___ in the army for two years, and then he went to university.',['was','has been','is'],'ps_fin');
+m('9C','They ___ in Brazil since 2016. They love it there.',['’ve lived','lived','live'],'pp_unfin');
+m('9C','My grandmother ___ born in 1940.',['was','has been','is'],'ps_fin');
+m('9C','She ___ three novels so far.',['has written','wrote','writes'],'alive_pp');
+m('9C','When ___ your parents get married?',['did','have','were'],'ps_fin');
+m('9C','He ___ his job last year, and now he works for himself.',['left','has left','leaves'],'ps_fin');
+
+f('9C',['Mozart','has written','more than 600 pieces of music.'],1,['wrote','writes','has wrote'],'dead');
+f('9C',['They','were','married','since 1990.'],1,['have been','are','was'],'pp_unfin');
+f('9C',['She','has lived','in Paris','for two years','before she moved to London.'],1,['lived','lives','is living'],'ps_fin');
+f('9C',['My grandfather','has died','in 2015.'],1,['died','dies','was die'],'dead');
+f('9C',['I','know','him','since we were children.'],1,['’ve known','knew','am knowing'],'pp_unfin');
+
+/* ===================== VOCABULARY, UNIT 9 ===================== */
+VPOINTS.push(
+  { id:'V9A', code:'9A', unit:9, title:'Animals and insects', sub:'giraffe, sheep, mosquito; bite or sting?' },
+  { id:'V9B', code:'9B', unit:9, title:'Fear; phrases with for and since', sub:'terrified, dizzy, panic; for ages, since then' },
+  { id:'V9C', code:'9C', unit:9, title:'Biographies', sub:'be born, leave school, get divorced, retire' }
+);
+VUNITS[9] = 'Animals, fear, life events';
+Object.assign(GAP_INS, { 'V9A':'Complete the word. The first letter or letters are given.' });
+Object.assign(RULES, {
+  bite_sting:'Bees, wasps and jellyfish sting. Mosquitoes, spiders, snakes and animals with teeth bite.',
+  animal_pl:'Irregular plurals: one deer, two deer (NOT deers); one mouse, two mice; one sheep, two sheep.',
+  fear:'fear (noun): a fear of flying. afraid / frightened / scared (adjectives) of something. terrified = very afraid. dizzy = everything goes round. panic = suddenly feel afraid and can’t think. suffer from = be badly affected by.',
+  forsince_ph:'for + a period: for ages, for a long time, for six months, for a few weeks. since + a starting point: since 1990, since then, since the 4th of May, since I was a child.',
+  bio:'Life events: be born → go to primary school → go to secondary school → leave school → go to university → get a job → fall in love → get married → have children → (separate → get divorced) → retire → die.'
+});
+
+/* ---------------- V9A animals ---------------- */
+vg('V9A','An ___ is a very big grey animal with a long nose.','el…  = the biggest land animal','elephant','elephant = a big grey animal with a long nose (a trunk).','el');
+vg('V9A','A ___ has a very long neck.','g…  = a tall African animal','giraffe','giraffe = a tall animal with a very long neck.','g');
+vg('V9A','We get wool from ___.','sh…  = a farm animal with a woolly coat','sheep','sheep (plural: sheep) = we get wool from them.','sh');
+vg('V9A','I can’t sleep. There’s a ___ in my room and it keeps biting me!','m…  = a small insect that bites you at night','mosquito','mosquito = a small insect that bites you.','m');
+vg('V9A','A ___ makes honey.','b…  = a yellow and black insect that makes honey','bee','bee = it makes honey and can sting you.','b');
+vg('V9A','Look at that beautiful ___! It has orange and black wings.','bu…  = an insect with beautiful wings','butterfly','butterfly = an insect with big, beautiful wings.','bu');
+vg('V9A','A ___ has eight legs.','sp…  = it makes a web','spider','spider = it has eight legs and makes a web.','sp');
+vg('V9A','A ___ lives in Australia and carries its baby in a pocket.','k…  = an Australian animal that jumps','kangaroo','kangaroo = an Australian animal that jumps.','k');
+vg('V9A','A ___ is the biggest animal in the sea. It isn’t a fish.','wh…  = a very big sea animal','whale','whale = the biggest animal in the sea.','wh');
+vg('V9A','Don’t swim here. There are ___ in the water!','sh…  = big fish with sharp teeth','sharks','shark = a big fish with sharp teeth.','sh');
+vg('V9A','A ___ can walk in the desert for days without water.','c…  = a desert animal','camel','camel = it can live in the desert.','c');
+vg('V9A','A ___ sleeps in the day and flies at night.','b…  = a small animal that flies at night','bat','bat = a small animal that flies at night.','b');
+vg('V9A','We get eggs from ___.','ch…  = farm birds','chickens','chickens give us eggs.','ch');
+vg('V9A','A ___ is a big wild cat with orange and black stripes.','t…  = a big striped cat','tiger','tiger = a big orange and black wild cat.','t');
+m('V9A','I saw two ___ in the forest.',['deer','deers','dear'],'animal_pl');
+m('V9A','There are some ___ in the kitchen!',['mice','mouses','mices'],'animal_pl');
+m('V9A','A bee ___ me on the arm.',['stung','bit','ate'],'bite_sting');
+m('V9A','A mosquito ___ me last night.',['bit','stung','ate'],'bite_sting');
+m('V9A','Be careful! That dog ___.',['bites','stings','eats'],'bite_sting');
+m('V9A','Jellyfish can ___ you.',['sting','bite','kick'],'bite_sting');
+m('V9A','A ___ is a farm animal. We get milk from it.',['cow','bull','horse'],'A cow gives milk. A bull is a male cow.');
+m('V9A','A ___ is a sea animal. It’s very intelligent and friendly.',['dolphin','shark','crocodile'],'dolphin = an intelligent, friendly sea animal.');
+m('V9A','The ___ is called the king of the animals.',['lion','bear','giraffe'],'lion = the king of the animals.');
+SORTS.push({ id:'V9A-where', bins:['On a farm','Wild (on land)','In the sea'], rules:['Farm animals: bull, chicken, cow, goat, horse, pig, sheep.','Wild animals: bear, deer, elephant, giraffe, kangaroo, lion, monkey, tiger …','Sea animals: dolphin, jellyfish, shark, whale.'], cards:[
+  ['cow',0,'V9A'], ['sheep',0,'V9A'], ['goat',0,'V9A'], ['pig',0,'V9A'],
+  ['lion',1,'V9A'], ['giraffe',1,'V9A'], ['kangaroo',1,'V9A'], ['tiger',1,'V9A'], ['bear',1,'V9A'],
+  ['shark',2,'V9A'], ['whale',2,'V9A'], ['dolphin',2,'V9A'], ['jellyfish',2,'V9A']
+]});
+
+/* ---------------- V9B fear; for and since ---------------- */
+m('V9B','I’m ___ of heights.',['afraid','fear','panic'],'fear');
+m('V9B','Nicole Kidman suffers ___ a fear of butterflies.',['from','of','with'],'fear');
+m('V9B','I have a ___ of flying.',['fear','afraid','scared'],'fear');
+m('V9B','When I look down from a high place, I feel ___.',['dizzy','dirty','busy'],'fear');
+m('V9B','When I see a spider, I ___ and I can’t think.',['panic','fear','suffer'],'fear');
+m('V9B','I’m not just afraid of snakes – I’m ___ of them!',['terrified','interested','excited'],'fear');
+m('V9B','She was very ___ when she heard the strange noise.',['frightened','frightening','fear'],'fear');
+m('V9B','My brother gets very ___ before he flies somewhere.',['nervous','terrifying','fear'],'fear');
+m('V9B','I’ve had this phobia for ___.',['about 20 years','I was a child','2010'],'forsince_ph');
+m('V9B','I haven’t been there since ___.',['then','five minutes','ages'],'forsince_ph');
+m('V9B','She’s been here since ___.',['8.15','a few weeks','a long time'],'forsince_ph');
+m('V9B','I’ve known him for ___.',['ages','last June','I got up'],'forsince_ph');
+m('V9B','We haven’t seen them since ___.',['the 4th of May','six months','a long time'],'forsince_ph');
+m('V9B','I’ve felt ill since ___.',['I got up this morning','five minutes','a few weeks'],'forsince_ph');
+SORTS.push({ id:'V9B-forsince', bins:['for …','since …'], rules:['forsince_ph','forsince_ph'], cards:[
+  ['a long time',0,'V9B'], ['ages',0,'V9B'], ['six months',0,'V9B'], ['a few weeks',0,'V9B'], ['five minutes',0,'V9B'], ['about 20 years',0,'V9B'],
+  ['1990',1,'V9B'], ['I was a child',1,'V9B'], ['the 4th of May',1,'V9B'], ['then',1,'V9B'], ['8.15',1,'V9B'], ['I got up this morning',1,'V9B']
+]});
+
+/* ---------------- V9C biographies ---------------- */
+m('V9C','She was ___ in Paris in 1985.',['born','borned','bear'],'bio');
+m('V9C','He ___ school when he was 16 and got a job.',['left','finished from','went out'],'bio');
+m('V9C','They ___ in love when they were at university.',['fell','got','made'],'bio');
+m('V9C','In 1951 she ___ a famous actor.',['married','married with','married to'],'marry somebody (no preposition). get married to somebody.');
+m('V9C','They ___ married in 2010.',['got','did','made'],'bio');
+m('V9C','They separated in 2015 and ___ divorced a year later.',['got','had','did'],'bio');
+m('V9C','My grandfather ___ when he was 65. Now he plays golf every day.',['retired','died','separated'],'retire = stop working because you are old.');
+m('V9C','Children go to ___ school when they are about five.',['primary','secondary','university'],'bio');
+m('V9C','At 11 or 12, children go to ___ school.',['secondary','primary','second'],'bio');
+m('V9C','After school, she went to ___ to study law.',['university','secondary school','primary school'],'bio');
+m('V9C','They have three ___: two boys and a girl.',['children','childs','childrens'],'one child, two children.');
+m('V9C','Her husband ___ in 2004, and she lived alone after that.',['died','dead','death'],'die (verb), dead (adjective), death (noun).');
+
+/* ===================== UNIT 10 ===================== */
+POINTS.push(
+  { id:'10A', unit:10, title:'Expressing movement', sub:'across, through, into, past, up …', star:'The Ball' },
+  { id:'10B', unit:10, title:'Word order of phrasal verbs', sub:'Put it on. Look for it.', star:'The Alarm Clock' },
+  { id:'10C', unit:10, title:'The passive', sub:'It was invented by … They’re made in …', star:'The Lightbulb' }
+);
+UNITS[10] = 'Movement, phrasal verbs, the passive';
+Object.assign(GAP_INS, {
+  '10A':'Write the preposition for the movement in brackets ({across}, {along}, {into}, {over}, {past}, {through}, {towards} …).',
+  '10B':'Write the missing word ({it}, {them}, {for}, {on}, {up} …). The brackets help you.',
+  '10C':'Write the verb in brackets in the {passive} (present or past).'
+});
+Object.assign(RULES, {
+  mov:'Verb of movement + preposition: walk across the road, run up the steps, drive through the tunnel, go past the church, swim towards the beach, jump over the wall, go under the bridge, walk along the street, run round the lake.',
+  mov_across:'across = from one side to the other of something with sides (a road, a river, a square). through = from one side to the other of something you are inside (a tunnel, a forest, a crowd).',
+  mov_into:'into / out of + a noun: She walked into the shop. He came out of the house. Without a noun: in / out: Come in! He went out.',
+  mov_away:'away = to another place (Go away! He ran away). back = to the place where you were before (We went back to the hotel).',
+  pv_1:'Some phrasal verbs have no object: get up, go out, sit down, wake up, set off.',
+  pv_sep:'With an object, the particle can go before or after a noun: Put on your coat. / Put your coat on.',
+  pv_pron:'With a pronoun (it, them, him, her, me …), the pronoun ALWAYS goes in the middle: Put it on. NOT Put on it.',
+  pv_insep:'Some phrasal verbs can’t be separated: look for, look after, get on with, look forward to: I’m looking for my keys. NOT I’m looking my keys for.',
+  pas_form:'Passive: be + past participle. Present: is / are made. Past: was / were invented.',
+  pas_use:'Use the passive when what happened is more important than who did it, or when we don’t know who did it: My bike was stolen. These cars are made in Sweden.',
+  pas_by:'To say who did the action, use by: The saxophone was invented by a Belgian musician.',
+  pas_q:'Passive questions: Is English spoken here? When was it invented? Negative: isn’t / wasn’t + past participle.'
+});
+
+/* ---------------- 10A Expressing movement ---------------- */
+g('10A','The train went ___ a long tunnel under the mountain.','from one end to the other, inside','through','mov_across');
+g('10A','She walked ___ the shop and bought some milk.','→ inside','into','mov_into');
+g('10A','He came ___ the house and got into his car.','← from inside',['out of'],'mov_into');
+g('10A','We swam ___ the river to the other side.','from one side to the other',['across'],'mov_across');
+g('10A','The cat ran ___ the tree.','↑',['up'],'mov');
+g('10A','Be careful when you walk ___ the stairs.','↓',['down'],'mov');
+g('10A','Walk ___ the church and turn left.','go next to it and continue','past','mov');
+g('10A','The dog jumped ___ the wall into the garden.','from one side to the other, above it','over','mov');
+g('10A','We walked ___ the lake. It took an hour to get back to the car.','all the way around',['round','around'],'mov');
+g('10A','The boat went ___ the bridge.','below it','under','mov');
+g('10A','They walked ___ the beach next to the sea.','from one end to the other',['along'],'mov');
+g('10A','A man was running ___ me, so I moved out of the way.','in my direction',['towards','toward'],'mov');
+g('10A','He goes ___ one defender, and then another …','go next to and continue','past','mov');
+g('10A','We walked ___ the forest for two hours and came out at a lake.','from one side to the other, inside','through','mov_across');
+
+m('10A','She swam ___ the river to the other side.',['across','through','up'],'mov_across');
+m('10A','We walked ___ the forest and came out on the other side.',['through','across','over'],'mov_across');
+m('10A','Come ___! The door’s open.',['in','into','inside of'],'mov_into');
+m('10A','He walked ___ the room and sat down.',['into','onto','in to'],'mov_into');
+m('10A','The thief ran ___ when he saw the police.',['away','back','towards'],'mov_away');
+m('10A','After dinner we went ___ to our hotel.',['back','away','out of'],'mov_away');
+m('10A','The plane flew ___ the city.',['over','under','through'],'mov');
+m('10A','Go ___ the road at the traffic lights.',['across','along','through'],'mov_across');
+m('10A','He kicked the ball ___ the goal.',['into','in to','onto'],'mov_into');
+m('10A','She ran ___ the stairs to answer the phone.',['up','over','through'],'mov');
+m('10A','Walk ___ the bank, and the café is on your left.',['past','across','through'],'mov');
+m('10A','The ball went ___ the goalkeeper’s head and into the net.',['over','under','through'],'mov');
+
+f('10A',['He','came','out','the house.'],2,['out of','out from','out to'],'mov_into');
+f('10A',['We','walked','through','the road.'],2,['across','between','among'],'mov_across');
+f('10A',['The bus','went','across','the tunnel.'],2,['through','between','among'],'mov_across');
+f('10A',['The dog','ran','into of','the garden.'],2,['into','in to','inside of'],'mov_into');
+f('10A',['The children','ran','down','the stairs','to the top floor.'],2,['up','under','along'],'mov');
+f('10A',['Go','past','the bridge','to get to the other side of the river.'],1,['over','into','towards'],'mov');
+
+/* ---------------- 10B Word order of phrasal verbs ---------------- */
+g('10B','Your coat’s on the floor. Pick ___ up!','the coat',['it'],'pv_pron');
+g('10B','Your shoes are dirty. Take ___ off, please.','the shoes',['them'],'pv_pron');
+g('10B','I don’t know this word. I’ll look ___ up in a dictionary.','the word',['it'],'pv_pron');
+g('10B','Where are my glasses? I’m looking ___ them.','search',['for'],'pv_insep');
+g('10B','The music’s too loud. Can you turn ___ down?','the music',['it'],'pv_pron');
+g('10B','My sister’s looking ___ my son today.','take care of',['after'],'pv_insep');
+g('10B','Can you fill ___ this form, please?','complete',['in','out'],'pv_sep');
+g('10B','It’s cold. Put ___ your jacket.','wear',['on'],'pv_sep');
+g('10B','Don’t throw that letter ___! It’s important.','put in the bin',['away','out'],'pv_sep');
+g('10B','I want to give ___ chocolate. I eat too much.','stop',['up'],'pv_sep');
+g('10B','We set ___ for the airport at 6.30.','start a journey',['off','out'],'pv_1');
+g('10B','My alarm goes ___ at seven every morning.','ring',['off'],'pv_1');
+g('10B','I really don’t get on ___ my brother.','have a good relationship',['with'],'pv_insep');
+g('10B','I’m really looking ___ to the holidays.','feel happy about the future',['forward'],'pv_insep');
+g('10B','Your toys are all over the floor. Put ___ away, please.','the toys',['them'],'pv_pron');
+
+m('10B','Your shoes are dirty. Take ___.',['them off','off them','off'],'pv_pron');
+m('10B','I can’t find my keys. Can you help me look ___?',['for them','them for','for'],'pv_insep');
+m('10B','The TV is too loud. Can you turn ___?',['it down','down it','down'],'pv_pron');
+m('10B','I bought a new jacket. Look, I’ll put ___.',['it on','on it','on'],'pv_pron');
+m('10B','That’s my sister’s son. I’m looking ___ today.',['after him','him after','after'],'pv_insep');
+m('10B','Here’s the form. Please fill ___.',['it in','in it','in'],'pv_pron');
+m('10B','Can you pick ___ at the airport?',['me up','up me','up'],'pv_pron');
+m('10B','I wrote your number on a piece of paper, but I threw ___ by mistake.',['it away','away it','away'],'pv_pron');
+m('10B','___ the TV. I want to watch the news.',['Turn on','Turn it on','Turn on it'],'pv_sep');
+m('10B','I need to ___ more about the hotel before I book it.',['find out','find','find up'],'pv_sep');
+m('10B','We ___ at six o’clock and arrived at ten.',['set off','set up','set on'],'pv_1');
+m('10B','Here are the photos. Do you want to ___?',['look at them','look them at','look at'],'pv_insep');
+
+f('10B',['Here’s your coat.','Put on it.'],1,['Put it on.','Put on.','Put it.'],'pv_pron');
+f('10B',['I’m looking','my phone for.'],1,['for my phone.','my phone.','at my phone for.'],'pv_insep');
+f('10B',['The radio is too loud.','Can you turn down it?'],1,['Can you turn it down?','Can you turn down?','Can you turn it?'],'pv_pron');
+f('10B',['These are my old photos.','Don’t throw away them!'],1,['Don’t throw them away!','Don’t throw away!','Don’t throw them!'],'pv_pron');
+f('10B',['I smoked for years,','but I gave up it','last year.'],1,['but I gave it up','but I gave up of it','but I gave it'],'pv_pron');
+f('10B',['Can you','look','my cat after','this weekend?'],2,['after my cat','my cat','after for my cat'],'pv_insep');
+
+/* ---------------- 10C The passive ---------------- */
+g('10C','The saxophone ___ by a Belgian musician.','invent','was invented','pas_by');
+g('10C','Volvo cars ___ in Sweden.','make','are made','pas_use');
+g('10C','My bike ___ last night.','steal','was stolen','pas_use');
+g('10C','English ___ in many countries.','speak','is spoken','pas_form');
+g('10C','The first CDs ___ by a Dutch company.','invent','were invented','pas_by');
+g('10C','This bridge ___ in 1890.','build','was built','pas_form');
+g('10C','Coffee ___ in Brazil and Colombia.','grow','is grown','pas_form');
+g('10C','The Mona Lisa ___ by Leonardo da Vinci.','paint','was painted','pas_by');
+g('10C','Thousands of photos ___ on social media every second.','upload','are uploaded','pas_form');
+g('10C','These shoes ___ in Italy.','make',['are made','were made'],'pas_form');
+g('10C','The thief ___ by the police yesterday.','catch','was caught','pas_by');
+g('10C','Our office ___ every evening.','clean','is cleaned','pas_form');
+g('10C','The windows ___ last week. Look how dirty they are!','not clean','weren’t cleaned','pas_q');
+g('10C','The Harry Potter books ___ by J.K. Rowling.','write','were written','pas_by');
+
+m('10C','Glasses ___ by the Italians in the 13th century.',['were invented','was invented','invented'],'pas_form');
+m('10C','Rice ___ in many Asian countries.',['is grown','is grow','are grown'],'pas_form');
+m('10C','Where ___ these phones made?',['are','do','is'],'pas_q');
+m('10C','When ___ the telephone invented?',['was','did','is'],'pas_q');
+m('10C','The letters ___ yesterday.',['were sent','was sent','sent'],'pas_form');
+m('10C','This song ___ by the Beatles.',['was written','wrote','is wrote'],'pas_by');
+m('10C','My car ___ last week.',['was stolen','stole','was stole'],'pas_use');
+m('10C','Lego ___ by a Danish businessman.',['was invented','invented','is invented'],'pas_by');
+m('10C','The wristwatch was invented ___ the Swiss.',['by','from','of'],'pas_by');
+m('10C','Spanish ___ in Mexico.',['is spoken','speaks','is speak'],'pas_form');
+m('10C','In this hotel, dinner ___ at eight o’clock.',['is served','serves','is serve'],'pas_form');
+m('10C','The pyramids ___ thousands of years ago.',['were built','built','was built'],'pas_form');
+
+f('10C',['The first mobile phone','invented','in 1973.'],1,['was invented','is invented','were invented'],'pas_form');
+f('10C',['This cheese','is make','in France.'],1,['is made','makes','is making'],'pas_form');
+f('10C',['The film','was directed','from Spielberg.'],2,['by Spielberg.','of Spielberg.','with Spielberg.'],'pas_by');
+f('10C',['My wallet','stolen','yesterday.'],1,['was stolen','is stolen','stole'],'pas_form');
+f('10C',['When','did','this house','built?'],1,['was','is','were'],'pas_q');
+f('10C',['Coffee','are grown','in Colombia.'],1,['is grown','is grow','growing'],'pas_form');
+
+/* ===================== VOCABULARY, UNIT 10 ===================== */
+VPOINTS.push(
+  { id:'V10A', code:'10A', unit:10, title:'Sports', sub:'play tennis, go cycling, do yoga; hit, kick, throw' },
+  { id:'V10B', code:'10B', unit:10, title:'Phrasal verbs', sub:'give up, find out, look after, set off' },
+  { id:'V10C', code:'10C', unit:10, title:'People from different countries', sub:'the Italians, the Swiss, the Poles' }
+);
+VUNITS[10] = 'Sports, phrasal verbs, nationalities';
+Object.assign(RULES, {
+  sport_verb:'play + sports with a ball (play tennis, play football). go + -ing sports (go cycling, go skiing, go swimming). do + other sports and activities (do yoga, do karate, do athletics, do gymnastics).',
+  sport_hit:'throw the ball (with your hands), kick the ball (with your foot), hit the ball (with a racket or bat), run round the track.',
+  pv_mean:'Phrasal verbs: give up = stop doing; find out = get information; look after = take care of; set off = start a journey; go off = start ringing; fill in = complete a form; look up = find in a dictionary; run out of = have no more; look round = visit and look at.',
+  nation:'People from a country: the + nationality + -s (the Americans, the Italians, the Brazilians). No -s if the word ends in -sh, -ch, -ese or -ss: the English, the Dutch, the Chinese, the Swiss. Special words: the Poles, the Turks, the Danes, the Swedes.'
+});
+
+/* ---------------- V10A sports ---------------- */
+m('V10A','I ___ tennis every Saturday.',['play','do','go'],'sport_verb');
+m('V10A','We ___ skiing in the Alps every winter.',['go','play','do'],'sport_verb');
+m('V10A','She ___ yoga twice a week.',['does','plays','goes'],'sport_verb');
+m('V10A','He ___ karate when he was a child.',['did','played','went'],'sport_verb');
+m('V10A','My brother ___ cycling at the weekend.',['goes','plays','does'],'sport_verb');
+m('V10A','They ___ volleyball on the beach.',['play','go','do'],'sport_verb');
+m('V10A','Do you ___ athletics at school?',['do','play','go'],'sport_verb');
+m('V10A','In basketball you have to ___ the ball through a hoop.',['throw','kick','hit'],'sport_hit');
+m('V10A','In football you have to ___ the ball into a goal.',['kick','throw','hit'],'sport_hit');
+m('V10A','In tennis you have to ___ the ball over a net.',['hit','kick','throw'],'sport_hit');
+m('V10A','In the 800-metre race you ___ twice round the track.',['run','kick','throw'],'sport_hit');
+m('V10A','You need a racket to play ___.',['tennis','football','basketball'],'You play tennis with a racket.');
+m('V10A','You play ___ with an oval ball.',['rugby','volleyball','basketball'],'rugby = a sport with an oval ball.');
+SORTS.push({ id:'V10A-sport', bins:['play','go','do'], rules:['sport_verb','sport_verb','sport_verb'], cards:[
+  ['tennis',0,'V10A'], ['football',0,'V10A'], ['basketball',0,'V10A'], ['volleyball',0,'V10A'], ['rugby',0,'V10A'], ['baseball',0,'V10A'],
+  ['cycling',1,'V10A'], ['skiing',1,'V10A'], ['windsurfing',1,'V10A'], ['swimming',1,'V10A'],
+  ['yoga',2,'V10A'], ['karate',2,'V10A'], ['athletics',2,'V10A'], ['gymnastics',2,'V10A']
+]});
+
+/* ---------------- V10B phrasal verbs ---------------- */
+m('V10B','My alarm ___ at six o’clock every morning.',['goes off','goes out','gets up'],'pv_mean');
+m('V10B','We ___ for the airport at 6.30.',['set off','set up','got off'],'pv_mean');
+m('V10B','I want to ___ chocolate. I eat too much.',['give up','give back','turn down'],'pv_mean');
+m('V10B','The match will ___ at about 5.30.',['be over','go off','turn off'],'pv_mean');
+m('V10B','Could you ___ this form, please?',['fill in','find out','look up'],'pv_mean');
+m('V10B','I want to ___ about hotels in Madrid.',['find out','fill in','look after'],'pv_mean');
+m('V10B','He ___ the words in a dictionary.',['looked up','looked forward','looked after'],'pv_mean');
+m('V10B','My sister’s ___ my son today because I’m working.',['looking after','looking for','looking up'],'pv_mean');
+m('V10B','Turn ___ the music! It’s very loud.',['down','up','on'],'turn down = make quieter. turn up = make louder.');
+m('V10B','Turn ___ the TV! I can’t hear it.',['up','down','off'],'turn down = make quieter. turn up = make louder.');
+m('V10B','Could you take ___ your boots, please?',['off','on','up'],'take off ↔ put on (clothes, shoes).');
+m('V10B','Don’t ___ that letter! It’s important.',['throw away','give up','turn off'],'throw away = put in the bin.');
+m('V10B','We’ve ___ petrol. Is there a petrol station near here?',['run out of','run away from','looked for'],'pv_mean');
+m('V10B','Let’s ___ the old town this afternoon.',['look round','look after','look up'],'pv_mean');
+MATCHES.push({ id:'V10B-pv1', p:'V10B', title:'What do they mean?', pairs:[
+  ['give up','stop doing something'], ['find out','get information'], ['look after','take care of'], ['set off','start a journey']
+]});
+MATCHES.push({ id:'V10B-pv2', p:'V10B', title:'What do they mean?', pairs:[
+  ['go off','start ringing (an alarm)'], ['fill in','complete (a form)'], ['look up','find (a word) in a dictionary'], ['run out of','have no more of something']
+]});
+
+/* ---------------- V10C people from different countries ---------------- */
+m('V10C','The saxophone was invented by a ___ musician.',['Belgian','Belgium','Belgish'],'nation');
+m('V10C','Lego was invented by a ___ businessman.',['Danish','Denmark','Danes'],'nation');
+m('V10C','The ___ invented the wristwatch.',['Swiss','Swisses','Switzerland'],'nation');
+m('V10C','Glasses were invented by the ___.',['Italians','Italian','Italys'],'nation');
+m('V10C','The ___ drink a lot of tea.',['English','Englishes','England'],'nation');
+m('V10C','Guns were invented by the ___.',['Chinese','Chineses','China'],'nation');
+m('V10C','The ___ are famous for tulips and bicycles.',['Dutch','Dutches','Netherlands'],'nation');
+m('V10C','The ___ love football and carnival.',['Brazilians','Brazilian','Brazils'],'nation');
+m('V10C','People from Poland are the ___.',['Poles','Polishes','Polands'],'nation');
+m('V10C','People from Turkey are the ___.',['Turks','Turkeys','Turkishes'],'nation');
+m('V10C','People from Japan are the ___.',['Japanese','Japaneses','Japans'],'nation');
+m('V10C','People from Russia are the ___.',['Russians','Russian','Russias'],'nation');
+m('V10C','People from Argentina are the ___.',['Argentinians','Argentinian','Argentinas'],'nation');
+m('V10C','People from Spain are the ___.',['Spanish','Spanishes','Spains'],'nation');
+m('V10C','Dynamite was invented by a ___ scientist.',['Swedish','Sweden','Swede'],'nation');
+SORTS.push({ id:'V10C-s', bins:['the … + -s','the … (no -s)'], rules:['nation','nation'], cards:[
+  ['Americans',0,'V10C'], ['Belgians',0,'V10C'], ['Italians',0,'V10C'], ['Brazilians',0,'V10C'], ['Russians',0,'V10C'],
+  ['English',1,'V10C'], ['Chinese',1,'V10C'], ['Dutch',1,'V10C'], ['Swiss',1,'V10C'], ['French',1,'V10C'], ['Japanese',1,'V10C']
+]});
+
+/* ===================== UNIT 11 ===================== */
+POINTS.push(
+  { id:'11A', unit:11, title:'used to', sub:'I used to … / I didn’t use to …', star:'The School Bell' },
+  { id:'11B', unit:11, title:'might', sub:'It might rain. I might not go.', star:'The Coin' },
+  { id:'11C', unit:11, title:'so, neither + auxiliaries', sub:'So do I. Neither can I.', star:'The Twins' }
+);
+UNITS[11] = 'used to, might, so / neither';
+Object.assign(GAP_INS, {
+  '11A':'Use the correct form of {used to} + the verb in brackets.',
+  '11B':'Use {might} or {might not} + the verb in brackets.',
+  '11C':'Write the correct {auxiliary} verb (do, am, did, can, have …).'
+});
+Object.assign(RULES, {
+  ut_form:'used to + infinitive for things that happened many times, or were true for a long time, in the past (and usually not now): I used to have long hair. Same form for all persons.',
+  ut_neg:'Negative and questions: didn’t use to / Did you use to …? (no d): I didn’t use to like vegetables. Did you use to walk to school?',
+  ut_now:'used to is only for the past. For present habits, use usually + present simple: I usually cook dinner. NOT I use to cook dinner.',
+  might_form:'might / might not + infinitive without to: It might rain. I might not go. Same form for all persons (she might, NOT she mights).',
+  might_use:'might = perhaps something will happen, or perhaps you will do it: I might go to the party (I’m not sure).',
+  might_may:'may / may not mean the same as might / might not.',
+  so_aux:'To say you are the same: So + auxiliary + I after a positive sentence (A: I love cats. B: So do I.), Neither + auxiliary + I after a negative sentence (A: I can’t swim. B: Neither can I.).',
+  so_tense:'The auxiliary depends on the verb in the first sentence: do / does (present simple), did (past simple), am / is / are, was / were, can, have, would.',
+  so_order:'Word order: So do I. NOT So I do. Neither can I. NOT Neither I can. You can also say Nor instead of Neither.'
+});
+
+/* ---------------- 11A used to ---------------- */
+g('11A','I ___ long hair when I was a child.','have','used to have','ut_form');
+g('11A','We ___ to school every day.','walk','used to walk','ut_form');
+g('11A','My dad ___, but he stopped ten years ago.','smoke','used to smoke','ut_form');
+g('11A','I ___ vegetables, but now I love them.','not like','didn’t use to like','ut_neg');
+g('11A','She ___ very shy at school.','be','used to be','ut_form');
+g('11A','They ___ in a small flat in the city centre.','live','used to live','ut_form');
+g('11A','He ___ basketball every day after school.','play','used to play','ut_form');
+g('11A','I ___ maths at school. I was very bad at it.','not enjoy','didn’t use to enjoy','ut_neg');
+g('11A','We ___ to the beach every summer when I was young.','go','used to go','ut_form');
+g('11A','My grandmother ___ us stories at bedtime.','tell','used to tell','ut_form');
+g('11A','There ___ a cinema in our village, but now it’s a supermarket.','be','used to be','ut_form');
+g('11A','At my primary school we ___ a uniform.','wear','used to wear','ut_form');
+
+m('11A','I ___ have a dog when I was a child.',['used to','use to','used'],'ut_form');
+m('11A','Did you ___ play football at school?',['use to','used to','using to'],'ut_neg');
+m('11A','She ___ to like coffee, but now she drinks it every day.',['didn’t use','didn’t used','not used'],'ut_neg');
+m('11A','I ___ to the gym three times a week now.',['usually go','use to go','used to go'],'ut_now');
+m('11A','Where ___ to live when you were a child?',['did you use','did you used','used you'],'ut_neg');
+m('11A','He used to ___ very thin.',['be','being','been'],'ut_form');
+m('11A','We ___ live in London, but we moved to Leeds in 2015.',['used to','use to','were use to'],'ut_form');
+m('11A','There ___ a lot of shops here, but they’ve all closed.',['used to be','used to have','use to be'],'ut_form');
+m('11A','I didn’t ___ wear glasses.',['use to','used to','using'],'ut_neg');
+m('11A','My mum ___ make all our clothes.',['used to','use to','uses to'],'ut_form');
+
+f('11A',['I','didn’t used to','like','fish.'],1,['didn’t use to','don’t use to','not used to'],'ut_neg');
+f('11A',['Did','you','used to','have long hair?'],2,['use to','using to','uses to'],'ut_neg');
+f('11A',['She','use to','live','in Paris.'],1,['used to','uses to','using to'],'ut_form');
+f('11A',['I','use to','get up','at seven every day now.'],1,['usually','used to','use'],'ut_now');
+f('11A',['We','used to','going','to the beach every summer.'],2,['go','went','gone'],'ut_form');
+
+/* ---------------- 11B might ---------------- */
+g('11B','Take an umbrella. It ___.','rain',['might rain','may rain'],'might_use');
+g('11B','I’m not sure what to do tonight. I ___ to the cinema.','go',['might go','may go'],'might_use');
+g('11B','Don’t wait for me. I ___ late.','be',['might be','may be'],'might_use');
+g('11B','I ___ to the party. I’m very tired.','not go',['might not go','may not go'],'might_form');
+g('11B','Take some money with you. You ___ it.','need',['might need','may need'],'might_use');
+g('11B','She ___ the job. Her interview didn’t go very well.','not get',['might not get','may not get'],'might_form');
+g('11B','We ___ a new car next year, but we haven’t decided.','buy',['might buy','may buy'],'might_use');
+g('11B','Don’t touch that dog. It ___ you.','bite',['might bite','may bite'],'might_use');
+g('11B','The hotel ___ wi-fi, so download the map before we go.','not have',['might not have','may not have'],'might_form');
+g('11B','Be careful on those stairs! You ___.','fall',['might fall','may fall'],'might_use');
+g('11B','Call Sarah now. She ___ at home.','be',['might be','may be'],'might_use');
+g('11B','I ___ time to see you this week. I’m really busy.','not have',['might not have','may not have'],'might_form');
+
+m('11B','I might ___ to Spain this summer.',['go','to go','going'],'might_form');
+m('11B','She ___ come to the party. She isn’t sure.',['might','mights','might to'],'might_form');
+m('11B','It ___ snow tomorrow. Let’s wait and see.',['might','must','will definitely'],'might_use');
+m('11B','We might ___ have time to see the museum.',['not','don’t','no'],'might_form');
+m('11B','A: Why are you taking a raincoat?  B: Because it ___ rain.',['might','might to','mights'],'might_form');
+m('11B','Take your phone. I ___ need to call you.',['might','am might','might to'],'might_form');
+m('11B','A: Are you going out tonight?  B: I don’t know. I ___.',['might','might go to','might to'],'might_use');
+m('11B','He ___ be late. The traffic is terrible.',['might','might to','is might'],'might_form');
+m('11B','I’m not sure what to have. I ___ order the fish.',['might','must','mights'],'might_use');
+m('11B','It might rain later. = It ___ rain later.',['may','must','should'],'might_may');
+
+f('11B',['It','might','to rain','later.'],2,['rain','raining','rains'],'might_form');
+f('11B',['She','mights','come','tomorrow.'],1,['might','might to','is might'],'might_form');
+f('11B',['I','don’t might','have','time tomorrow.'],1,['might not','not might','mightn’t to'],'might_form');
+f('11B',['Take a coat.','It','might to be','cold later.'],2,['might be','might being','mights be'],'might_form');
+f('11B',['We','might','going','to the beach.'],2,['go','to go','went'],'might_form');
+
+/* ---------------- 11C so, neither + auxiliaries ---------------- */
+g('11C','A: I love chocolate.  B: So ___ I.','auxiliary','do','so_tense');
+g('11C','A: I’m tired.  B: So ___ I.','auxiliary','am','so_tense');
+g('11C','A: I didn’t like the film.  B: Neither ___ I.','auxiliary','did','so_tense');
+g('11C','A: I can’t swim.  B: Neither ___ I.','auxiliary','can','so_tense');
+g('11C','A: I went to bed late last night.  B: So ___ I.','auxiliary','did','so_tense');
+g('11C','A: I’ve been to Paris.  B: So ___ I.','auxiliary','have','so_tense');
+g('11C','A: I’m not hungry.  B: Neither ___ I.','auxiliary','am','so_tense');
+g('11C','A: I was at home last night.  B: So ___ I.','auxiliary','was','so_tense');
+g('11C','A: I don’t like spiders.  B: Neither ___ I.','auxiliary','do','so_tense');
+g('11C','A: I’d love to go to Japan.  B: So ___ I.','auxiliary','would','so_tense');
+g('11C','A: I haven’t finished.  B: Neither ___ I.','auxiliary','have','so_tense');
+g('11C','A: I can speak French.  B: So ___ I.','auxiliary','can','so_tense');
+g('11C','A: I wasn’t very good at maths.  B: Neither ___ I.','auxiliary','was','so_tense');
+
+m('11C','A: I love cooking.  B: ___',['So do I.','So I do.','Neither do I.'],'so_order');
+m('11C','A: I don’t eat meat.  B: ___',['Neither do I.','So do I.','Neither don’t I.'],'so_aux');
+m('11C','A: I’m not from here.  B: ___',['Neither am I.','So am I.','Neither do I.'],'so_aux');
+m('11C','A: I can’t drive.  B: ___',['Neither can I.','So can I.','Neither can’t I.'],'so_aux');
+m('11C','A: I went to the cinema last night.  B: ___',['So did I.','So went I.','So do I.'],'so_tense');
+m('11C','A: I’ve never been to the USA.  B: ___',['Neither have I.','So have I.','Neither I have.'],'so_order');
+m('11C','A: My brother is a doctor.  B: ___ mine.',['So is','So does','Neither is'],'so_tense');
+m('11C','A: I wasn’t at the meeting.  B: ___',['Neither was I.','Neither did I.','So was I.'],'so_tense');
+m('11C','A: I’d like a coffee.  B: ___',['So would I.','So do I.','So did I.'],'so_tense');
+m('11C','A: I have a son called James.  B: ___',['So do I.','So I do.','So am I.'],'so_order');
+
+f('11C',['A: I like jazz.','B:','So I do.'],2,['So do I.','So I like.','So like I.'],'so_order');
+f('11C',['A: I can’t cook.','B:','Neither do I.'],2,['Neither can I.','Neither can’t I.','So can I.'],'so_tense');
+f('11C',['A: I was tired.','B:','So did I.'],2,['So was I.','So I was.','So were I.'],'so_tense');
+f('11C',['A: I don’t smoke.','B:','So do I.'],2,['Neither do I.','Neither don’t I.','So don’t I.'],'so_aux');
+f('11C',['A: I’ve finished.','B:','So I have.'],2,['So have I.','So did I.','So am I.'],'so_order');
+
+/* ===================== VOCABULARY, UNIT 11 ===================== */
+VPOINTS.push(
+  { id:'V11A', code:'11A', unit:11, title:'School subjects', sub:'geography, history, IT, PE, chemistry' },
+  { id:'V11B', code:'11B', unit:11, title:'Word building: nouns', sub:'decide → decision, choose → choice' },
+  { id:'V11C', code:'11C', unit:11, title:'Similarities and differences', sub:'both, identical, like, similar to' }
+);
+VUNITS[11] = 'School, making nouns, similarities';
+Object.assign(GAP_INS, { 'V11B':'Write the {noun} made from the verb in brackets.' });
+Object.assign(RULES, {
+  subj:'School subjects: art, foreign languages, geography, history, IT (information technology), literature, maths, PE (physical education), science (physics, chemistry and biology).',
+  nouns:'Many nouns are verb + -ion, -sion, -ation or -ition: decide → decision, invite → invitation, compete → competition, pronounce → pronunciation. Some are new words: choose → choice, advise → advice, fly → flight, live → life, die → death, succeed → success.',
+  simil:'both (We both like jazz), the same … as (the same eyes as you), look like + noun (She looks like her brother), similar to, different from, identical.'
+});
+
+/* ---------------- V11A school subjects ---------------- */
+m('V11A','In ___ we learn about countries, mountains and rivers.',['geography','history','biology'],'subj');
+m('V11A','In ___ we learn about the past.',['history','geography','literature'],'subj');
+m('V11A','In ___ we do sport.',['PE','IT','art'],'subj');
+m('V11A','In ___ we learn how to use computers.',['IT','PE','maths'],'subj');
+m('V11A','In ___ we study plants and animals.',['biology','chemistry','physics'],'subj');
+m('V11A','In ___ we read novels, plays and poems.',['literature','history','geography'],'subj');
+m('V11A','In ___ we draw and paint.',['art','IT','science'],'subj');
+m('V11A','In ___ we do sums.',['maths','literature','geography'],'subj');
+m('V11A','___ is the study of chemicals and what happens when you mix them.',['Chemistry','Physics','Biology'],'subj');
+m('V11A','___ is the science of things like energy, light and electricity.',['Physics','Chemistry','Biology'],'subj');
+m('V11A','I was very bad ___ maths at school.',['at','in','on'],'good at, bad at.');
+m('V11A','PE means physical ___.',['education','exercise','energy'],'subj');
+m('V11A','IT means information ___.',['technology','teaching','time'],'subj');
+m('V11A','English, French and Spanish are foreign ___.',['languages','literatures','sciences'],'subj');
+
+/* ---------------- V11B noun formation ---------------- */
+g('V11B','I had to make a big ___ about my future.','decide','decision','nouns');
+g('V11B','I got an ___ to their wedding.','invite','invitation','nouns');
+g('V11B','Can you give me some ___ about which phone to buy?','advise','advice','nouns');
+g('V11B','He won a cooking ___.','compete','competition','nouns');
+g('V11B','Your ___ is very good. You sound British!','pronounce','pronunciation','nouns');
+g('V11B','The ___ to Rome takes two hours.','fly','flight','nouns');
+g('V11B','There’s too much ___ in this restaurant. I can’t decide what to eat!','choose','choice','nouns');
+g('V11B','A good ___ is very important for children.','educate','education','nouns');
+g('V11B','The telephone was a fantastic ___.','invent','invention','nouns');
+g('V11B','There was a lot of ___ at the airport. Nobody knew where to go.','confuse','confusion','nouns');
+g('V11B','The film was a big ___. Millions of people saw it.','succeed','success','nouns');
+g('V11B','His ___ was a shock to everybody. He was only 40.','die','death','nouns');
+g('V11B','I’m doing some ___ for my exam tomorrow.','revise','revision','nouns');
+g('V11B','She has had a very interesting ___.','live','life','nouns');
+m('V11B','The noun from decide is ___.',['decision','decition','decidation'],'nouns');
+m('V11B','The noun from pronounce is ___.',['pronunciation','pronounciation','pronunciasion'],'nouns');
+m('V11B','The noun from choose is ___.',['choice','choosement','chosen'],'nouns');
+m('V11B','The noun from advise is ___.',['advice','advise','advision'],'nouns');
+m('V11B','The noun from succeed is ___.',['success','succeedation','successful'],'nouns');
+m('V11B','The noun from invite is ___.',['invitation','invition','invitement'],'nouns');
+f('V11B',['I need','some','advise.'],2,['advice.','advices.','advising.'],'nouns');
+f('V11B',['Her','pronounciation','is','excellent.'],1,['pronunciation','pronouncing','pronounce'],'nouns');
+f('V11B',['We have to make','a decide','today.'],1,['a decision','a deciding','a decidation'],'nouns');
+
+/* ---------------- V11C similarities and differences ---------------- */
+m('V11C','Cordelia and Ciara were ___ on Erasmus scholarships.',['both','same','like'],'simil');
+m('V11C','The two girls looked ___.',['identical','same','like'],'simil');
+m('V11C','The first photos were totally different ___ her.',['from','as','like'],'simil');
+m('V11C','She looks just ___ her brother.',['like','as','similar'],'simil');
+m('V11C','She has the same mouth ___ you.',['as','like','than'],'simil');
+m('V11C','Maggie’s ‘twin’ looks very similar ___ her.',['to','as','from'],'simil');
+m('V11C','I have the same colour eyes ___ my mother.',['as','like','to'],'simil');
+m('V11C','My sister and I ___ like jazz.',['both','same','similar'],'simil');
+m('V11C','They’re ___ twins. You can’t see any difference.',['identical','similar','same'],'simil');
+m('V11C','My personality is quite similar ___ my dad’s.',['to','as','with'],'simil');
+f('V11C',['He','looks','as','his father.'],2,['like','same','similar'],'simil');
+f('V11C',['My house','is similar','as','yours.'],2,['to','like','from'],'simil');
+f('V11C',['We','have','the same','hair','like','our mum.'],4,['as','than','to'],'simil');
+f('V11C',['Your bag','is','very different','as','mine.'],3,['from','like','for'],'simil');
+
+/* ===================== UNIT 12 ===================== */
+POINTS.push(
+  { id:'12A', unit:12, title:'Past perfect', sub:'When I arrived, the train had left.', star:'The Detective' },
+  { id:'12B', unit:12, title:'Reported speech', sub:'She said that she was tired.', star:'The Whisper' },
+  { id:'12C', unit:12, title:'Questions without auxiliaries', sub:'Who painted it? What did you see?', star:'The Quiz' }
+);
+UNITS[12] = 'Past perfect, reported speech, questions';
+Object.assign(GAP_INS, {
+  '12A':'Write the verb in brackets in the {past perfect} (had + past participle).',
+  '12B':'Complete the {reported speech}. The words in brackets are what the person said.',
+  '12C':'Write the verb in brackets in the correct form. Use {do / does / did} only if you need it.'
+});
+Object.assign(RULES, {
+  ppast_form:'Past perfect: had + past participle. Same form for all persons: I’d forgotten. She hadn’t seen it. Had you been there before?',
+  ppast_use:'Use the past perfect for an action that happened BEFORE another action in the past: When I got to the station, the train had left (it left before I arrived).',
+  ppast_d:'’d can mean had or would. had + past participle (I’d finished). would + infinitive (I’d like).',
+  rep_tense:'In reported speech the verb usually goes one tense back: am / is → was, are → were, present simple → past simple, present continuous → past continuous, will → would, can → could, past simple and present perfect → past perfect.',
+  rep_pron:'Pronouns and possessives change too: ‘I’m tired,’ she said. → She said (that) she was tired. ‘my mum’ → her mum.',
+  rep_say_tell:'tell + a person: He told me (that) he was leaving. say without a person: He said (that) he was leaving. NOT He said me.',
+  subjq:'When the question word (Who, What, Which, How many) is the SUBJECT of the verb, don’t use do / does / did: Who painted it? Which team won? How many people live here?',
+  objq:'When the question word is NOT the subject, use do / does / did as normal: What did you buy? Who did you see? Where does she live?'
+});
+
+/* ---------------- 12A Past perfect ---------------- */
+g('12A','When I got to the station, the train ___.','leave','had left','ppast_use');
+g('12A','Walter only realized his wife wasn’t in the car after he ___ 100 kilometres.','drive','had driven','ppast_use');
+g('12A','Julie didn’t know that the cat ___ into the box.','climb','had climbed','ppast_use');
+g('12A','I couldn’t get into my flat because I ___ my keys.','lose','had lost','ppast_use');
+g('12A','She was very tired because she ___ well.','not sleep','hadn’t slept','ppast_form');
+g('12A','When we arrived at the cinema, the film ___.','start','had started','ppast_use');
+g('12A','I ___ the film before, so I knew the ending.','see','had seen','ppast_use');
+g('12A','He was nervous because he ___ before.','not fly','hadn’t flown','ppast_form');
+g('12A','When I woke up, it ___ in the night and everything was white.','snow','had snowed','ppast_use');
+g('12A','They were hungry because they ___ anything all day.','not eat','hadn’t eaten','ppast_form');
+g('12A','I recognized her because I ___ her at a party the year before.','meet','had met','ppast_use');
+g('12A','When the police arrived, the thief ___.','escape','had escaped','ppast_use');
+g('12A','We ___ to Rome before, so we knew the city well.','be','had been','ppast_use');
+g('12A','The kitchen was clean because my brother ___ the washing-up.','do','had done','ppast_use');
+
+m('12A','When I arrived at the party, everybody ___ home.',['had gone','have gone','has gone'],'ppast_use');
+m('12A','I didn’t know her name because we ___ before.',['hadn’t met','haven’t met','didn’t met'],'ppast_form');
+m('12A','When you went to Rome last year, ___ you been there before?',['had','have','did'],'ppast_form');
+m('12A','She was angry because her husband ___ her behind.',['had left','has left','leaves'],'ppast_use');
+m('12A','The floor was wet. Somebody ___ it.',['had cleaned','has cleaned','cleans'],'ppast_use');
+m('12A','I’d ___ the book, so I didn’t buy it.',['already read','already reading','already to read'],'ppast_form');
+m('12A','He ___ his homework, so the teacher was angry.',['hadn’t done','hasn’t done','didn’t done'],'ppast_form');
+m('12A','When we got to the party, the other guests ___ all the food.',['had eaten','have eaten','eat'],'ppast_use');
+m('12A','She’d ___ in Paris before she moved to London.',['lived','live','living'],'ppast_form');
+m('12A','In ‘He’d left’, ’d = ___.',['had','would','did'],'ppast_d');
+m('12A','In ‘I’d like a coffee’, ’d = ___.',['would','had','did'],'ppast_d');
+
+f('12A',['When I arrived,','the train','has left.'],2,['had left.','had leave.','have left.'],'ppast_use');
+f('12A',['I','had','forget','my passport.'],2,['forgotten','forgot','forgetting'],'ppast_form');
+f('12A',['She','hadn’t','saw','the film','before.'],2,['seen','see','sees'],'ppast_form');
+f('12A',['We weren’t hungry','because','we have had','lunch.'],2,['we’d had','we’d have','we had have'],'ppast_use');
+f('12A',['They','had went','home','when I arrived.'],1,['had gone','have gone','had go'],'ppast_form');
+
+/* ---------------- 12B Reported speech ---------------- */
+g('12B','She said that she ___ tired.','‘I am tired.’','was','rep_tense');
+g('12B','He said that he ___ me.','‘I’ll call you.’','would call','rep_tense');
+g('12B','She told me that she ___.','‘I can’t swim.’','couldn’t swim','rep_tense');
+g('12B','They said that they ___ a party.','‘We’re having a party.’','were having','rep_tense');
+g('12B','He said that he ___ coffee.','‘I don’t like coffee.’','didn’t like','rep_tense');
+g('12B','She said that she ___ her keys.','‘I’ve lost my keys.’','had lost','rep_tense');
+g('12B','He told me that he ___ Tom the day before.','‘I saw Tom yesterday.’',['had seen','saw'],'rep_tense');
+g('12B','She said that she ___ in London.','‘I live in London.’','lived','rep_tense');
+g('12B','She told him that she ___ back.','‘I won’t come back.’','wouldn’t come','rep_tense');
+g('12B','She said that she ___ to stay with her mum.','‘I’m going to stay with my mum.’','was going','rep_tense');
+g('12B','He said that he ___ some help.','‘I need some help.’','needed','rep_tense');
+g('12B','She said that she ___ the children to her sister’s.','‘I’ve taken the children to my sister’s.’','had taken','rep_tense');
+
+m('12B','‘I’m in a hurry.’ → She said that she ___ in a hurry.',['was','is being','were'],'rep_tense');
+m('12B','‘I’ll write.’ → He said that he ___ write.',['would','will be','wills'],'rep_tense');
+m('12B','He ___ me that he was leaving.',['told','said','says'],'rep_say_tell');
+m('12B','She ___ that she was sorry.',['said','told','talked'],'rep_say_tell');
+m('12B','Can you ___ Mark that I can’t meet him tonight?',['tell','say','speak'],'rep_say_tell');
+m('12B','What did you ___ to her?',['say','tell','speak'],'rep_say_tell');
+m('12B','‘We can come.’ → They said that they ___ come.',['could','can to','would can'],'rep_tense');
+m('12B','‘I left my homework at home.’ → He said that he ___ his homework at home.',['had left','has left','have left'],'rep_tense');
+m('12B','‘I have a problem,’ Annie ___.',['said','told','spoke'],'rep_say_tell');
+m('12B','‘I’m leaving my husband.’ → Lisa said that she ___ her husband.',['was leaving','is leaving now','leaving'],'rep_tense');
+m('12B','‘I love you.’ → He said that he ___ me.',['loved','loves to','was love'],'rep_tense');
+m('12B','‘I’m working.’ → He said that he ___.',['was working','is working now','works'],'rep_tense');
+m('12B','‘I can drive.’ → She told us that she ___.',['could drive','can to drive','could to drive'],'rep_tense');
+m('12B','‘We’ve finished.’ → They said that they ___.',['had finished','have finish','finished have'],'rep_tense');
+
+f('12B',['She','said me','that she was tired.'],1,['told me','talked me','says me'],'rep_say_tell');
+f('12B',['He told','that','he was leaving.'],0,['He said','He told to','He spoke'],'rep_say_tell');
+f('12B',['They said','they','will','call me.'],2,['would','are','can to'],'rep_tense');
+f('12B',['He said','that he','didn’t can','come.'],2,['couldn’t','can’t not','not could'],'rep_tense');
+f('12B',['She said','that','my mum','was ill.'],2,['her mum','me mum','she mum'],'rep_pron');
+
+/* ---------------- 12C Questions without auxiliaries ---------------- */
+g('12C','Who ___ The Milkmaid?','paint','painted','subjq');
+g('12C','Which team ___ the match last night?','win','won','subjq');
+g('12C','How many people ___ in your house?','live','live','subjq');
+g('12C','What ___ last night? I heard a noise.','happen','happened','subjq');
+g('12C','Who ___ this window? There’s glass everywhere!','break',['broke','has broken'],'subjq');
+g('12C','Which city ___ first in the survey?','come','came','subjq');
+g('12C','Who ___ to come to the cinema with me tonight?','want','wants','subjq');
+g('12C','What ___ you have for dinner last night?','do','did','objq');
+g('12C','Where ___ Stuart find his phone?','do','did','objq');
+g('12C','Who ___ you meet at the party?','do','did','objq');
+g('12C','How many students ___ the exam last week?','pass','passed','subjq');
+g('12C','Who ___ the light on? It’s very bright.','turn',['turned','has turned'],'subjq');
+
+m('12C','Who ___ Harry Potter?',['wrote','did write','did wrote'],'subjq');
+m('12C','What ___ to the party?',['did you wear','you wore','wore you'],'objq');
+m('12C','Which team ___ the World Cup in 2018?',['won','did win','did won'],'subjq');
+m('12C','How many people ___ to the concert?',['came','did come','did came'],'subjq');
+m('12C','Who ___ you to the airport?',['drove','did drive','did drove'],'subjq');
+m('12C','Who ___ you see at the party?',['did','was','have'],'objq');
+m('12C','What music ___ you like?',['do','are','have'],'objq');
+m('12C','Who ___ that noise?',['made','did make','did made'],'subjq');
+m('12C','What ___ to you? You look terrible!',['happened','did happen','did happened'],'subjq');
+m('12C','Which of you ___ English best?',['speaks','does speak','do speak'],'subjq');
+
+f('12C',['Who did paint','this picture?'],0,['Who painted','Who did painted','Who painting'],'subjq');
+f('12C',['What','you bought','yesterday?'],1,['did you buy','did you bought','you buy'],'objq');
+f('12C',['How many people','did live','in this house?'],1,['live','do live','lives'],'subjq');
+f('12C',['Who','did win','the game?'],1,['won','did won','winned'],'subjq');
+f('12C',['Which','bus','you take','to work?'],2,['do you take','you do take','takes you'],'objq');
+
+/* ===================== VOCABULARY, UNIT 12 ===================== */
+VPOINTS.push(
+  { id:'V12A', code:'12A', unit:12, title:'Time expressions', sub:'suddenly, eventually, meanwhile, immediately' },
+  { id:'V12B', code:'12B', unit:12, title:'say or tell?', sub:'say sorry, tell a joke, tell somebody' },
+  { id:'V12C', code:'12C', unit:12, title:'Question words', sub:'who, whose, which, how often …' }
+);
+VUNITS[12] = 'Time expressions, say / tell, question words';
+Object.assign(RULES, {
+  timex:'suddenly = quickly and unexpectedly. eventually = after a long time. meanwhile = while something else was happening. immediately / straight away = without delay.',
+  saytell:'tell + a person (tell me, tell them) and tell a story, a joke, a lie, the truth. say + something (say sorry, say hello, say that …). You can say something to somebody. NOT say me.',
+  qwords:'Question words: who (person), whose (who it belongs to), what, which (from a few choices), where (place), when (time), why (reason), how (way), how many, how often, how long.'
+});
+
+/* ---------------- V12A time expressions ---------------- */
+m('V12A','The police went to the apartment ___. They got there in two minutes.',['immediately','eventually','meanwhile'],'timex');
+m('V12A','She opened the box and a cat ___ jumped out.',['suddenly','eventually','meanwhile'],'timex');
+m('V12A','I put the DVDs in the box and closed it ___.',['straight away','eventually','meanwhile'],'timex');
+m('V12A','Walter drove for 100 kilometres. ___, Claudia was trying to phone him.',['Meanwhile','Immediately','Straight away'],'timex');
+m('V12A','Her husband ___ came back two hours later.',['eventually','straight away','meanwhile'],'timex');
+m('V12A','quickly and unexpectedly = ___',['suddenly','eventually','meanwhile'],'timex');
+m('V12A','after a long time = ___',['eventually','immediately','meanwhile'],'timex');
+m('V12A','while something else was happening = ___',['meanwhile','suddenly','eventually'],'timex');
+m('V12A','without delay = ___',['immediately','eventually','meanwhile'],'timex');
+m('V12A','We waited for hours, and ___ the bus came.',['eventually','immediately','meanwhile'],'timex');
+m('V12A','Call me ___ if there’s a problem.',['immediately','eventually','meanwhile'],'timex');
+MATCHES.push({ id:'V12A-time', p:'V12A', title:'What do they mean?', pairs:[
+  ['suddenly','quickly and unexpectedly'], ['eventually','after a long time'], ['meanwhile','while something else was happening'], ['immediately','without delay']
+]});
+
+/* ---------------- V12B say or tell ---------------- */
+m('V12B','Can you ___ me your address, please?',['tell','say'],'saytell');
+m('V12B','He ___ sorry and left.',['said','told'],'saytell');
+m('V12B','___ hello to your parents from me.',['Say','Tell'],'saytell');
+m('V12B','Don’t ___ lies!',['tell','say'],'saytell');
+m('V12B','She ___ me a secret.',['told','said'],'saytell');
+m('V12B','What did she ___ to you?',['say','tell'],'saytell');
+m('V12B','My grandfather ___ us a story every night.',['told','said'],'saytell');
+m('V12B','They ___ that they were going to be late.',['said','told'],'saytell');
+m('V12B','He ___ us that he was leaving.',['told','said'],'saytell');
+m('V12B','Please ___ me what happened.',['tell','say'],'saytell');
+m('V12B','Can you ___ that again, please? I didn’t understand.',['say','tell'],'saytell');
+m('V12B','She ___ goodbye and closed the door.',['said','told'],'saytell');
+m('V12B','I ___ him to call me later.',['told','said'],'saytell');
+m('V12B','He’s always ___ jokes.',['telling','saying'],'saytell');
+f('V12B',['She','said','him','the truth.'],1,['told','says','talked'],'saytell');
+f('V12B',['He','told','that','he was hungry.'],1,['said','told to','spoke'],'saytell');
+f('V12B',['Can you','tell','hello to Anna for me?'],1,['say','talk','speak'],'saytell');
+
+/* ---------------- V12C question words ---------------- */
+m('V12C','___ do you usually get to class: on foot, by car or by bus?',['How','What','Which'],'qwords');
+m('V12C','___ do you usually sit next to in class?',['Who','Whose','Where'],'qwords');
+m('V12C','___ are you going to do after this class?',['What','How','Which'],'qwords');
+m('V12C','___ many teachers have you had?',['How','What','Which'],'qwords');
+m('V12C','In your class, ___ pronunciation is the best?',['whose','who','who’s'],'qwords');
+m('V12C','___ often do you miss a class?',['How','What','When'],'qwords');
+m('V12C','If you could go anywhere, ___ would you go?',['where','what','which'],'qwords');
+m('V12C','___ would your ideal time be for English classes?',['When','Where','Who'],'qwords');
+m('V12C','___ do you find more difficult, speaking or listening?',['Which','Who','Where'],'qwords');
+m('V12C','Are you going to carry on with English? ___ not?',['Why','What','How'],'qwords');
+m('V12C','___ bag is this? Is it yours?',['Whose','Who’s','Who'],'qwords');
+m('V12C','___ time does the film start?',['What','Which','How'],'qwords');
+m('V12C','___ long have you lived here?',['How','What','When'],'qwords');
+m('V12C','___ kind of music do you like?',['What','Who','How'],'qwords');
+
+/* ===================== PRACTICAL ENGLISH 1, 2, 5, 6 ===================== */
+VPOINTS.push(
+  { id:'P1', code:'PE1', unit:'PE', title:'Calling reception', sub:'There’s a problem with … I’ll send somebody up.' },
+  { id:'P2', code:'PE2', unit:'PE', title:'At the restaurant', sub:'Are you ready to order? Can we have the bill?' },
+  { id:'P5', code:'PE5', unit:'PE', title:'Asking how to get there', sub:'Go straight on. Take the first turning on the left.' },
+  { id:'P6', code:'PE6', unit:'PE', title:'On the phone', sub:'Can I leave a message? I’ll put you through.' }
+);
+Object.assign(RULES, {
+  reception:'Calling reception: Hello, this is room 613. There’s a problem with the air conditioning. I can’t get a signal. Receptionist: How can I help you? I’ll send somebody up to look at it. I’ll put you through to IT.',
+  restaurant:'At a restaurant: A table for four, please. Are you ready to order? I’ll have the steak, please. Can we have the bill, please? (American English: the check). Excuse me, I think there’s a mistake.',
+  directions:'Directions: Go straight on. Turn left / right. Take the first / second turning on the right. Turn right at the traffic lights. Go round the roundabout and take the third exit.',
+  phone:'On the phone: Can I speak to …, please? I’ll put you through. She’s not at her desk. Can I leave a message? I’ll call back later. The line’s busy. Do you want to hold? I have the wrong number.'
+});
+
+/* ---------------- Practical English 1: calling reception ---------------- */
+m('P1','A: Hello, reception.  B: Hello. ___ room 613.',['This is','I am','Here is'],'On the phone, say This is … to say who you are.');
+m('P1','A: How can I ___ you?',['help','helping','to help'],'reception');
+m('P1','There’s a ___ with the air conditioning. It isn’t working.',['problem','mistake','trouble'],'There’s a problem with … (trouble is uncountable: NOT a trouble).');
+m('P1','I’m sorry, sir. I’ll ___ somebody up to look at it right now.',['send','go','come'],'reception');
+m('P1','Hello. I’m sorry to ___ you again.',['bother','help','mind'],'I’m sorry to bother you = I’m sorry to interrupt you.');
+m('P1','I have a problem with the wi-fi. I can’t get a ___.',['signal','sign','line'],'get a signal (for wi-fi or a phone).');
+m('P1','I’m sorry, sir. I’ll put you ___ to IT.',['through','across','over'],'put somebody through = connect them to another phone.');
+m('P1','In ‘I’ll send somebody’, I’ll = I ___.',['will','would','shall'],'I’ll = I will. We use I’ll + verb to offer to do something.');
+m('P1','A: You must be really ___.  B: No, I’m fine.',['tired','tiring','tire'],'You must be tired = I’m sure you are tired.');
+m('P1','A: Do you have a ___ view?  B: Yes, I can see the mountains.',['good','well','goodly'],'a good view.');
+m('P1','A: It’s so good to see you again.  B: It’s great to see you, ___.',['too','also','either'],'too at the end of a sentence = also.');
+m('P1','It’s great to ___ here.',['be','being','is'],'It’s great to be here.');
+m('P1','By the ___, what time’s the meeting tomorrow?',['way','road','time'],'By the way = use it to change the subject.');
+m('P1','A: We need to get up early tomorrow.  B: Yes, I ___ you’re right.',['guess','guessing','guessed'],'I guess = I think (informal).');
+
+/* ---------------- Practical English 2: at the restaurant ---------------- */
+m('P2','The list of food in a restaurant is the ___.',['menu','bill','tip'],'menu = the list of food and drinks.');
+m('P2','The three parts of a meal are the starter, the main course and the ___.',['dessert','desert','sweet course'],'dessert = the sweet course at the end. (A desert is a dry place with sand.)');
+m('P2','The person who serves you in a restaurant is the ___.',['waiter','chef','customer'],'waiter / waitress = the person who serves you.');
+m('P2','The piece of paper with the price of the meal is the ___.',['bill','menu','tip'],'the bill (American English: the check).');
+m('P2','Extra money you leave if you are happy with the service is a ___.',['tip','bill','price'],'tip = extra money for the waiter.');
+m('P2','Good evening. A ___ for four, please.',['table','place','seat'],'restaurant');
+m('P2','A: What would you like?  B: I’ll ___ the steak, please.',['have','eat','order to'],'restaurant');
+m('P2','Excuse me. Can we have the ___, please?',['bill','note','count'],'restaurant');
+m('P2','A: Are you ready to ___?  B: Yes, please.',['order','ask','command'],'Are you ready to order?');
+m('P2','Can I get you something to ___ with?',['start','first','starter'],'something to start with = a starter or a drink before the main course.');
+m('P2','How would you like your steak? Rare, medium or ___?',['well done','good done','very done'],'rare, medium, well done.');
+m('P2','A: Would you like still or ___ water?  B: Sparkling, please.',['sparkling','gas','bubble'],'still water (no bubbles) / sparkling water (with bubbles).');
+m('P2','I’m sorry, but I asked ___ a green salad, not fries.',['for','about','to'],'ask for something you want.');
+m('P2','Excuse me, I think there’s a ___ in the bill.',['mistake','fault','wrong'],'There’s a mistake in the bill.');
+m('P2','In American English, the bill is the ___.',['check','cheque','note'],'the bill (British) = the check (American).');
+m('P2','A: My steak isn’t well done.  B: I’m really sorry. I’ll ___ it back to the kitchen.',['take','bring','carry on'],'I’ll take it back = I’ll offer to solve the problem.');
+
+/* ---------------- Practical English 5: asking how to get there ---------------- */
+m('P5','Go ___ on for about 50 yards.',['straight','right','direct'],'directions');
+m('P5','Take the second ___ on the right.',['turning','corner','crossing'],'directions');
+m('P5','Turn right at the traffic ___.',['lights','lamps','signals'],'directions');
+m('P5','Go round the ___ and take the third exit.',['roundabout','corner','square'],'roundabout = a round place where several roads meet.');
+m('P5','How do I ___ to Greenwich Village on the subway?',['get','arrive','reach to'],'How do I get to …?');
+m('P5','A: Take the B train to West 4th Street.  B: How many ___ is that?',['stops','times','ways'],'How many stops is that?');
+m('P5','Take the B train and get ___ at 14th Street.',['off','down','away'],'get on ↔ get off (a bus, a train).');
+m('P5','From Prospect Park take the B train, and then the A train. That’s only one ___.',['change','changing','switch'],'one change = you change trains once.');
+m('P5','Come ___ of the subway on Eighth Avenue.',['out','off','away'],'come out of a station.');
+m('P5','Could you ___ that again, please?',['say','tell','speak'],'Could you say that again? = please repeat.');
+m('P5','OK, thanks. See you later.  B: And don’t get ___!',['lost','lose','losing'],'get lost = not know where you are.');
+m('P5','In British English, the subway is the ___.',['underground','train','bus'],'the subway (American) = the underground (British).');
+m('P5','In American English, the toilet is the ___.',['restroom','toiletroom','lounge'],'the toilet (British) = the restroom (American).');
+m('P5','A: You’re half an hour late!  B: I’m so ___.',['sorry','sad','bad'],'I’m so sorry. I really am sorry.');
+m('P5','I’m sorry. I didn’t ___ to say that.',['mean','think','try'],'I didn’t mean to = I didn’t want to (it was an accident).');
+m('P5','A: Let’s go to the park.  B: I don’t really ___ like a walk.',['feel','want','have'],'feel like + noun / -ing = want.');
+
+/* ---------------- Practical English 6: on the phone ---------------- */
+m('P6','A: Hello. Broadway Grill.  B: Oh, sorry. I have the wrong ___.',['number','phone','line'],'phone');
+m('P6','Hello. Can I ___ to Barbara Keaton, please?',['speak','say','tell'],'phone');
+m('P6','Just a second. I’ll put you ___.',['through','across','in'],'phone');
+m('P6','I’m sorry. She’s not at her ___ right now.',['desk','table','chair'],'phone');
+m('P6','Can I leave a ___, please?',['message','note','call'],'phone');
+m('P6','Can you tell her Rob Walker ___? I’ll call back later.',['called','calls','calling'],'phone');
+m('P6','A: Can you tell her I called?  B: Sure. I’ll give her the ___.',['message','note','information'],'phone');
+m('P6','I’m sorry, I can’t take your ___ at the moment.',['call','phone','line'],'phone');
+m('P6','Please leave a message after the ___.',['beep','ring','sound'],'phone');
+m('P6','Hello, Barbara. This is Rob ___ your call.',['returning','answering','giving back'],'return a call = phone somebody who phoned you.');
+m('P6','I’m sorry, the line’s ___. Do you want to hold?',['busy','full','closed'],'The line’s busy = somebody is already on the phone.');
+m('P6','A: Do you want to hold?  B: OK, I’ll ___.',['hold','wait on','stay'],'phone');
+m('P6','In American English, a mobile phone is a ___ phone.',['cell','hand','pocket'],'mobile phone (British) = cell phone (American).');
+m('P6','A: Did you know Mark and Allie are getting married?  B: Wow! That’s great ___.',['news','new','newses'],'That’s great news! (news is uncountable).');
+m('P6','A: Are you OK?  B: Yes, I’m fine. ___ better.',['Never','Ever','Always'],'Never better = I feel very good.');
+m('P6','A: So what’s the problem?  B: It’s very complicated. I’ll ___ later.',['explain','explain it you','tell'],'I’ll explain later.');
+
+/* keep the menus in book order: Unit 1 … 12, then Practical English 1 … 6 */
+{ const ord = p => (p.unit === 'PE' ? 99 : +p.unit);
+  const by = (a, b) => ord(a) - ord(b) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  POINTS.sort(by); VPOINTS.sort(by); }
+/* ===================== END OF NEW UNITS ===================== */
+
 [['g',GAP],['m',MC],['f',FAULT]].forEach(([k,arr]) => { const c = {}; arr.forEach(it => { c[it.p] = (c[it.p]||0)+1; it.id = it.p + k + c[it.p]; it.k = k; }); });
 POINTS.forEach(p => { p.sec = 'G'; p.code = p.id; }); VPOINTS.forEach(p => { p.sec = 'V'; });
 const ALLP = [...POINTS, ...VPOINTS];
+const PREVIEW = /[?&]preview\b/i.test(location.search);
+{ const R = new Set(RELEASED.map(x => String(x).toUpperCase()));
+  ALLP.forEach(p => { const lesson = p.id.replace(/^V/, '');
+    p.live = PREVIEW || (p.unit === 'PE' ? R.has('PE') || R.has('PE' + p.id.slice(1)) : R.has(String(p.unit)) || R.has(lesson)); }); }
 const ITEM_BY_ID = {}; [...GAP, ...MC, ...FAULT].forEach(it => { ITEM_BY_ID[it.id] = it; });
 /* ===================== KEY WORDS (no repeats within a round) =====================
    Each question gets the "key words" its answer depends on: the content words of the correct answer,
@@ -1840,7 +3691,9 @@ const STOP = new Set(('the a an to of in on at for with by from and or but than 
   'more most less least very too much many few little lot lots enough some any no not never ever always just only also ' +
   'will would shall should must can could may might do does did have has had having be being am is are was were ' +
   'i you he she it we they me him her us them my your his its our their mine yours hers ours theirs myself ' +
-  'one what who whose where how why which bit').split(' '));
+  'one what who whose where how why which bit might may neither nor ago yet just already ever ' +
+  'something anything nothing everything somebody anybody nobody everybody someone anyone everyone somewhere anywhere nowhere everywhere ' +
+  'although because though after before then later suddenly next up out off down over away back round around').split(' '));
 const words = s => String(s).toLowerCase().replace(/[‘’ʼ`]/g, "'").replace(/'ll\b/g,' will').replace(/n't\b/g,' not').replace(/'(s|re|ve|m|d)\b/g,' ').replace(/[^a-z' -]/g,' ').split(/[\s-]+/).filter(Boolean);
 function stem(w){
   w = w.replace(/'/g, ''); if (IRR[w]) w = IRR[w];
@@ -1851,16 +3704,26 @@ function stem(w){
   w = w.replace(/e$/, '').replace(/y$/, 'i').replace(/([bcdfghjklmnpqrstvwz])\1$/, '$1');
   return w;
 }
-const content = s => words(s).filter(w => !STOP.has(w.replace(/'/g,'')) && w !== 'not').map(stem).filter(w => w.length > 1);
-function itemKeys(it){
+const content = s => words(String(s).replace(/\b(going|used|use) to\b/gi, ' ')).filter(w => !STOP.has(w.replace(/'/g,'')) && w !== 'not').map(stem).filter(w => w.length > 1);
+function itemKeys(it, ctx){
   let ans, after = '', before = '';
   if (it.k === 'f'){ ans = it.x[0]; after = it.c.slice(it.w + 1).join(' '); before = it.c.slice(0, it.w).join(' '); }
   else { const [b, a = ''] = it.t.split('___'); ans = it.k === 'g' ? it.a[0] : it.o[0]; after = a; before = b; }
-  let k = content(ans);
+  let k = ctx ? [] : content(ans);
   if (!k.length){ const a = content(after); k = a.length ? [a[0]] : content(before).slice(-1); }
   return [...new Set(k)];
 }
-[...GAP, ...MC, ...FAULT].forEach(it => { it.keys = itemKeys(it); });
+/* a point whose answers are nearly always the same few words (say / tell, so / because …) gets keys from the
+   words around the gap instead, so the rule still stops the same idea coming back in one round */
+function assignKeys(items){
+  const byP = {};
+  items.forEach(it => { it.keys = itemKeys(it); (byP[it.p] = byP[it.p] || []).push(it); });
+  Object.values(byP).forEach(list => {
+    const vals = new Set(list.flatMap(it => it.keys));
+    if (list.length >= 8 && vals.size <= Math.max(3, Math.floor(list.length / 5))) list.forEach(it => { it.keys = itemKeys(it, true); it.ctxKeys = true; });
+  });
+}
+assignKeys([...GAP, ...MC, ...FAULT]);
 
 
 /* ===================== UTILITIES ===================== */
@@ -1880,10 +3743,18 @@ function freshStore(){ return { v:1, xp:0, bestStreak:0, muted:false, answered:0
 let store = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return Object.assign(freshStore(), s); } catch (e) {} return freshStore(); })();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 let SEC = store.lastSec === 'V' ? 'V' : 'G';
-const secPoints = (x = SEC) => ALLP.filter(p => p.sec === x);
+const secPoints = (x = SEC) => ALLP.filter(p => p.sec === x && p.live);
+/* "Units 5–8", "Units 1–4 and 9", … from the units that are live */
+function unitsLabel(sec){
+  const u = [...new Set(ALLP.filter(p => p.live && (!sec || p.sec === sec) && p.unit !== 'PE').map(p => +p.unit))].sort((a, b) => a - b);
+  if (!u.length) return '';
+  const runs = []; u.forEach(n => { const r = runs[runs.length - 1]; if (r && n === r[1] + 1) r[1] = n; else runs.push([n, n]); });
+  const txt = runs.map(([a, b]) => a === b ? '' + a : a + '–' + b);
+  return (u.length === 1 ? 'Unit ' : 'Units ') + (txt.length > 1 ? txt.slice(0, -1).join(', ') + ' and ' + txt[txt.length - 1] : txt[0]);
+}
 const THEME = {
-  G: { name:'Grammar', title:'The Grammar Observatory', eyebrow:'Grammar · Units 5–8', back:'Back to the sky', perfect:'Perfect sky – every star lit!', light:'Light up all five stars!', units:[5,6,7,8], unitNames: UNITS },
-  V: { name:'Vocabulary', title:'The Word Workshop', eyebrow:'Vocabulary · Units 5–8', back:'Back to the workshop', perfect:'Perfect – every gear is turning!', light:'Get all five gears turning!', units:[5,6,7,8,'PE'], unitNames: VUNITS }
+  G: { name:'Grammar', title:'The Grammar Observatory', back:'Back to the sky', perfect:'Perfect sky – every star lit!', light:'Light up all five stars!', units:[1,2,3,4,5,6,7,8,9,10,11,12], unitNames: UNITS },
+  V: { name:'Vocabulary', title:'The Word Workshop', back:'Back to the workshop', perfect:'Perfect – every gear is turning!', light:'Get all five gears turning!', units:[1,2,3,4,5,6,7,8,9,10,11,12,'PE'], unitNames: VUNITS }
 };
 function setSection(x){ SEC = x; store.lastSec = x; save(); applyTheme(x); }
 function applyTheme(x){ document.body.dataset.theme = x === 'V' ? 'clock' : 'sky'; document.querySelector('meta[name=theme-color]').setAttribute('content', x === 'V' ? '#140d08' : '#060a1a'); Sky.setTheme(x === 'V' ? 'clock' : 'sky'); }
@@ -1924,6 +3795,12 @@ function checkGap(it, raw){
   const g = canon(raw);
   const cands = new Set([g]);
   if (it.pre) cands.add(canon(it.pre + raw.trim()));
+  // 's after a pronoun can be is or has; 'd can be had or would: try both
+  [...cands].forEach(c => {
+    const s1 = c.replace(/\b(he|she|it|that|there|what|who|where|here)'s\b/g, '$1 is'), s2 = c.replace(/\b(he|she|it|that|there|what|who|where|here)'s\b/g, '$1 has');
+    [s1, s2].forEach(x => { cands.add(x); cands.add(x.replace(/'d\b/g, ' had')); cands.add(x.replace(/'d\b/g, ' would')); });
+  });
+  [...cands].forEach(c => cands.add(c.replace(/\s+/g, ' ').trim()));
   const strip = s => {
     const out = [s];
     if (prev && s.startsWith(prev + ' ')) out.push(s.slice(prev.length + 1));
@@ -2246,12 +4123,12 @@ function buildQueue(p, mode){
   if (mode === 'mix') return pickVaried(mixPool(p), 9).map(it => ({ k: it.k, it }));
   if (mode === 'sort'){ const cards = []; sortsFor(p).forEach(s => s.cards.forEach((c, i) => cards.push({ k:'s', set:s, card:c, id:s.id + '#' + i }))); return leastSeen(cards, 10, x => x.id); }
   if (mode === 'match') return leastSeen(matchesFor(p), 2, x => x.id).map(b => ({ k:'x', board:b, id:b.id }));
-  if (mode === 'all'){ const used = new Set(); return shuffle(secPoints().filter(pt => mixPool(pt.id).length).map(pt => { const it = pickVaried(mixPool(pt.id), 1, used)[0]; return { k: it.k, it }; })); }
+  if (mode === 'all'){ const used = new Set(); return shuffle(secPoints().filter(pt => mixPool(pt.id).length)).slice(0, 12).map(pt => { const it = pickVaried(mixPool(pt.id), 1, used)[0]; return { k: it.k, it }; }); }
   if (mode === 'book') return buildReview(SEC);
   if (mode === 'weak'){
     // weak spots come from the mistakes book: the 3 points with most mistakes, some of the missed
     // questions again, then new questions from those points
-    const tally = {}; Object.values(store.book).forEach(b => { if (b.sec === SEC) tally[b.p] = (tally[b.p] || 0) + b.n; });
+    const tally = {}; Object.values(store.book).forEach(b => { if (b.sec === SEC && inLive(b)) tally[b.p] = (tally[b.p] || 0) + b.n; });
     const pts = Object.keys(tally).filter(p => mixPool(p).length).sort((a, b) => tally[b] - tally[a]).slice(0, 3);
     const mine = bookItems(SEC, 20).filter(e => pts.includes(bkPoint(e))).slice(0, 4), have = new Set(mine.map(bkKey));
     const used = new Set(mine.flatMap(keysOf));
@@ -2305,7 +4182,7 @@ const GEAR_SVG = '<svg viewBox="0 0 48 48"><path fill="currentColor" fill-rule="
 function renderLanding(){
   $('#landing').innerHTML = `
     <header class="top">
-      <div><div class="eyebrow">English File Pre-Intermediate</div><h1>Units 5–8 Revision</h1></div>
+      <div><div class="eyebrow">English File Pre-Intermediate</div><h1>${unitsLabel()} Revision</h1></div>
       <button class="icon-btn" data-act="mute" aria-label="Sound on or off">${MUTE_ICON(store.muted)}</button>
     </header>
     ${levelCard()}
@@ -2314,12 +4191,12 @@ function renderLanding(){
       <button class="door-card sky" data-act="section" data-s="G">
         <span class="door-art">${STAR_SVG}</span>
         <span class="door-txt"><span class="eyebrow">Grammar</span><span class="door-title">The Observatory</span>
-        <span class="muted small">12 grammar points · ${secStars('G')} / 60 stars</span></span>
+        <span class="muted small">${secPoints('G').length} grammar points · ${secStars('G')} / ${secPoints('G').length * 5} stars</span></span>
       </button>
       <button class="door-card clock" data-act="section" data-s="V">
         <span class="door-art">${GEAR_SVG}</span>
         <span class="door-txt"><span class="eyebrow">Vocabulary</span><span class="door-title">The Workshop</span>
-        <span class="muted small">12 topics · ${secStars('V')} / 60 gears</span></span>
+        <span class="muted small">${secPoints('V').length} topics · ${secStars('V')} / ${secPoints('V').length * 5} gears</span></span>
       </button>
     </div>
     ${SHARE_URL ? `<button class="btn ghost wide share-link" data-act="share"><span>Share results with my teacher</span><span class="bk-count">${sharing() ? 'On' : 'Off'}</span></button>` : ''}
@@ -2331,7 +4208,7 @@ function renderHome(){
   const units = T.units.map(u => {
     const ps = secPoints().filter(p => p.unit === u); if (!ps.length) return '';
     return `
-    <div class="unit"><div class="unit-head"><span class="u">${u === 'PE' ? 'Practical English' : 'Unit ' + u}</span><span class="t">${u === 'PE' ? 'Episodes 3 and 4' : esc(T.unitNames[u])}</span></div>
+    <div class="unit"><div class="unit-head"><span class="u">${u === 'PE' ? 'Practical English' : 'Unit ' + u}</span><span class="t">${u === 'PE' ? 'Episode' + (ps.length > 1 ? 's ' : ' ') + ps.map(p => p.id.slice(1)).join(', ').replace(/, (\d+)$/, ' and $1') : esc(T.unitNames[u] || '')}</span></div>
     <div class="pgrid">${ps.map(p => `
       <button class="pcard" data-act="point" data-p="${p.id}">
         <span class="pc-id">${p.code}</span><span class="pc-title">${esc(p.title)}</span>${starsHtml(mastery(p.id))}
@@ -2340,10 +4217,10 @@ function renderHome(){
   $('#home').innerHTML = `
     <div class="back-row"><button class="btn ghost small back-btn" data-act="landing">${BACK}Menu</button><div style="flex:1"></div>
       <button class="icon-btn" data-act="mute" aria-label="Sound on or off">${MUTE_ICON(store.muted)}</button></div>
-    <header class="top"><div><div class="eyebrow">${T.eyebrow}</div><h1>${T.title}</h1></div></header>
+    <header class="top"><div><div class="eyebrow">${T.name} · ${unitsLabel(SEC)}</div><h1>${T.title}</h1></div></header>
     ${sessionStrip()}
     <div class="quick">
-      <button class="btn primary" data-act="start" data-p="ALL" data-mode="all"><span>Mixed revision</span><span class="small" style="font-weight:700">all 12 ${SEC === 'V' ? 'topics' : 'points'}</span></button>
+      <button class="btn primary" data-act="start" data-p="ALL" data-mode="all"><span>Mixed revision</span><span class="small" style="font-weight:700">${secPoints().length > 12 ? '12 random' : 'all ' + secPoints().length} ${SEC === 'V' ? 'topics' : 'points'}</span></button>
       <button class="btn ghost" data-act="start" data-p="WEAK" data-mode="weak"${bookCount(SEC) ? '' : ' disabled'}><span>Weak spots</span><span class="small muted" style="font-weight:700">${bookCount(SEC) ? 'from your mistakes' : 'after your first mistake'}</span></button>
     </div>
     <button class="btn ghost wide book-link" data-act="book"><span>My mistakes book</span><span class="bk-count">${bookCount(SEC)}</span></button>
@@ -2629,7 +4506,8 @@ function bookMissPair(board, L, R){
   b.h = esc(board.pairs[L][0]) + ' <mark>' + esc(board.pairs[L][1]) + '</mark>'; b.y = board.pairs[R][1]; b.r = p === '8B' ? 'c_match' : ''; save();
 }
 function bookHitPair(board, L){ const b = store.book[board.id + '#' + L]; if (b && ++b.ok >= BOOK_CLEAR) bookDrop(b); save(); }
-const bookCount = sec => Object.values(store.book).filter(b => !sec || b.sec === sec).length;
+const inLive = b => PT[b.p] && PT[b.p].live;
+const bookCount = sec => Object.values(store.book).filter(b => inLive(b) && (!sec || b.sec === sec)).length;
 
 /* turn a stored entry back into a playable queue entry, or null if the question has changed or gone */
 function bookResolve(b){
@@ -2646,13 +4524,13 @@ function bookResolve(b){
 }
 /* up to n of this section's most-missed playable questions (not match boards) */
 function bookItems(sec, n){
-  return Object.values(store.book).filter(b => b.sec === sec && b.k !== 'x').sort((a, c) => c.n - a.n || a.last - c.last)
+  return Object.values(store.book).filter(b => b.sec === sec && b.k !== 'x' && inLive(b)).sort((a, c) => c.n - a.n || a.last - c.last)
     .map(bookResolve).filter(Boolean).slice(0, n);
 }
 /* a review round: for the 3 points with most misses, a rule card, the missed questions again, then 2 new ones */
 function buildReview(sec){
   const live = [];
-  Object.values(store.book).forEach(b => { if (b.sec !== sec) return; const r = bookResolve(b); if (r) live.push({ b, r }); else delete store.book[b.key]; });
+  Object.values(store.book).forEach(b => { if (b.sec !== sec || !inLive(b)) return; const r = bookResolve(b); if (r) live.push({ b, r }); else delete store.book[b.key]; });
   save();
   const byP = {}; live.forEach(x => (byP[x.b.p] = byP[x.b.p] || []).push(x));
   const pts = Object.keys(byP).sort((a, c) => byP[c].reduce((s, x) => s + x.b.n, 0) - byP[a].reduce((s, x) => s + x.b.n, 0)).slice(0, 3);
@@ -2688,7 +4566,7 @@ function bookGroups(sec){
 }
 function bookText(){
   const d = new Date(), L = [];
-  L.push('ENGLISH FILE PRE-INTERMEDIATE · UNITS 5–8 REVISION', 'My mistakes book', 'Saved: ' + fmtDay(d) + ', ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+  L.push('ENGLISH FILE PRE-INTERMEDIATE · ' + unitsLabel().toUpperCase() + ' REVISION', 'My mistakes book', 'Saved: ' + fmtDay(d) + ', ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
     'Questions to review: ' + bookCount() + '    Fixed so far: ' + (store.cleared || 0), '');
   ['G', 'V'].forEach(sec => {
     const gs = bookGroups(sec); if (!gs.length) return;
@@ -2997,6 +4875,7 @@ document.addEventListener('keydown', ev => {
 });
 
 /* ===================== BOOT ===================== */
+if (PREVIEW){ const t = document.createElement('div'); t.className = 'preview-tag'; t.textContent = 'Teacher preview: all units visible'; document.body.appendChild(t); }
 renderLanding(); document.body.dataset.theme = 'sky';
 flushOutbox();
 (function loadThree(){
