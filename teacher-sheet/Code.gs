@@ -1,5 +1,5 @@
 /**
- * Units 5–8 Revision: receives results from students who turn on "Share with my teacher".
+ * English File Pre-Intermediate revision: receives results from students who turn on "Share with my teacher".
  *
  * Sheets (created by setup()):
  *   Rounds    one row per game played

@@ -4630,7 +4630,7 @@ function renderBook(){
    the time the session started, and the wrong answers. Nothing else is sent (no device details, no ids).
    Messages wait in store.outbox until they get through, so results played offline arrive later.
    SHARE_URL is the Sheet's web-app address; while it is empty the whole feature is hidden. */
-const SHARE_URL = '';
+const SHARE_URL = 'https://script.google.com/macros/s/AKfycbye6s5Fp1dplPyLlJQv-l7Q-Mc8zMkgxBu34xU2jxJL7uxx8VXUn1ThVndrDnS0K_YmeA/exec';
 const SHARE_KEEP = 'about 6 months';   // must match KEEP_DAYS in teacher-sheet/Code.gs
 const sharing = () => !!(SHARE_URL && store.share && store.share.on && store.share.name);
 function shareRound(){
