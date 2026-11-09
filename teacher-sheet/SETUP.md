@@ -11,7 +11,8 @@ It takes about 15 minutes, once.
 ## 2. Run setup once
 1. In the toolbar's function menu, choose **setup**, then click **Run**.
 2. Google will ask for permission. Choose your account. You may see "Google hasn't verified this app": click **Advanced → Go to (project name)**. This is normal for a script you wrote yourself. Then click **Allow**.
-3. Back in the spreadsheet you should now see three tabs: **Rounds**, **Mistakes** and **Summary**.
+3. Back in the spreadsheet you should now see four tabs: **Rounds**, **Mistakes**, **Flags** and **Summary**.
+   `setup` also makes your **dashboard key** and writes it in cell **E3** of the Summary tab.
    `setup` also installs the nightly job that deletes rows older than 180 days.
 
 ## 3. Publish it as a web app
@@ -31,12 +32,22 @@ const SHARE_URL = '';
 Paste the address between the quotes, save, commit and push. (Or send me the address and I'll do it.)
 Until this is filled in, the sharing button is hidden in the game.
 
+## 5. The teacher dashboard
+Open [omachale.github.io/EF-Review/teacher.html](https://omachale.github.io/EF-Review/teacher.html), paste the dashboard key
+from cell E3 of the Summary tab, and click **Open dashboard**. It shows recent games, each student's weak topics and
+mistakes, the most-missed questions, and the questions students have **flagged** for you (you can mark them as done).
+Add `?demo` to the address to see it with made-up data.
+
+- The key is a password for your students' results. Only tick "Remember on this device" on your own devices.
+- If the key gets out, run **newDashboardKey** in Apps Script (same way as setup). The old key stops working at once.
+- The key never goes in a link; it is sent inside the request. Without it, the web app gives no data back.
+
 ## Things to keep true
 The in-game notice tells students these things. Please keep them true:
 - **Only you can open the Sheet.** Don't share the spreadsheet with others (or update the notice if you do).
 - **Results are deleted after about 6 months.** If you change `KEEP_DAYS` in `Code.gs`, also change `SHARE_KEEP` in `index.html`.
-- **You will delete a student's results if they ask.** Delete their rows (filter the Rounds and Mistakes tabs by name).
+- **You will delete a student's results if they ask.** Delete their rows (filter the Rounds, Mistakes and Flags tabs by name).
 
 ## If you change Code.gs later
-Paste the new version, save, then **Deploy → Manage deployments → edit (pencil) → Version: New version → Deploy**.
+Paste the new version, save, run **setup** once more (it keeps your data and your key, and adds anything new), then **Deploy → Manage deployments → edit (pencil) → Version: New version → Deploy**.
 The web app URL stays the same.

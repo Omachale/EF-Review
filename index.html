@@ -152,6 +152,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .fb-rule.hide-rule{display:none}
 .fb-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 .fb-actions .primary{min-width:120px}
+.fb-actions .flag-btn{margin-right:auto;color:var(--muted);white-space:nowrap}
+.fb-actions .flag-btn.done{color:var(--gold2);opacity:.85;pointer-events:none}
+.overlay .flag-panel{text-align:left;max-width:420px}
+.flag-panel .fb-sent{margin:10px 0 6px}
+.flag-note{height:auto;min-height:84px;padding:10px 14px;font-weight:600;resize:vertical}
 /* results & report */
 .result{text-align:center}
 .big-score{font-family:'Fraunces',serif;font-size:4.2rem;font-weight:700;line-height:1;margin:10px 0 2px}
@@ -288,7 +293,7 @@ body[data-theme="clock"] .opt .door{background:rgba(233,169,75,.16)}
    To release more, add to the list, save, and push. To check hidden content yourself, open the game with
    ?preview at the end of the address (e.g. …/EF-Review/?preview). Note: hidden content is still inside
    this file, so a student who reads the page's source code could see it. */
-const RELEASED = ['1', '2', '3', '4', '5', '6', '7', '8', '9A', '9B', '9C', '10A', 'PE3', 'PE4'];
+const RELEASED = ['1', '2', '3', '4', '5', '6', '7', '8', '9A', '9B', '9C', '10A', '10B', '10C', 'PE3', 'PE4'];
 /* ===================== ITEM BANK =====================
    Conventions
    g(point, text, base, answers, rule, instruction?)  typed gap-fill ("___" marks the gap)
@@ -4309,8 +4314,9 @@ function feedback(ok, o){
     ${o.also ? `<div class="fb-also">Also correct: ${o.also}</div>` : ''}
     ${o.note ? `<div class="fb-note">${esc(o.note)}</div>` : ''}
     ${ruleText(o.rule) ? `<div class="fb-rule ${ok ? 'hide-rule' : ''}">${esc(ruleText(o.rule))}</div>` : ''}
-    <div class="fb-actions">${ok && ruleText(o.rule) ? '<button class="btn ghost small" data-act="why">Why?</button>' : ''}<button class="btn primary" data-act="next" id="nextBtn">${isLastItem() ? 'Finish' : 'Next'}</button></div>
+    <div class="fb-actions">${sharing() && o.sent ? '<button class="btn ghost small flag-btn" data-act="flag" aria-label="Flag this question for my teacher">⚑ Flag</button>' : ''}${ok && ruleText(o.rule) ? '<button class="btn ghost small" data-act="why">Why?</button>' : ''}<button class="btn primary" data-act="next" id="nextBtn">${isLastItem() ? 'Finish' : 'Next'}</button></div>
   </div>`;
+  G.shown = { ok, sent: o.sent || '', your: o.your || '', p: G.cur && G.cur.k !== 'r' && G.cur.k !== 'x' ? bkPoint(G.cur) : '', id: G.cur && G.cur.k !== 'r' && G.cur.k !== 'x' ? bkKey(G.cur) : '' };
   if (!ok && o.sent) G.mistakes.push({ sent: o.sent, your: o.your || '', p: G.cur && G.cur.k !== 'r' && G.cur.k !== 'x' ? bkPoint(G.cur) : '' });
   if (!ok && G.missKey) bookFill(o);
   setTimeout(() => { fb.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 30);
@@ -4643,6 +4649,33 @@ function shareRound(){
     mistakes: G.mistakes.map(m => ({ p: m.p ? PT[m.p].code : '', q: plain(m.sent), a: m.your || '' })) });
   store.outbox = store.outbox.slice(-200); save(); flushOutbox();
 }
+/* Flag for my teacher: while sharing is on, the feedback box offers a button that sends this question,
+   the student's answer and an optional short note to the Flags tab of the teacher's Sheet.
+   Flags are v:2 so a Sheet script from before flags existed ignores them instead of filing them as games. */
+function flagDialog(){
+  const f = G && G.shown; if (!f || !sharing()) return;
+  const o = $('#overlay');
+  o.innerHTML = `<div class="panel flag-panel"><h2>Flag this question</h2>
+    <p class="muted small">Your teacher will see this question${f.your ? ', your answer' : ''} and your note, under the name “${esc(store.share.name)}”.</p>
+    <div class="fb-sent">${f.sent}</div>
+    ${f.your ? `<div class="fb-your">Your answer: <s>${esc(f.your)}</s></div>` : ''}
+    <label class="share-lab" for="flagNote">Note for your teacher (optional)</label>
+    <textarea id="flagNote" class="share-in flag-note" maxlength="200" rows="3" placeholder="For example: I think my answer is also correct."></textarea>
+    <p class="muted small">Please don’t write personal information here.</p>
+    <div class="btn-col"><button class="btn primary wide" data-act="flagSend">Send to my teacher</button><button class="btn ghost wide" data-act="closeOverlay">Cancel</button></div></div>`;
+  o.classList.add('show');
+  setTimeout(() => { const n = $('#flagNote'); if (n) n.focus(); }, 50);
+}
+function sendFlag(){
+  const f = G && G.shown; if (!f || !sharing()) return;
+  const P = PT[f.p], note = ($('#flagNote') ? $('#flagNote').value : '').trim().slice(0, 200);
+  store.outbox.push({ v: 2, type: 'flag', name: store.share.name, sec: THEME[SEC].name, topic: P ? P.code : '',
+    title: P ? P.title : '', id: f.id, q: plain(f.sent), a: f.your, ok: !!f.ok, note });
+  store.outbox = store.outbox.slice(-200); save(); flushOutbox();
+  $('#overlay').classList.remove('show');
+  const b = $('.flag-btn'); if (b){ b.textContent = '⚑ Flagged'; b.classList.add('done'); }
+  toast('Sent to your teacher');
+}
 async function flushOutbox(){
   if (flushOutbox.busy || !SHARE_URL || !store.outbox.length) return;
   flushOutbox.busy = true;
@@ -4664,6 +4697,7 @@ const SHARE_NOTICE = () => `
     <li>the topic and game, your score, and how long the game took</li>
     <li>the questions you got wrong, with your answers</li>
     <li>the time your session started</li>
+    <li>any question you choose to <b>flag</b> for your teacher, with your answer and the note you write</li>
   </ul>
   <p><b>It does not send</b> anything else from your phone: no email, no contacts, no location, no device or account details. The app does not record your IP address. (Like every website, Google’s computers see it when the results arrive, as part of normal internet traffic.)</p>
   <p><b>Where it goes:</b> a Google Sheet that only your teacher can open. Google stores the Sheet, so <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google’s privacy policy</a> also applies.</p>
@@ -4789,7 +4823,7 @@ function renderHistory(){
       <div class="list">${secPoints(x).map(p => { const a = recentAcc(p.id); return `<div class="li"><span><b>${p.code}</b> ${esc(p.title)}</span><span>${starsHtml(mastery(p.id))} <span class="muted small">${a === null ? '–' : Math.round(a * 100) + '%'}</span></span></div>`; }).join('')}</div>`).join('')}
       <div class="sec-title">Past sessions</div>
       <div class="list">${store.history.length ? store.history.map(h => `<div class="li"><span>${fmtD(h.end)} · ${h.games} game${h.games === 1 ? '' : 's'}</span><b>${h.c}/${h.t} · ${pct(h.c, h.t)}%</b></div>`).join('') : '<div class="muted small">Finished sessions appear here. Open the session report and tap “Finish this session”.</div>'}</div>
-      <div class="muted small" style="margin-top:14px">${sharing() ? 'Your progress is saved in this browser on this phone. Because you turned on <b>Share results with my teacher</b>, each game’s score and wrong answers are also sent to your teacher, under the name you chose.' : 'Your progress is saved only in this browser on this phone. None of it is sent anywhere.'}</div>
+      <div class="muted small" style="margin-top:14px">${sharing() ? 'Your progress is saved in this browser on this phone. Because you turned on <b>Share results with my teacher</b>, each game’s score and wrong answers, and any question you flag, are also sent to your teacher, under the name you chose.' : 'Your progress is saved only in this browser on this phone. None of it is sent anywhere.'}</div>
     </div>
     <div class="btn-col"><button class="btn ghost wide" data-act="reset">Reset all progress</button></div>`;
 }
@@ -4866,11 +4900,13 @@ document.addEventListener('click', ev => {
     case 'shareOn': { const n = $('#shareName').value.trim().slice(0, 40); if (!n){ toast('Please type a name first'); $('#shareName').focus(); break; }
       const was = sharing(); store.share = { on: true, name: n }; save(); toast(was ? 'Name saved' : 'Sharing is on'); renderShare(); flushOutbox(); break; }
     case 'shareOff': store.share = { on: false, name: store.share.name }; store.outbox = []; save(); toast('Sharing is off'); renderShare(); break;
+    case 'flag': flagDialog(); break;
+    case 'flagSend': sendFlag(); break;
     case 'closeOverlay': $('#overlay').classList.remove('show'); break;
   }
 });
 document.addEventListener('keydown', ev => {
-  if (ev.key !== 'Enter' || !$('#game').classList.contains('active')) return;
+  if (ev.key !== 'Enter' || !$('#game').classList.contains('active') || $('#overlay').classList.contains('show')) return;
   const nb = $('#nextBtn'); if (nb && document.activeElement !== nb){ ev.preventDefault(); nb.click(); }
 });
 
